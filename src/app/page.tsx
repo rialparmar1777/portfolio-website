@@ -27,7 +27,7 @@ export default function Home() {
               animate={{ scale: 1 }}
               transition={{ duration: 0.8, type: "spring" }}
             >
-              Your Name
+              Rial Parmar
             </motion.h1>
             <motion.p 
               className="text-xl md:text-2xl text-gray-300"
