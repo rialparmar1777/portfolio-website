@@ -2,9 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useMotionValueEvent, useAnimation } from 'framer-motion';
-import Link from 'next/link';
 
-const NavLink = ({ href, text, delay = 0 }: { href: string; text: string; delay?: number }) => {
+interface NavLinkProps {
+  href: string;
+  text: string;
+  delay?: number;
+  onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => void;
+}
+
+const NavLink = ({ href, text, delay = 0, onNavigate }: NavLinkProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const controls = useAnimation();
 
@@ -21,6 +27,8 @@ const NavLink = ({ href, text, delay = 0 }: { href: string; text: string; delay?
       }
     });
   }, [controls, delay]);
+
+  const sectionId = href.replace('#', '');
 
   const stringVariants = {
     initial: { 
@@ -89,7 +97,6 @@ const NavLink = ({ href, text, delay = 0 }: { href: string; text: string; delay?
         onHoverStart={() => {
           setIsHovered(true);
           controls.stop();
-          controls.start("hover");
         }}
         onHoverEnd={() => {
           setIsHovered(false);
@@ -111,7 +118,11 @@ const NavLink = ({ href, text, delay = 0 }: { href: string; text: string; delay?
           transformStyle: 'preserve-3d'
         }}
       >
-        <Link href={href} className="relative block no-underline">
+        <motion.a
+          href={href}
+          onClick={(e) => onNavigate(e, sectionId)}
+          className="relative block no-underline"
+        >
           <motion.div
             className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 
                        border-2 border-white/20 backdrop-blur-sm shadow-lg
@@ -141,13 +152,17 @@ const NavLink = ({ href, text, delay = 0 }: { href: string; text: string; delay?
               }
             }}
           />
-        </Link>
+        </motion.a>
       </motion.div>
     </div>
   );
 };
 
-const Navbar = () => {
+interface NavbarProps {
+  onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => void;
+}
+
+const Navbar = ({ onNavigate }: NavbarProps) => {
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
 
@@ -173,10 +188,10 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center h-36">
           <div className="hidden md:flex items-center gap-20">
-            <NavLink href="#home" text="Home" delay={0} />
-            <NavLink href="#about" text="About" delay={0.1} />
-            <NavLink href="#projects" text="Projects" delay={0.2} />
-            <NavLink href="#contact" text="Contact" delay={0.3} />
+            <NavLink href="#home" text="Home" delay={0} onNavigate={onNavigate} />
+            <NavLink href="#about" text="About" delay={0.1} onNavigate={onNavigate} />
+            <NavLink href="#projects" text="Projects" delay={0.2} onNavigate={onNavigate} />
+            <NavLink href="#contact" text="Contact" delay={0.3} onNavigate={onNavigate} />
           </div>
 
           <motion.div
@@ -207,10 +222,10 @@ const Navbar = () => {
         exit={{ opacity: 0, height: 0 }}
       >
         <div className="px-2 pt-2 pb-3 space-y-8 sm:px-3">
-          <NavLink href="#home" text="Home" delay={0} />
-          <NavLink href="#about" text="About" delay={0.1} />
-          <NavLink href="#projects" text="Projects" delay={0.2} />
-          <NavLink href="#contact" text="Contact" delay={0.3} />
+          <NavLink href="#home" text="Home" delay={0} onNavigate={onNavigate} />
+          <NavLink href="#about" text="About" delay={0.1} onNavigate={onNavigate} />
+          <NavLink href="#projects" text="Projects" delay={0.2} onNavigate={onNavigate} />
+          <NavLink href="#contact" text="Contact" delay={0.3} onNavigate={onNavigate} />
         </div>
       </motion.div>
     </motion.nav>
