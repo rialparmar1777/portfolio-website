@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import CustomCursor from './components/CustomCursor';
 import AnimatedBackground from './components/AnimatedBackground';
@@ -8,11 +8,60 @@ import ContactForm from './components/ContactForm';
 import Navbar from './components/Navbar';
 import SnowEffect from './components/SnowEffect';
 import TypewriterText from './components/TypewriterText';
+import PageTransition from './components/PageTransition';
 import { motion } from 'framer-motion';
 
+// Animation variants for sections
+const sectionVariants = {
+  initial: {
+    opacity: 0,
+    y: 50,
+    scale: 0.95,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -50,
+    scale: 0.95,
+    transition: {
+      duration: 0.4,
+    },
+  },
+};
+
 export default function Home() {
+  const [activeSection, setActiveSection] = useState('home');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['home', 'about', 'projects', 'contact'];
+      const current = sections.find(section => {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return rect.top <= 100 && rect.bottom >= 100;
+        }
+        return false;
+      });
+      if (current) {
+        setActiveSection(current);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <>
+    <PageTransition>
       <CustomCursor />
       <AnimatedBackground />
       <SnowEffect />
@@ -22,9 +71,10 @@ export default function Home() {
         {/* Hero Section */}
         <motion.section 
           id="home"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
+          variants={sectionVariants}
+          initial="initial"
+          animate={activeSection === 'home' ? "animate" : "initial"}
+          exit="exit"
           className="min-h-screen flex items-center justify-center relative px-4 overflow-hidden py-20"
         >
           {/* Background Decorative Elements */}
@@ -192,11 +242,11 @@ Proficient in modern web frameworks and database management, with a track record
         {/* About Section */}
         <motion.section 
           id="about"
+          variants={sectionVariants}
+          initial="initial"
+          animate={activeSection === 'about' ? "animate" : "initial"}
+          exit="exit"
           className="min-h-screen flex items-center justify-center py-20 px-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
         >
           <div className="max-w-4xl">
             <h2 className="text-4xl md:text-5xl font-bold mb-8 gradient-text">About Me</h2>
@@ -211,11 +261,11 @@ Proficient in modern web frameworks and database management, with a track record
         {/* Projects Section */}
         <motion.section 
           id="projects"
+          variants={sectionVariants}
+          initial="initial"
+          animate={activeSection === 'projects' ? "animate" : "initial"}
+          exit="exit"
           className="min-h-screen py-20 px-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
         >
           <div className="max-w-6xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold mb-12 gradient-text text-center">Projects</h2>
@@ -237,11 +287,11 @@ Proficient in modern web frameworks and database management, with a track record
         {/* Contact Section */}
         <motion.section 
           id="contact"
+          variants={sectionVariants}
+          initial="initial"
+          animate={activeSection === 'contact' ? "animate" : "initial"}
+          exit="exit"
           className="min-h-screen flex items-center justify-center py-20 px-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
         >
           <div className="max-w-4xl w-full">
             <h2 className="text-4xl md:text-5xl font-bold mb-12 gradient-text text-center">Get in Touch</h2>
@@ -249,6 +299,6 @@ Proficient in modern web frameworks and database management, with a track record
           </div>
         </motion.section>
       </div>
-    </>
+    </PageTransition>
   );
 }
