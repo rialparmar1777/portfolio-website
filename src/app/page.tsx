@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import CustomCursor from './components/CustomCursor';
 import AnimatedBackground from './components/AnimatedBackground';
 import ContactForm from './components/ContactForm';
+import Navbar from './components/Navbar';
 import { motion } from 'framer-motion';
 
 export default function Home() {
@@ -11,10 +12,12 @@ export default function Home() {
     <>
       <CustomCursor />
       <AnimatedBackground />
+      <Navbar />
       
       <div className="min-h-screen">
         {/* Hero Section */}
         <motion.section 
+          id="home"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -42,6 +45,7 @@ export default function Home() {
 
         {/* About Section */}
         <motion.section 
+          id="about"
           className="min-h-screen flex items-center justify-center py-20 px-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -60,6 +64,7 @@ export default function Home() {
 
         {/* Projects Section */}
         <motion.section 
+          id="projects"
           className="min-h-screen py-20 px-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -85,6 +90,7 @@ export default function Home() {
 
         {/* Contact Section */}
         <motion.section 
+          id="contact"
           className="min-h-screen flex items-center justify-center py-20 px-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
