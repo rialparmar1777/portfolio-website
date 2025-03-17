@@ -641,6 +641,64 @@ const About = () => {
           </div>
         </div>
 
+        {/* Education Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-20 relative"
+        >
+          {/* Glowing Effect behind title */}
+          <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full transform scale-150" />
+          
+          <h2 className="relative text-6xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-6">
+            Education
+          </h2>
+          <motion.div 
+            className="h-1 w-40 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full mb-8"
+            animate={{
+              width: ["10%", "40%", "10%"],
+              opacity: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        </motion.div>
+
+        <div className="space-y-8 mb-32">
+          {/* Diploma */}
+          <div className="relative pl-8 border-l-2 border-purple-500/20 group">
+            <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-purple-500/20 group-hover:bg-purple-500/40 transition-colors duration-300" />
+            <div className="space-y-2">
+              <h4 className="text-xl font-semibold text-white group-hover:text-purple-300 transition-colors">
+                Diploma in Computer Programming
+              </h4>
+              <p className="text-gray-400">Conestoga College</p>
+              <div className="flex items-center gap-2 text-sm text-purple-400">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Graduated August - 2024
+              </div>
+            </div>
+          </div>
+
+          {/* Bachelor's */}
+          <div className="relative pl-8 border-l-2 border-blue-500/20 group">
+            <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-blue-500/20 group-hover:bg-blue-500/40 transition-colors duration-300" />
+            <div className="space-y-2">
+              <h4 className="text-xl font-semibold text-white group-hover:text-blue-300 transition-colors">
+                Bachelor of Computer Applications
+              </h4>
+              <p className="text-gray-400">Manipal Institute of Technology</p>
+            </div>
+          </div>
+        </div>
+
         {/* Enhanced Skills Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
