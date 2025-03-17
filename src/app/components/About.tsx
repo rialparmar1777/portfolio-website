@@ -247,13 +247,14 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const isInView = useInView(cardRef, { once: true, margin: "-100px" });
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     if (!isHovered) {
       const interval = setInterval(() => {
         setRotation({
-          x: Math.sin(Date.now() / 2000) * 3,
-          y: Math.cos(Date.now() / 2000) * 3,
+          x: Math.sin(Date.now() / 3000) * 2,
+          y: Math.cos(Date.now() / 3000) * 2,
         });
       }, 50);
       return () => clearInterval(interval);
@@ -263,8 +264,8 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 15;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 15;
     setMousePosition({ x, y });
   };
 
@@ -276,45 +277,63 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
       animate={{ 
         opacity: isInView ? 1 : 0,
         y: isInView ? 0 : 50,
-        transition: { duration: 0.8, delay: index * 0.1, ease: "easeOut" }
+        transition: { duration: 0.8, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }
       }}
     >
       <motion.div
         className="relative w-full aspect-square rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 p-6 overflow-hidden cursor-pointer transform-gpu"
         style={{
           transform: isHovered
-            ? `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg) scale3d(1.05, 1.05, 1.05)`
+            ? `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg) scale3d(1.03, 1.03, 1.03)`
             : `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale3d(1, 1, 1)`,
-          transition: 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)',
+          transition: 'all 0.8s cubic-bezier(0.23, 1, 0.32, 1)',
         }}
         onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          setShowDetails(true);
+        }}
         onMouseLeave={() => {
           setIsHovered(false);
+          setShowDetails(false);
           setMousePosition({ x: 0, y: 0 });
         }}
       >
+        {/* Animated Border */}
+        <motion.div
+          className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-purple-500/50 via-blue-500/50 to-purple-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          animate={{
+            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+
         {/* Floating Particles */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(5)].map((_, i) => (
+          {[...Array(3)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 rounded-full"
+              className="absolute w-1.5 h-1.5 rounded-full"
               style={{
                 backgroundColor: skill.color,
-                opacity: 0.3,
+                opacity: 0.2,
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
               }}
               animate={{
-                y: [0, -20, 0],
-                opacity: [0.2, 0.5, 0.2],
+                y: [0, -30, 0],
+                opacity: [0.1, 0.3, 0.1],
+                scale: [1, 1.5, 1],
               }}
               transition={{
-                duration: 3 + i,
+                duration: 4 + i,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: i * 0.3,
+                delay: i * 0.5,
               }}
             />
           ))}
@@ -324,13 +343,13 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
         <motion.div 
           className="absolute inset-0 opacity-0 group-hover:opacity-100"
           style={{
-            background: `radial-gradient(circle at ${mousePosition.x + 50}% ${mousePosition.y + 50}%, ${skill.color}20, transparent 70%)`,
-            transition: 'opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1)',
+            background: `radial-gradient(circle at ${mousePosition.x + 50}% ${mousePosition.y + 50}%, ${skill.color}15, transparent 70%)`,
+            transition: 'opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1)',
           }}
           animate={{
-            scale: isHovered ? [1, 1.2, 1] : 1,
+            scale: isHovered ? [1, 1.1, 1] : 1,
           }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         />
         
         {/* Content */}
@@ -338,10 +357,10 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
           <motion.div 
             className="mb-4"
             animate={{
-              rotateZ: isHovered ? [0, -5, 5, 0] : 0,
-              scale: isHovered ? [1, 1.1, 1] : 1,
+              rotateZ: isHovered ? [0, -3, 3, 0] : 0,
+              scale: isHovered ? [1, 1.05, 1] : 1,
             }}
-            transition={{ duration: 1, ease: "easeInOut" }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
           >
             {skill.icon}
           </motion.div>
@@ -351,7 +370,7 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
               animate={{
                 color: isHovered ? skill.color : '#ffffff',
               }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
               {skill.name}
             </motion.h3>
@@ -361,10 +380,10 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
               className="text-sm text-white/60 mb-3 overflow-hidden"
               initial={{ opacity: 0, height: 0 }}
               animate={{ 
-                opacity: isHovered ? 1 : 0,
-                height: isHovered ? 'auto' : 0
+                opacity: showDetails ? 1 : 0,
+                height: showDetails ? 'auto' : 0
               }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
               <p className="mb-2">{skill.description}</p>
               {skill.highlights && (
@@ -375,9 +394,9 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
                       className="px-2 py-1 rounded-full text-xs"
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: i * 0.1 }}
+                      transition={{ duration: 0.4, delay: i * 0.1, ease: "easeOut" }}
                       style={{ 
-                        backgroundColor: `${skill.color}20`,
+                        backgroundColor: `${skill.color}15`,
                         color: skill.color 
                       }}
                     >
@@ -389,7 +408,7 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
             </motion.div>
 
             {/* Proficiency Bar */}
-            <div className="relative w-full h-2 bg-white/10 rounded-full overflow-hidden">
+            <div className="relative w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
               <motion.div
                 className="absolute top-0 left-0 h-full rounded-full"
                 style={{ backgroundColor: skill.color }}
@@ -397,18 +416,18 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
                 animate={{ 
                   width: isInView ? `${skill.proficiency}%` : '0%',
                 }}
-                transition={{ duration: 1.5, delay: index * 0.1, ease: "easeOut" }}
+                transition={{ duration: 1.8, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }}
               />
               <motion.div
                 className="absolute top-0 left-0 h-full w-full"
                 style={{
-                  background: `linear-gradient(90deg, transparent, ${skill.color}50, transparent)`,
+                  background: `linear-gradient(90deg, transparent, ${skill.color}30, transparent)`,
                 }}
                 animate={{
                   x: ['-100%', '100%'],
                 }}
                 transition={{
-                  duration: 3,
+                  duration: 4,
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
@@ -429,14 +448,14 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
           animate={{
             boxShadow: isHovered 
               ? [
-                  `0 0 20px ${skill.color}20`,
-                  `0 0 30px ${skill.color}30`,
-                  `0 0 20px ${skill.color}20`
+                  `0 0 15px ${skill.color}15`,
+                  `0 0 25px ${skill.color}25`,
+                  `0 0 15px ${skill.color}15`
                 ]
               : `0 0 0px transparent`
           }}
           transition={{ 
-            duration: 2, 
+            duration: 3, 
             repeat: Infinity,
             ease: "easeInOut"
           }}
@@ -711,7 +730,7 @@ const About = () => {
           <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full transform scale-150" />
           
           <h2 className="relative text-6xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-6">
-            Skills & Expertise
+            Technical Expertise
           </h2>
           <motion.div 
             className="h-1 w-40 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full mb-8"
@@ -726,52 +745,63 @@ const About = () => {
             }}
           />
           <p className="text-2xl text-gray-300 max-w-3xl mx-auto relative">
-            Mastering the art of full-stack development with a passion for creating 
-            seamless, innovative digital experiences.
+            A comprehensive skill set that enables me to deliver end-to-end solutions 
+            with efficiency and innovation.
           </p>
         </motion.div>
 
-        {/* Enhanced Skills Grid by Category */}
-        <div className="space-y-16">
-          {Object.entries(skillsByCategory).map(([category, categorySkills], categoryIndex) => (
-            <div key={category} className="space-y-8">
-              <motion.h3
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-blue-300 capitalize flex items-center gap-4"
+        {/* Interactive Skills Showcase */}
+        <div className="relative">
+          {/* Background Effects */}
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-blue-500/5 rounded-3xl blur-3xl" />
+          
+          {/* Category Navigation */}
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            {Object.keys(skillsByCategory).map((category) => (
+              <motion.button
+                key={category}
+                className="px-6 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 backdrop-blur-sm relative group overflow-hidden"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <span>{category === 'language' ? 'Programming Languages' : category}</span>
-                <motion.div 
-                  className="h-px flex-1 bg-gradient-to-r from-purple-500/50 to-transparent"
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  transition={{ duration: 0.8 }}
-                  viewport={{ once: true }}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '100%' }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
                 />
-              </motion.h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {categorySkills.map((skill, index) => (
-                  <SkillCard key={skill.name} skill={skill} index={index} />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+                <span className="relative z-10">{category}</span>
+              </motion.button>
+            ))}
+          </div>
 
-      {/* Keep existing Custom Animations style */}
-      <style jsx global>{`
-        @keyframes gradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animate-gradient {
-          animation: gradient 6s linear infinite;
-        }
-      `}</style>
+          {/* Skills Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {skills.map((skill, index) => (
+              <SkillCard key={skill.name} skill={skill} index={index} />
+            ))}
+          </div>
+        </div>
+
+        {/* Add shimmer animation */}
+        <style jsx global>{`
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          .animate-shimmer {
+            animation: shimmer 2s infinite;
+          }
+          @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          .animate-gradient {
+            animation: gradient 6s linear infinite;
+          }
+        `}</style>
+      </div>
     </section>
   );
 };
