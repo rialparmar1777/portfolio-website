@@ -50,19 +50,19 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
             key="transition"
             className="fixed inset-0 z-[150] pointer-events-none"
           >
-            {/* Initial flash effect */}
+            {/* Initial Flash Effect */}
             <motion.div
               className="absolute inset-0 bg-white"
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 1, 0] }}
               transition={{
-                duration: 0.8,
+                duration: 0.4,
                 times: [0, 0.1, 1],
                 ease: "easeInOut"
               }}
             />
 
-            {/* Main transition overlay */}
+            {/* Main Transition Overlay */}
             <motion.div
               className="absolute inset-0 backdrop-blur-3xl"
               initial={{ scale: 2.4, opacity: 0 }}
@@ -71,7 +71,7 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                 opacity: [0, 1]
               }}
               exit={{ scale: 2.4, opacity: 0 }}
-              transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 to-blue-900/60" />
               <motion.div
@@ -88,7 +88,7 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
               />
             </motion.div>
 
-            {/* Animated rings */}
+            {/* Animated Rings */}
             <div className="absolute inset-0 overflow-hidden">
               {[...Array(3)].map((_, i) => (
                 <motion.div
@@ -108,18 +108,94 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                   }}
                   exit={{ scale: 2.4, opacity: 0 }}
                   transition={{
-                    duration: 2.2,
-                    delay: i * 0.15,
+                    duration: 0.8,
+                    delay: i * 0.1,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 />
               ))}
             </div>
+
+            {/* Rocket Effect */}
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2"
+              initial={{ y: "110vh", opacity: 0 }}
+              animate={{ 
+                y: [null, "80vh", "40vh", "-10vh"],
+                opacity: [0, 1, 1, 0]
+              }}
+              transition={{
+                duration: 1.5,
+                times: [0, 0.2, 0.6, 1],
+                delay: 0.1,
+                ease: "easeInOut"
+              }}
+            >
+              <div className="relative">
+                {/* Rocket Body */}
+                <div className="w-12 h-24 bg-white rounded-full relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-blue-500" />
+                </div>
+                {/* Rocket Window */}
+                <div className="absolute top-5 left-1/2 -translate-x-1/2 w-6 h-6 bg-blue-200 rounded-full" />
+                {/* Rocket Fins */}
+                <div className="absolute bottom-0 -left-4 w-5 h-6 bg-purple-500 -skew-x-[30deg]" />
+                <div className="absolute bottom-0 -right-4 w-5 h-6 bg-purple-500 skew-x-[30deg]" />
+                {/* Rocket Flame */}
+                <motion.div
+                  className="absolute -bottom-12 left-1/2 -translate-x-1/2"
+                  animate={{
+                    scaleY: [1, 2, 1],
+                    opacity: [0.5, 1, 0.5]
+                  }}
+                  transition={{
+                    duration: 0.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <div className="w-8 h-16 bg-gradient-to-b from-yellow-500 via-orange-500 to-transparent rounded-full" />
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Rocket Particles */}
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2"
+              initial={{ y: "110vh" }}
+              animate={{ y: "-10vh" }}
+              transition={{
+                duration: 1.5,
+                delay: 0.1,
+                ease: "easeInOut"
+              }}
+            >
+              {[...Array(25)].map((_, i) => (
+                <motion.div
+                  key={`particle-${i}`}
+                  className="absolute w-2 h-2 bg-white rounded-full"
+                  style={{
+                    left: `${(Math.random() - 0.5) * 50}px`,
+                  }}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0.2, 1, 0.2],
+                    x: [(Math.random() - 0.5) * 40, (Math.random() - 0.5) * 80]
+                  }}
+                  transition={{
+                    duration: 0.8,
+                    delay: 0.2 + (i * 0.04),
+                    ease: "easeOut"
+                  }}
+                />
+              ))}
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Content wrapper */}
+      {/* Content Wrapper */}
       <motion.div
         key="content"
         className="relative z-[100]"
@@ -129,14 +205,15 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
           scale: isTransitioning ? 1.15 : 1,
         }}
         transition={{
-          duration: 1.2,
-          ease: [0.22, 1, 0.36, 1],
+          duration: 0.5,
+          delay: 0.5,
+          ease: "easeOut",
         }}
       >
         {children}
       </motion.div>
 
-      {/* Subtle mouse trail */}
+      {/* Subtle Mouse Trail */}
       <motion.div
         key="mouse-trail"
         className="fixed inset-0 z-[90] pointer-events-none mix-blend-soft-light"
@@ -150,4 +227,4 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
   );
 };
 
-export default PageTransition; 
+export default PageTransition;
