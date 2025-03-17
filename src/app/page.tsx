@@ -11,6 +11,8 @@ import TypewriterText from './components/TypewriterText';
 import PageTransition from './components/PageTransition';
 import About from './components/About';
 import { motion } from 'framer-motion';
+import Projects from './components/Projects';
+import { Toaster } from 'react-hot-toast';
 
 // Animation variants for sections
 const sectionVariants = {
@@ -74,9 +76,25 @@ export default function Home() {
 
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+    const element = document.getElementById(sectionId);
+    if (element) {
+      // Disable smooth scrolling temporarily
+      document.documentElement.style.scrollBehavior = 'auto';
+      
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      // Scroll to the element
+      window.scrollTo(0, offsetPosition);
+
+      // Re-enable smooth scrolling after a short delay
+      setTimeout(() => {
+        document.documentElement.style.scrollBehavior = 'smooth';
+      }, 100);
+
+      // Update URL hash without triggering scroll
+      window.history.pushState({}, '', `#${sectionId}`);
     }
   };
 
@@ -122,6 +140,29 @@ export default function Home() {
       `}</style>
 
       <PageTransition isTransitioning={showInitialTransition}>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#1a1a1a',
+              color: '#fff',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            },
+            success: {
+              iconTheme: {
+                primary: '#10B981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#EF4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
         <CustomCursor />
         <AnimatedBackground />
         <SnowEffect />
@@ -215,23 +256,29 @@ Proficient in modern web frameworks and database management, with a track record
                 >
                   <motion.a 
                     href="#projects"
-                    onClick={(e) => handleNavigation(e, 'projects')}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation(e, 'projects');
+                    }}
                     className="group relative px-8 py-4 text-lg rounded-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 transition-all duration-300 text-white font-semibold overflow-hidden"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <span className="relative z-10">View Projects</span>
+                    View Projects
                     <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                   </motion.a>
                   <motion.a 
                     href="#contact"
-                    onClick={(e) => handleNavigation(e, 'contact')}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation(e, 'contact');
+                    }}
                     className="group relative px-8 py-4 text-lg rounded-full border border-white/20 hover:border-white/40 transition-all duration-300 text-white font-semibold overflow-hidden"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <span className="relative z-10">Contact Me</span>
-                    <div className="absolute inset-0 bg-white/5 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                    Contact Me
+                    <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                   </motion.a>
                   
                   {/* Download CV Dropdown */}
@@ -431,30 +478,11 @@ Proficient in modern web frameworks and database management, with a track record
           </motion.section>
 
           {/* Projects Section */}
-          <motion.section 
-            id="projects"
-            variants={sectionVariants}
-            initial="initial"
-            animate={activeSection === 'projects' ? "animate" : "initial"}
-            exit="exit"
-            className="min-h-screen py-20 px-4"
-          >
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-bold mb-12 gradient-text text-center">Projects</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Project Cards */}
-                <motion.div 
-                  className="bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-white/10"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <h3 className="text-2xl font-bold mb-4">Project 1</h3>
-                  <p className="text-gray-300">Description of your amazing project goes here.</p>
-                </motion.div>
-                {/* Add more project cards as needed */}
-              </div>
+          <section id="projects" className="min-h-screen relative pt-10">
+            <div className="container mx-auto">
+              <Projects />
             </div>
-          </motion.section>
+          </section>
 
           {/* Contact Section */}
           <motion.section 
