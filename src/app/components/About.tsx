@@ -7,257 +7,237 @@ import {
   SiJavascript, SiTypescript, SiPython, SiOpenjdk, SiKotlin,
   SiReact, SiNextdotjs, SiTailwindcss, SiFramer, SiRedux,
   SiChartdotjs, SiNodedotjs, SiExpress, SiFirebase,
-  SiPostgresql, SiMongodb, SiRedis,
-  SiDocker, SiGit, SiAmazon, SiVercel
+  SiPostgresql, SiMongodb, SiRedis, SiDocker, SiGit, SiAmazon, SiVercel
 } from 'react-icons/si';
-import { TbApi, TbBrandWebflow as TbWebSocket, TbBrandWindows as TbSqlServer } from 'react-icons/tb';
+import { TbApi, TbBrandWebflow as TbWebSocket } from 'react-icons/tb';
 import { BiData as BiDatabase } from 'react-icons/bi';
-import { VscDatabase } from 'react-icons/vsc';
 
 interface Skill {
   name: string;
   icon: React.ReactNode;
   color: string;
-  category: string;
+  category: "Languages" | "Frontend" | "Backend" | "Database" | "DevOps";
   proficiency: number;
   description: string;
-  highlights?: string[];
+  highlights: string[];
 }
 
 const skills: Skill[] = [
-  // Programming Languages
-  { 
-    name: 'JavaScript',
-    icon: <SiJavascript className="w-12 h-12 text-gray-400 group-hover:text-[#F7DF1E] transition-colors duration-300" />,
-    color: '#F7DF1E',
-    category: 'language',
+  {
+    name: "JavaScript",
+    icon: <SiJavascript className="w-12 h-12" style={{ color: "#F7DF1E" }} />,
+    color: "#F7DF1E",
+    category: "Languages",
     proficiency: 95,
-    description: 'Modern ES6+, Async/Await, Promises',
-    highlights: ['ES6+', 'TypeScript', 'Node.js']
+    description: "Modern JavaScript development with ES6+ features",
+    highlights: ["ES6+", "Async/Await", "DOM", "Web APIs"]
   },
-  { 
-    name: 'TypeScript',
-    icon: <SiTypescript className="w-12 h-12 text-gray-400 group-hover:text-[#3178C6] transition-colors duration-300" />,
-    color: '#3178C6',
-    category: 'language',
+  {
+    name: "TypeScript",
+    icon: <SiTypescript className="w-12 h-12" style={{ color: "#3178C6" }} />,
+    color: "#3178C6",
+    category: "Languages",
     proficiency: 90,
-    description: 'Type Safety, Interfaces, Generics',
-    highlights: ['Type Safety', 'OOP', 'Generics']
+    description: "Type-safe JavaScript development",
+    highlights: ["Types", "Interfaces", "Generics", "Decorators"]
   },
-  { 
-    name: 'Python',
-    icon: <SiPython className="w-12 h-12 text-gray-400 group-hover:text-[#3776AB] transition-colors duration-300" />,
-    color: '#3776AB',
-    category: 'language',
+  {
+    name: "Python",
+    icon: <SiPython className="w-12 h-12" style={{ color: "#3776AB" }} />,
+    color: "#3776AB",
+    category: "Languages",
     proficiency: 85,
-    description: 'Django, FastAPI, Data Analysis',
-    highlights: ['Django', 'FastAPI', 'NumPy']
+    description: "Backend development and data processing",
+    highlights: ["Django", "FastAPI", "Data Science", "Automation"]
   },
-  { 
-    name: 'Java',
-    icon: <SiOpenjdk className="w-12 h-12 text-gray-400 group-hover:text-[#007396] transition-colors duration-300" />,
-    color: '#007396',
-    category: 'language',
-    proficiency: 88,
-    description: 'Spring Boot, Microservices',
-    highlights: ['Spring Boot', 'JPA', 'Microservices']
+  {
+    name: "Java",
+    icon: <SiOpenjdk className="w-12 h-12" style={{ color: "#ED8B00" }} />,
+    color: "#ED8B00",
+    category: "Languages",
+    proficiency: 80,
+    description: "Enterprise application development",
+    highlights: ["Spring Boot", "JPA", "Maven", "JUnit"]
   },
-  { 
-    name: 'Kotlin',
-    icon: <SiKotlin className="w-12 h-12 text-gray-400 group-hover:text-[#7F52FF] transition-colors duration-300" />,
-    color: '#7F52FF',
-    category: 'language',
-    proficiency: 82,
-    description: 'Android Development, Server-side',
-    highlights: ['Android', 'Coroutines', 'Flow']
+  {
+    name: "Kotlin",
+    icon: <SiKotlin className="w-12 h-12" style={{ color: "#7F52FF" }} />,
+    color: "#7F52FF",
+    category: "Languages",
+    proficiency: 75,
+    description: "Modern Android development",
+    highlights: ["Coroutines", "Flow", "Android SDK", "Jetpack"]
   },
-  
-  // Frontend Development
-  { 
-    name: 'React',
-    icon: <SiReact className="w-12 h-12 text-gray-400 group-hover:text-[#61DAFB] transition-colors duration-300" />,
-    color: '#61DAFB',
-    category: 'frontend',
+  {
+    name: "React",
+    icon: <SiReact className="w-12 h-12" style={{ color: "#61DAFB" }} />,
+    color: "#61DAFB",
+    category: "Frontend",
     proficiency: 95,
-    description: 'Modern React with Hooks & Context',
-    highlights: ['Hooks', 'Context', 'Redux']
+    description: "Building modern user interfaces",
+    highlights: ["Hooks", "Context", "Custom Hooks", "Performance"]
   },
-  { 
-    name: 'Next.js',
-    icon: <SiNextdotjs className="w-12 h-12 text-gray-400 group-hover:text-white transition-colors duration-300" />,
-    color: '#000000',
-    category: 'frontend',
-    proficiency: 92,
-    description: 'Full-stack React Framework',
-    highlights: ['SSR', 'API Routes', 'Dynamic Pages']
-  },
-  { 
-    name: 'Tailwind CSS',
-    icon: <SiTailwindcss className="w-12 h-12 text-gray-400 group-hover:text-[#38B2AC] transition-colors duration-300" />,
-    color: '#38B2AC',
-    category: 'frontend',
+  {
+    name: "Next.js",
+    icon: <SiNextdotjs className="w-12 h-12" style={{ color: "#ffffff" }} />,
+    color: "#ffffff",
+    category: "Frontend",
     proficiency: 90,
-    description: 'Utility-first CSS Framework',
-    highlights: ['Responsive', 'Custom Themes', 'JIT']
+    description: "Full-stack React framework",
+    highlights: ["SSR", "ISR", "API Routes", "Middleware"]
   },
-  { 
-    name: 'Framer Motion',
-    icon: <SiFramer className="w-12 h-12 text-gray-400 group-hover:text-[#FF4F8B] transition-colors duration-300" />,
-    color: '#FF4F8B',
-    category: 'frontend',
+  {
+    name: "Tailwind CSS",
+    icon: <SiTailwindcss className="w-12 h-12" style={{ color: "#06B6D4" }} />,
+    color: "#06B6D4",
+    category: "Frontend",
+    proficiency: 95,
+    description: "Utility-first CSS framework",
+    highlights: ["Responsive", "Dark Mode", "Animations", "Custom Plugins"]
+  },
+  {
+    name: "Framer Motion",
+    icon: <SiFramer className="w-12 h-12" style={{ color: "#0055FF" }} />,
+    color: "#0055FF",
+    category: "Frontend",
     proficiency: 85,
-    description: 'Production-ready Animations',
-    highlights: ['Animations', 'Gestures', 'Variants']
+    description: "Production-ready animations",
+    highlights: ["Gestures", "Variants", "Layout", "Exit Animations"]
   },
-  { 
-    name: 'Redux',
-    icon: <SiRedux className="w-12 h-12 text-gray-400 group-hover:text-[#764ABC] transition-colors duration-300" />,
-    color: '#764ABC',
-    category: 'frontend',
-    proficiency: 88,
-    description: 'State Management Solution',
-    highlights: ['Redux Toolkit', 'RTK Query', 'Middleware']
-  },
-  { 
-    name: 'Chart.js',
-    icon: <SiChartdotjs className="w-12 h-12 text-gray-400 group-hover:text-[#FF6384] transition-colors duration-300" />,
-    color: '#FF6384',
-    category: 'frontend',
-    proficiency: 85,
-    description: 'Interactive Data Visualization',
-    highlights: ['Responsive', 'Interactive', 'Customizable']
-  },
-  
-  // Backend Development
-  { 
-    name: 'Node.js',
-    icon: <SiNodedotjs className="w-12 h-12 text-gray-400 group-hover:text-[#339933] transition-colors duration-300" />,
-    color: '#339933',
-    category: 'backend',
+  {
+    name: "Redux",
+    icon: <SiRedux className="w-12 h-12" style={{ color: "#764ABC" }} />,
+    color: "#764ABC",
+    category: "Frontend",
     proficiency: 90,
-    description: 'Server-side JavaScript Runtime',
-    highlights: ['Express', 'REST APIs', 'WebSocket']
+    description: "State management for React",
+    highlights: ["RTK", "Middleware", "Selectors", "Thunks"]
   },
-  { 
-    name: 'Express.js',
-    icon: <SiExpress className="w-12 h-12 text-gray-400 group-hover:text-white transition-colors duration-300" />,
-    color: '#000000',
-    category: 'backend',
-    proficiency: 88,
-    description: 'Web Application Framework',
-    highlights: ['Middleware', 'Routing', 'Auth']
-  },
-  { 
-    name: 'Firebase',
-    icon: <SiFirebase className="w-12 h-12 text-gray-400 group-hover:text-[#FFCA28] transition-colors duration-300" />,
-    color: '#FFCA28',
-    category: 'backend',
+  {
+    name: "Chart.js",
+    icon: <SiChartdotjs className="w-12 h-12" style={{ color: "#FF6384" }} />,
+    color: "#FF6384",
+    category: "Frontend",
     proficiency: 85,
-    description: 'Backend as a Service (BaaS)',
-    highlights: ['Auth', 'Firestore', 'Functions']
+    description: "Interactive data visualization",
+    highlights: ["Responsive", "Animations", "Custom Charts", "Plugins"]
   },
-  { 
-    name: 'RESTful APIs',
-    icon: <TbApi className="w-12 h-12 text-gray-400 group-hover:text-[#FF4F8B] transition-colors duration-300" />,
-    color: '#FF4F8B',
-    category: 'backend',
-    proficiency: 92,
-    description: 'API Design & Implementation',
-    highlights: ['REST', 'GraphQL', 'WebSocket']
-  },
-  { 
-    name: 'WebSocket',
-    icon: <TbWebSocket className="w-12 h-12 text-gray-400 group-hover:text-[#4353FF] transition-colors duration-300" />,
-    color: '#4353FF',
-    category: 'backend',
-    proficiency: 85,
-    description: 'Real-time Communication',
-    highlights: ['Socket.io', 'Real-time', 'Events']
-  },
-  { 
-    name: 'Prisma',
-    icon: <BiDatabase className="w-12 h-12 text-gray-400 group-hover:text-[#2D3748] transition-colors duration-300" />,
-    color: '#2D3748',
-    category: 'backend',
-    proficiency: 88,
-    description: 'Next-gen ORM for Node.js & TypeScript',
-    highlights: ['ORM', 'Migrations', 'Type-safe']
-  },
-  
-  // Databases & Storage
-  { 
-    name: 'PostgreSQL',
-    icon: <SiPostgresql className="w-12 h-12 text-gray-400 group-hover:text-[#336791] transition-colors duration-300" />,
-    color: '#336791',
-    category: 'database',
-    proficiency: 88,
-    description: 'Advanced Open Source Database',
-    highlights: ['Complex Queries', 'Performance', 'ACID']
-  },
-  { 
-    name: 'MongoDB',
-    icon: <SiMongodb className="w-12 h-12 text-gray-400 group-hover:text-[#47A248] transition-colors duration-300" />,
-    color: '#47A248',
-    category: 'database',
-    proficiency: 85,
-    description: 'NoSQL Document Database',
-    highlights: ['Aggregation', 'Indexing', 'Atlas']
-  },
-  { 
-    name: 'SQL Server',
-    icon: <TbSqlServer className="w-12 h-12 text-gray-400 group-hover:text-[#CC2927] transition-colors duration-300" />,
-    color: '#CC2927',
-    category: 'database',
-    proficiency: 86,
-    description: 'Enterprise Database Solution',
-    highlights: ['T-SQL', 'Stored Procedures', 'SSMS']
-  },
-  { 
-    name: 'Redis',
-    icon: <SiRedis className="w-12 h-12 text-gray-400 group-hover:text-[#DC382D] transition-colors duration-300" />,
-    color: '#DC382D',
-    category: 'database',
-    proficiency: 82,
-    description: 'In-memory Data Store',
-    highlights: ['Caching', 'Pub/Sub', 'Sessions']
-  },
-  
-  // DevOps & Tools
-  { 
-    name: 'Docker',
-    icon: <SiDocker className="w-12 h-12 text-gray-400 group-hover:text-[#2496ED] transition-colors duration-300" />,
-    color: '#2496ED',
-    category: 'devops',
-    proficiency: 85,
-    description: 'Container Platform',
-    highlights: ['Containers', 'Compose', 'Swarm']
-  },
-  { 
-    name: 'Git',
-    icon: <SiGit className="w-12 h-12 text-gray-400 group-hover:text-[#F05032] transition-colors duration-300" />,
-    color: '#F05032',
-    category: 'devops',
+  {
+    name: "Node.js",
+    icon: <SiNodedotjs className="w-12 h-12" style={{ color: "#339933" }} />,
+    color: "#339933",
+    category: "Backend",
     proficiency: 90,
-    description: 'Version Control System',
-    highlights: ['GitHub', 'GitFlow', 'CI/CD']
+    description: "Server-side JavaScript runtime",
+    highlights: ["Event Loop", "Streams", "Clustering", "Native Addons"]
   },
-  { 
-    name: 'AWS',
-    icon: <SiAmazon className="w-12 h-12 text-gray-400 group-hover:text-[#FF9900] transition-colors duration-300" />,
-    color: '#FF9900',
-    category: 'devops',
-    proficiency: 84,
-    description: 'Cloud Computing Platform',
-    highlights: ['EC2', 'S3', 'Lambda']
+  {
+    name: "Express.js",
+    icon: <SiExpress className="w-12 h-12" style={{ color: "#ffffff" }} />,
+    color: "#ffffff",
+    category: "Backend",
+    proficiency: 90,
+    description: "Web application framework",
+    highlights: ["Routing", "Middleware", "Error Handling", "Security"]
   },
-  { 
-    name: 'Vercel',
-    icon: <SiVercel className="w-12 h-12 text-gray-400 group-hover:text-white transition-colors duration-300" />,
-    color: '#000000',
-    category: 'devops',
-    proficiency: 88,
-    description: 'Frontend Cloud Platform',
-    highlights: ['Deployment', 'Edge Functions', 'Analytics']
+  {
+    name: "Firebase",
+    icon: <SiFirebase className="w-12 h-12" style={{ color: "#FFCA28" }} />,
+    color: "#FFCA28",
+    category: "Backend",
+    proficiency: 85,
+    description: "Backend as a Service platform",
+    highlights: ["Auth", "Firestore", "Functions", "Hosting"]
+  },
+  {
+    name: "RESTful APIs",
+    icon: <TbApi className="w-12 h-12" style={{ color: "#4CAF50" }} />,
+    color: "#4CAF50",
+    category: "Backend",
+    proficiency: 95,
+    description: "API design and development",
+    highlights: ["REST", "OpenAPI", "Versioning", "Security"]
+  },
+  {
+    name: "WebSocket",
+    icon: <TbWebSocket className="w-12 h-12" style={{ color: "#4CAF50" }} />,
+    color: "#4CAF50",
+    category: "Backend",
+    proficiency: 85,
+    description: "Real-time communication",
+    highlights: ["Socket.io", "WS", "Events", "Scaling"]
+  },
+  {
+    name: "Prisma",
+    icon: <BiDatabase className="w-12 h-12" style={{ color: "#2D3748" }} />,
+    color: "#2D3748",
+    category: "Database",
+    proficiency: 90,
+    description: "Next-generation ORM",
+    highlights: ["Schema", "Migrations", "Relations", "Type Safety"]
+  },
+  {
+    name: "PostgreSQL",
+    icon: <SiPostgresql className="w-12 h-12" style={{ color: "#4169E1" }} />,
+    color: "#4169E1",
+    category: "Database",
+    proficiency: 85,
+    description: "Advanced relational database",
+    highlights: ["JSON", "Indexing", "Triggers", "Functions"]
+  },
+  {
+    name: "MongoDB",
+    icon: <SiMongodb className="w-12 h-12" style={{ color: "#47A248" }} />,
+    color: "#47A248",
+    category: "Database",
+    proficiency: 85,
+    description: "NoSQL document database",
+    highlights: ["Aggregation", "Indexing", "Atlas", "Compass"]
+  },
+  {
+    name: "Redis",
+    icon: <SiRedis className="w-12 h-12" style={{ color: "#DC382D" }} />,
+    color: "#DC382D",
+    category: "Database",
+    proficiency: 80,
+    description: "In-memory data structure store",
+    highlights: ["Caching", "Pub/Sub", "Lua", "Clustering"]
+  },
+  {
+    name: "Docker",
+    icon: <SiDocker className="w-12 h-12" style={{ color: "#2496ED" }} />,
+    color: "#2496ED",
+    category: "DevOps",
+    proficiency: 85,
+    description: "Container platform",
+    highlights: ["Compose", "Swarm", "Networks", "Volumes"]
+  },
+  {
+    name: "Git",
+    icon: <SiGit className="w-12 h-12" style={{ color: "#F05032" }} />,
+    color: "#F05032",
+    category: "DevOps",
+    proficiency: 95,
+    description: "Version control system",
+    highlights: ["Branching", "Merging", "Rebasing", "Hooks"]
+  },
+  {
+    name: "AWS",
+    icon: <SiAmazon className="w-12 h-12" style={{ color: "#FF9900" }} />,
+    color: "#FF9900",
+    category: "DevOps",
+    proficiency: 80,
+    description: "Cloud computing platform",
+    highlights: ["EC2", "S3", "Lambda", "RDS"]
+  },
+  {
+    name: "Vercel",
+    icon: <SiVercel className="w-12 h-12" style={{ color: "#ffffff" }} />,
+    color: "#ffffff",
+    category: "DevOps",
+    proficiency: 90,
+    description: "Frontend deployment platform",
+    highlights: ["Edge", "Analytics", "CI/CD", "Serverless"]
   }
 ];
 
@@ -265,15 +245,15 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const isInView = useInView(cardRef, { once: true, margin: "-50px" });
+  const isInView = useInView(cardRef, { once: true, margin: "-100px" });
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (!isHovered) {
       const interval = setInterval(() => {
         setRotation({
-          x: Math.sin(Date.now() / 1000) * 5,
-          y: Math.cos(Date.now() / 1000) * 5,
+          x: Math.sin(Date.now() / 2000) * 3,
+          y: Math.cos(Date.now() / 2000) * 3,
         });
       }, 50);
       return () => clearInterval(interval);
@@ -283,10 +263,9 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: ((e.clientX - rect.left) / rect.width - 0.5) * 25,
-      y: ((e.clientY - rect.top) / rect.height - 0.5) * 25,
-    });
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
+    setMousePosition({ x, y });
   };
 
   return (
@@ -297,16 +276,16 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
       animate={{ 
         opacity: isInView ? 1 : 0,
         y: isInView ? 0 : 50,
-        transition: { duration: 0.5, delay: index * 0.1 }
+        transition: { duration: 0.8, delay: index * 0.1, ease: "easeOut" }
       }}
     >
       <motion.div
         className="relative w-full aspect-square rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 p-6 overflow-hidden cursor-pointer transform-gpu"
         style={{
           transform: isHovered
-            ? `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg) scale3d(1.1, 1.1, 1.1)`
+            ? `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg) scale3d(1.05, 1.05, 1.05)`
             : `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale3d(1, 1, 1)`,
-          transition: 'all 0.4s ease',
+          transition: 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)',
         }}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
@@ -320,24 +299,22 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
           {[...Array(5)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-purple-500/30 to-blue-500/30"
+              className="absolute w-2 h-2 rounded-full"
               style={{
+                backgroundColor: skill.color,
+                opacity: 0.3,
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
-                filter: 'blur(1px)',
-                transform: 'translate3d(0, 0, 0)',
               }}
               animate={{
-                y: [0, -30, 0],
-                x: [0, Math.random() * 20 - 10, 0],
+                y: [0, -20, 0],
                 opacity: [0.2, 0.5, 0.2],
-                scale: [1, 1.5, 1],
               }}
               transition={{
-                duration: 3 + Math.random() * 2,
+                duration: 3 + i,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: Math.random() * 2,
+                delay: i * 0.3,
               }}
             />
           ))}
@@ -345,25 +322,26 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
 
         {/* Background Gradient */}
         <motion.div 
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          className="absolute inset-0 opacity-0 group-hover:opacity-100"
           style={{
-            background: `radial-gradient(circle at ${mousePosition.x + 50}% ${mousePosition.y + 50}%, ${skill.color}20, transparent 70%)`
+            background: `radial-gradient(circle at ${mousePosition.x + 50}% ${mousePosition.y + 50}%, ${skill.color}20, transparent 70%)`,
+            transition: 'opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1)',
           }}
           animate={{
             scale: isHovered ? [1, 1.2, 1] : 1,
           }}
-          transition={{ duration: 1, repeat: Infinity }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         />
         
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col items-center justify-between">
           <motion.div 
-            className="text-5xl mb-4"
+            className="mb-4"
             animate={{
-              rotateZ: isHovered ? [0, -10, 10, 0] : 0,
-              scale: isHovered ? [1, 1.2, 1] : 1,
+              rotateZ: isHovered ? [0, -5, 5, 0] : 0,
+              scale: isHovered ? [1, 1.1, 1] : 1,
             }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 1, ease: "easeInOut" }}
           >
             {skill.icon}
           </motion.div>
@@ -373,7 +351,7 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
               animate={{
                 color: isHovered ? skill.color : '#ffffff',
               }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
             >
               {skill.name}
             </motion.h3>
@@ -386,22 +364,25 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
                 opacity: isHovered ? 1 : 0,
                 height: isHovered ? 'auto' : 0
               }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
             >
               <p className="mb-2">{skill.description}</p>
               {skill.highlights && (
                 <div className="flex flex-wrap gap-1 justify-center">
                   {skill.highlights.map((highlight, i) => (
-                    <span
+                    <motion.span
                       key={i}
                       className="px-2 py-1 rounded-full text-xs"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: i * 0.1 }}
                       style={{ 
                         backgroundColor: `${skill.color}20`,
                         color: skill.color 
                       }}
                     >
                       {highlight}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
               )}
@@ -416,7 +397,7 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
                 animate={{ 
                   width: isInView ? `${skill.proficiency}%` : '0%',
                 }}
-                transition={{ duration: 1, delay: index * 0.1 }}
+                transition={{ duration: 1.5, delay: index * 0.1, ease: "easeOut" }}
               />
               <motion.div
                 className="absolute top-0 left-0 h-full w-full"
@@ -427,9 +408,9 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
                   x: ['-100%', '100%'],
                 }}
                 transition={{
-                  duration: 2,
+                  duration: 3,
                   repeat: Infinity,
-                  ease: "linear",
+                  ease: "easeInOut",
                 }}
               />
             </div>
@@ -448,14 +429,14 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
           animate={{
             boxShadow: isHovered 
               ? [
-                  `0 0 20px ${skill.color}30`,
-                  `0 0 30px ${skill.color}40`,
-                  `0 0 20px ${skill.color}30`
+                  `0 0 20px ${skill.color}20`,
+                  `0 0 30px ${skill.color}30`,
+                  `0 0 20px ${skill.color}20`
                 ]
               : `0 0 0px transparent`
           }}
           transition={{ 
-            duration: 1.5, 
+            duration: 2, 
             repeat: Infinity,
             ease: "easeInOut"
           }}
@@ -472,8 +453,12 @@ const About = () => {
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const springY = useSpring(y, { stiffness: 100, damping: 30 });
+  const y = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  const springY = useSpring(y, { 
+    stiffness: 50, 
+    damping: 20,
+    mass: 1
+  });
 
   // Group skills by category
   const skillsByCategory = skills.reduce((acc, skill) => {
@@ -501,16 +486,13 @@ const About = () => {
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-purple-500/30 to-blue-500/30"
+            className="absolute w-1 h-1 rounded-full bg-purple-500/20"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              filter: 'blur(1px)',
-              transform: 'translate3d(0, 0, 0)',
             }}
             animate={{
               y: [0, -30, 0],
-              x: [0, Math.random() * 20 - 10, 0],
               opacity: [0.2, 0.5, 0.2],
               scale: [1, 1.5, 1],
             }}
@@ -524,9 +506,8 @@ const About = () => {
         ))}
       </motion.div>
 
-      {/* Enhanced Content Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Animated Introduction Section */}
+        {/* Enhanced Introduction Section */}
         <div className="mb-32">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -535,52 +516,64 @@ const About = () => {
             viewport={{ once: true }}
             className="text-center mb-16 relative"
           >
-            {/* Enhanced Title with 3D Effect */}
-            <div className="relative">
-              <motion.div
-                className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full transform scale-150"
-                animate={{
-                  scale: [1.4, 1.6, 1.4],
-                  opacity: [0.3, 0.5, 0.3],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <h1 className="relative text-7xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-6 transform hover:scale-105 transition-transform duration-300">
-                Full-Stack Developer
-              </h1>
-            </div>
-
-            {/* Animated Underline */}
+            {/* Glowing Effect behind title */}
+            <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full transform scale-150" />
+            
+            <h1 className="relative text-7xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-6">
+              Full-Stack Developer
+            </h1>
             <motion.div 
-              className="h-1 w-40 mx-auto rounded-full overflow-hidden mb-8"
-              style={{
-                background: 'linear-gradient(90deg, #9333EA, #3B82F6, #9333EA)',
-                backgroundSize: '200% 100%',
-              }}
+              className="h-1 w-40 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full mb-8"
               animate={{
-                backgroundPosition: ['0% 0%', '200% 0%'],
+                width: ["10%", "40%", "10%"],
+                opacity: [0.5, 1, 0.5],
               }}
               transition={{
                 duration: 3,
                 repeat: Infinity,
-                ease: "linear",
+                ease: "easeInOut",
               }}
             />
           </motion.div>
 
-          {/* Enhanced Grid Layout */}
-          <div className="grid md:grid-cols-2 gap-12 items-start">
-            {/* Introduction Column */}
+          {/* Enhanced Role Tags */}
+          <motion.div 
+            className="flex flex-wrap justify-center gap-4 mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            {['Problem Solver', 'Tech Enthusiast', 'Creative Developer'].map((tag, index) => (
+              <motion.span
+                key={tag}
+                className="px-6 py-2 rounded-full text-lg font-medium bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 backdrop-blur-sm relative group overflow-hidden"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.05 }}
+              >
+                {/* Animated background on hover */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '100%' }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                />
+                <span className="relative z-10">{tag}</span>
+              </motion.span>
+            ))}
+          </motion.div>
+
+          {/* Enhanced Main Introduction */}
+          <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
               className="space-y-6"
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
             >
               <div className="prose prose-lg prose-invert">
                 <motion.p 
@@ -590,62 +583,39 @@ const About = () => {
                   transition={{ duration: 0.5, delay: 0.2 }}
                   viewport={{ once: true }}
                 >
-                  <motion.span 
-                    className="absolute -left-6 top-0 text-purple-400 text-2xl"
-                    animate={{
-                      y: [0, -5, 0],
-                      opacity: [0.5, 1, 0.5],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      repeatDelay: 1
-                    }}
-                  >
-                    ❝
-                  </motion.span>
+                  <span className="absolute -left-6 top-0 text-purple-400 text-2xl">❝</span>
                   Passionate about building high-performance web applications, I thrive on leveraging modern technologies to develop scalable, efficient, and user-friendly solutions. My goal is to craft experiences that are not only functional but also intuitive and engaging.
-                  <motion.span 
-                    className="absolute -right-6 bottom-0 text-purple-400 text-2xl"
-                    animate={{
-                      y: [0, 5, 0],
-                      opacity: [0.5, 1, 0.5],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      repeatDelay: 1
-                    }}
-                  >
-                    ❞
-                  </motion.span>
+                  <span className="absolute -right-6 bottom-0 text-purple-400 text-2xl">❞</span>
                 </motion.p>
               </div>
             </motion.div>
 
-            {/* Beyond Code Section */}
             <motion.div
               className="space-y-6"
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
             >
               <motion.div 
                 className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 p-8 rounded-xl backdrop-blur-sm border border-white/10 relative group"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               >
+                {/* Animated border gradient */}
                 <motion.div
-                  className="absolute -inset-[1px] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    background: 'linear-gradient(45deg, rgba(147, 51, 234, 0.5), rgba(59, 130, 246, 0.5))',
+                  className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-purple-500/50 via-blue-500/50 to-purple-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  animate={{
+                    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
                   }}
                 />
                 <div className="relative">
-                  <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3">
+                  <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-blue-300 mb-4 flex items-center gap-3">
                     <motion.span 
                       className="text-3xl"
                       animate={{
@@ -656,14 +626,11 @@ const About = () => {
                         duration: 2,
                         repeat: Infinity,
                         ease: "easeInOut",
-                        repeatDelay: 1
                       }}
                     >
                       🎵
                     </motion.span>
-                    <span className="bg-gradient-to-r from-purple-300 to-blue-300 text-transparent bg-clip-text">
-                      Beyond Code
-                    </span>
+                    Beyond Code
                   </h3>
                   <p className="text-gray-300 leading-relaxed">
                     Outside of tech, I'm a versatile musician & active choir member. Music enhances my creativity, precision, and teamwork—qualities that seamlessly translate into my development work.
@@ -674,67 +641,47 @@ const About = () => {
           </div>
         </div>
 
-        {/* Skills Section */}
+        {/* Enhanced Skills Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true }}
           className="text-center mb-20 relative"
         >
-          <motion.div
-            className="absolute inset-0 blur-3xl"
-            style={{
-              background: 'radial-gradient(circle at center, rgba(147, 51, 234, 0.15) 0%, transparent 70%)',
-            }}
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.5, 0.8, 0.5],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut",
-              repeatDelay: 1
-            }}
-          />
+          {/* Glowing Effect behind title */}
+          <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full transform scale-150" />
           
           <h2 className="relative text-6xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-6">
             Skills & Expertise
           </h2>
-          
           <motion.div 
-            className="h-1 w-40 mx-auto rounded-full overflow-hidden mb-8"
-            style={{
-              background: 'linear-gradient(90deg, #9333EA, #3B82F6, #9333EA)',
-              backgroundSize: '200% 100%',
-            }}
+            className="h-1 w-40 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full mb-8"
             animate={{
-              backgroundPosition: ['0% 0%', '200% 0%'],
+              width: ["10%", "40%", "10%"],
+              opacity: [0.5, 1, 0.5],
             }}
             transition={{
               duration: 3,
               repeat: Infinity,
-              ease: "linear",
-              repeatDelay: 1
+              ease: "easeInOut",
             }}
           />
-          
           <p className="text-2xl text-gray-300 max-w-3xl mx-auto relative">
             Mastering the art of full-stack development with a passion for creating 
             seamless, innovative digital experiences.
           </p>
         </motion.div>
 
-        {/* Skills Grid */}
+        {/* Enhanced Skills Grid by Category */}
         <div className="space-y-16">
           {Object.entries(skillsByCategory).map(([category, categorySkills], categoryIndex) => (
             <div key={category} className="space-y-8">
               <motion.h3
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
                 className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-blue-300 capitalize flex items-center gap-4"
               >
                 <span>{category === 'language' ? 'Programming Languages' : category}</span>
@@ -746,7 +693,7 @@ const About = () => {
                   viewport={{ once: true }}
                 />
               </motion.h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {categorySkills.map((skill, index) => (
                   <SkillCard key={skill.name} skill={skill} index={index} />
                 ))}
@@ -756,7 +703,7 @@ const About = () => {
         </div>
       </div>
 
-      {/* Custom Animations */}
+      {/* Keep existing Custom Animations style */}
       <style jsx global>{`
         @keyframes gradient {
           0% { background-position: 0% 50%; }
@@ -771,4 +718,4 @@ const About = () => {
   );
 };
 
-export default About;
+export default About; 
