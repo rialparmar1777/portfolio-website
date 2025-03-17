@@ -40,32 +40,19 @@ const sectionVariants = {
 export default function Home() {
   const [activeSection, setActiveSection] = useState('home');
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showInitialTransition, setShowInitialTransition] = useState(true);
 
   useEffect(() => {
-    // Initial load transition
-    setIsTransitioning(true);
-    setTimeout(() => setIsTransitioning(false), 2000);
+    // Remove initial transition after it completes
+    const timer = setTimeout(() => {
+      setShowInitialTransition(false);
+    }, 2500); // Match this with the total duration of your transition
+
+    return () => clearTimeout(timer);
   }, []);
-
-  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault();
-    setIsTransitioning(true);
-
-    // Start transition
-    setTimeout(() => {
-      const section = document.getElementById(sectionId);
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-      }
-      setTimeout(() => setIsTransitioning(false), 1000);
-    }, 1000);
-  };
 
   useEffect(() => {
     const handleScroll = () => {
-      if (isTransitioning) return; // Don't update active section during transition
-
       const sections = ['home', 'about', 'projects', 'contact'];
       const current = sections.find(section => {
         const element = document.getElementById(section);
@@ -82,7 +69,15 @@ export default function Home() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isTransitioning]);
+  }, []);
+
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const handleDownload = async () => {
     if (isDownloading) return; // Prevent multiple clicks
@@ -125,7 +120,7 @@ export default function Home() {
         }
       `}</style>
 
-      <PageTransition isTransitioning={isTransitioning}>
+      <PageTransition isTransitioning={showInitialTransition}>
         <CustomCursor />
         <AnimatedBackground />
         <SnowEffect />

@@ -44,25 +44,25 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
 
   return (
     <>
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isTransitioning && (
           <motion.div
-            initial={false}
-            animate={{
-              opacity: 1,
-              scale: 1,
-            }}
-            exit={{
-              opacity: 0,
-              scale: 0.95,
-            }}
-            transition={{
-              duration: 1,
-              ease: [0.22, 1, 0.36, 1],
-            }}
+            key="transition"
             className="fixed inset-0 z-[150] pointer-events-none"
           >
-            {/* Gradient background */}
+            {/* Initial flash effect */}
+            <motion.div
+              className="absolute inset-0 bg-white"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{
+                duration: 0.8,
+                times: [0, 0.1, 1],
+                ease: "easeInOut"
+              }}
+            />
+
+            {/* Main transition overlay */}
             <motion.div
               className="absolute inset-0 backdrop-blur-3xl"
               initial={{ scale: 2.4, opacity: 0 }}
@@ -115,18 +115,6 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                 />
               ))}
             </div>
-
-            {/* Flash effect */}
-            <motion.div
-              className="absolute inset-0 bg-white"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{
-                duration: 0.8,
-                times: [0, 0.1, 1],
-                ease: "easeInOut"
-              }}
-            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -134,6 +122,7 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
       {/* Content wrapper */}
       <motion.div
         key="content"
+        className="relative z-[100]"
         initial={{ opacity: 0, scale: 1.15 }}
         animate={{ 
           opacity: isTransitioning ? 0 : 1,
@@ -143,7 +132,6 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
           duration: 1.2,
           ease: [0.22, 1, 0.36, 1],
         }}
-        className="relative z-[100]"
       >
         {children}
       </motion.div>
