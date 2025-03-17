@@ -62,16 +62,16 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
               }}
             />
 
-            {/* Main Transition Overlay */}
+            {/* Galaxy Explosion Effect */}
             <motion.div
               className="absolute inset-0 backdrop-blur-3xl"
-              initial={{ scale: 2.4, opacity: 0 }}
+              initial={{ scale: 0, opacity: 0 }}
               animate={{ 
-                scale: [2.4, 1],
-                opacity: [0, 1]
+                scale: [0, 1.5, 1],
+                opacity: [0, 1, 0]
               }}
-              exit={{ scale: 2.4, opacity: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              exit={{ scale: 2, opacity: 0 }}
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 to-blue-900/60" />
               <motion.div
@@ -116,6 +116,38 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
               ))}
             </div>
 
+            {/* Particle Explosion */}
+            <motion.div
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {[...Array(100)].map((_, i) => (
+                <motion.div
+                  key={`particle-${i}`}
+                  className="absolute w-2 h-2 bg-white rounded-full"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                  }}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{
+                    scale: [0, 1, 0],
+                    opacity: [0, 1, 0],
+                    x: [(Math.random() - 0.5) * 200, (Math.random() - 0.5) * 400],
+                    y: [(Math.random() - 0.5) * 200, (Math.random() - 0.5) * 400],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    delay: Math.random() * 0.5,
+                    ease: "easeOut",
+                  }}
+                />
+              ))}
+            </motion.div>
+
             {/* Rocket Effect */}
             <motion.div
               className="absolute left-1/2 -translate-x-1/2"
@@ -157,39 +189,6 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                   <div className="w-8 h-16 bg-gradient-to-b from-yellow-500 via-orange-500 to-transparent rounded-full" />
                 </motion.div>
               </div>
-            </motion.div>
-
-            {/* Rocket Particles */}
-            <motion.div
-              className="absolute left-1/2 -translate-x-1/2"
-              initial={{ y: "110vh" }}
-              animate={{ y: "-10vh" }}
-              transition={{
-                duration: 1.5,
-                delay: 0.1,
-                ease: "easeInOut"
-              }}
-            >
-              {[...Array(25)].map((_, i) => (
-                <motion.div
-                  key={`particle-${i}`}
-                  className="absolute w-2 h-2 bg-white rounded-full"
-                  style={{
-                    left: `${(Math.random() - 0.5) * 50}px`,
-                  }}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{
-                    opacity: [0, 1, 0],
-                    scale: [0.2, 1, 0.2],
-                    x: [(Math.random() - 0.5) * 40, (Math.random() - 0.5) * 80]
-                  }}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.2 + (i * 0.04),
-                    ease: "easeOut"
-                  }}
-                />
-              ))}
             </motion.div>
           </motion.div>
         )}
