@@ -9,6 +9,7 @@ import Navbar from './components/Navbar';
 import SnowEffect from './components/SnowEffect';
 import TypewriterText from './components/TypewriterText';
 import PageTransition from './components/PageTransition';
+import About from './components/About';
 import { motion } from 'framer-motion';
 
 // Animation variants for sections
@@ -418,22 +419,15 @@ Proficient in modern web frameworks and database management, with a track record
           </motion.section>
 
           {/* About Section */}
-          <motion.section 
+          <motion.section
             id="about"
             variants={sectionVariants}
             initial="initial"
             animate={activeSection === 'about' ? "animate" : "initial"}
             exit="exit"
-            className="min-h-screen flex items-center justify-center py-20 px-4"
+            className="relative"
           >
-            <div className="max-w-4xl">
-              <h2 className="text-4xl md:text-5xl font-bold mb-8 gradient-text">About Me</h2>
-              <p className="text-lg md:text-xl text-gray-300 leading-relaxed">
-                I am a passionate developer and designer who loves creating immersive digital experiences.
-                With expertise in modern web technologies and creative design, I bring ideas to life through
-                code and animation.
-              </p>
-            </div>
+            <About />
           </motion.section>
 
           {/* Projects Section */}
