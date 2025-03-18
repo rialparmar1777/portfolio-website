@@ -178,6 +178,87 @@ const projects: Project[] = [
       "Gallery section",
       "Contact information"
     ]
+  },
+  {
+    title: "Real-time Chat Application",
+    description: "A real-time messaging system built with Java and Firebase, featuring secure authentication and push notifications. The application supports multiple concurrent users with optimized performance and reduced latency.",
+    image: "/images/chat-app.png",
+    link: "https://github.com/rialparmar1777/Real-time-Chat-Application/tree/master",
+    liveDemo: "https://github.com/rialparmar1777/Real-time-Chat-Application/tree/master",
+    techStack: {
+      frontend: [
+        "Java",
+        "Android Studio",
+        "XML Layouts",
+        "Material Design",
+        "Push Notifications",
+        "Real-time Updates"
+      ],
+      backend: [
+        "Firebase Realtime Database",
+        "Firebase Authentication",
+        "Firebase Cloud Messaging",
+        "Firebase Analytics",
+        "Cloud Functions"
+      ]
+    },
+    features: [
+      "Real-time messaging system",
+      "Secure user authentication",
+      "Push notifications",
+      "Concurrent user support",
+      "Optimized performance",
+      "40% reduced latency"
+    ]
+  },
+  {
+    title: "Q-Game Mind Puzzle",
+    description: "An engaging mind games puzzle built with C#, challenging players with strategic thinking and problem-solving scenarios. Features a clean, intuitive interface and progressive difficulty levels.",
+    image: "/images/q-game.png",
+    link: "https://github.com/rialparmar1777/QGame",
+    liveDemo: "https://github.com/rialparmar1777/QGame",
+    techStack: {
+      frontend: [
+        "C#",
+        "Windows Forms",
+        ".NET Framework",
+        "Custom Controls",
+        "Game Logic"
+      ]
+    },
+    features: [
+      "Strategic puzzle gameplay",
+      "Progressive difficulty levels",
+      "Intuitive user interface",
+      "Score tracking system",
+      "Level editor",
+      "Achievement system"
+    ]
+  },
+  {
+    title: "Block Puzzle Game",
+    description: "A challenging and addictive Block 3 Puzzle game that tests your strategic skills. Built with C#, featuring smooth animations and engaging gameplay mechanics.",
+    image: "/images/block-puzzle.webp",
+    link: "https://github.com/rialparmar1777/Block-Puzzle-Game",
+    liveDemo: "https://github.com/rialparmar1777/Block-Puzzle-Game",
+    techStack: {
+      frontend: [
+        "C#",
+        "Windows Forms",
+        ".NET Framework",
+        "Custom Graphics",
+        "Animation System",
+        "Game State Management"
+      ]
+    },
+    features: [
+      "Engaging puzzle mechanics",
+      "Multiple difficulty levels",
+      "Score tracking",
+      "High score system",
+      "Smooth animations",
+      "Progressive challenges"
+    ]
   }
 ];
 
@@ -306,11 +387,12 @@ const Projects = () => {
                 <Image
                   src={project.image}
                   alt={project.title}
-                  width={800}
-                  height={600}
+                  width={1280}
+                  height={720}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   priority={index === 0}
-                  quality={100}
+                  quality={90}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
