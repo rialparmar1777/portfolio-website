@@ -5,11 +5,13 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
+import emailjs from '@emailjs/browser';
+import { toast } from 'react-hot-toast';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    from_name: '',
+    reply_to: '',
     subject: '',
     message: ''
   });
@@ -17,6 +19,7 @@ const Contact = () => {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const isInView = useInView(containerRef, { once: false, margin: "-100px" });
   const controls = useAnimation();
 
@@ -25,6 +28,11 @@ const Contact = () => {
       controls.start("visible");
     }
   }, [isInView, controls]);
+
+  // Initialize EmailJS
+  useEffect(() => {
+    emailjs.init("1wGoxATqiQHzAPMB_");
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
@@ -37,15 +45,29 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formRef.current) return;
+
     setIsSubmitting(true);
     
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      const result = await emailjs.sendForm(
+        'rialparmar1777',
+        'template_ra1w7ot',
+        formRef.current,
+        '1wGoxATqiQHzAPMB_'
+      );
+
+      if (result.text === 'OK') {
+        setSubmitStatus('success');
+        setFormData({ from_name: '', reply_to: '', subject: '', message: '' });
+        toast.success('Message sent successfully! I will get back to you soon.');
+      } else {
+        throw new Error('Failed to send message');
+      }
     } catch (error) {
+      console.error('Email error:', error);
       setSubmitStatus('error');
+      toast.error('Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setSubmitStatus('idle'), 3000);
@@ -53,9 +75,10 @@ const Contact = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
   };
 
@@ -213,31 +236,31 @@ const Contact = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-3xl blur-xl" />
               <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                      <label htmlFor="from_name" className="block text-sm font-medium text-gray-300 mb-2">Name</label>
                       <input
                         type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
+                        id="from_name"
+                        name="from_name"
+                        value={formData.from_name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400"
+                        className="w-full px-4 py-3 bg-white/90 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500"
                         placeholder="Your name"
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                      <label htmlFor="reply_to" className="block text-sm font-medium text-gray-300 mb-2">Email</label>
                       <input
                         type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
+                        id="reply_to"
+                        name="reply_to"
+                        value={formData.reply_to}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400"
+                        className="w-full px-4 py-3 bg-white/90 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -251,7 +274,7 @@ const Contact = () => {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-white/90 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500"
                       placeholder="What's this about?"
                     />
                   </div>
@@ -264,7 +287,7 @@ const Contact = () => {
                       onChange={handleChange}
                       required
                       rows={6}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-white/90 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500"
                       placeholder="Tell me about your project..."
                     />
                   </div>
@@ -286,25 +309,6 @@ const Contact = () => {
                     </span>
                     <div className="absolute inset-0 -translate-x-full hover:translate-x-0 bg-gradient-to-r from-pink-500 to-purple-500 transition-transform duration-300" />
                   </motion.button>
-                  
-                  {submitStatus === 'success' && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-green-400 text-center mt-4"
-                    >
-                      Message sent successfully! I'll get back to you soon.
-                    </motion.p>
-                  )}
-                  {submitStatus === 'error' && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-red-400 text-center mt-4"
-                    >
-                      Failed to send message. Please try again.
-                    </motion.p>
-                  )}
                 </form>
               </div>
             </div>
