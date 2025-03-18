@@ -40,6 +40,8 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
     };
   }, []);
 
+  const welcomeText = "Welcome to Rial's Portfolio".split('');
+
   if (!mounted) return null;
 
   return (
@@ -50,6 +52,57 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
             key="transition"
             className="fixed inset-0 z-[150] pointer-events-none"
           >
+            {/* Welcome Text */}
+            <motion.div 
+              className="absolute inset-0 flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="relative">
+                {/* Text Background Glow */}
+                <motion.div
+                  className="absolute inset-0 blur-3xl opacity-50"
+                  style={{
+                    background: 'linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899)',
+                  }}
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.7, 0.3],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                />
+                
+                {/* Animated Text */}
+                <div className="relative flex gap-[2px] overflow-hidden text-4xl md:text-6xl font-bold text-white tracking-wider">
+                  {welcomeText.map((char, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ y: 100, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -100, opacity: 0 }}
+                      transition={{
+                        duration: 0.6,
+                        delay: index * 0.03,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className="inline-block"
+                      style={{
+                        textShadow: '0 0 20px rgba(255,255,255,0.5)',
+                      }}
+                    >
+                      {char === ' ' ? '\u00A0' : char}
+                    </motion.span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
             {/* Initial Flash Effect */}
             <motion.div
               className="absolute inset-0 bg-white"
