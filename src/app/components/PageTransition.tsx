@@ -73,7 +73,7 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: isMobile ? 0.3 : 0.5 }}
+              transition={{ duration: isMobile ? 0.5 : 0.8 }}
             >
               <div className="relative">
                 {/* Text Background Glow */}
@@ -104,8 +104,8 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                       animate={{ y: 0, opacity: 1 }}
                       exit={{ y: -100, opacity: 0 }}
                       transition={{
-                        duration: isMobile ? 0.4 : 0.6,
-                        delay: index * (isMobile ? 0.02 : 0.03),
+                        duration: isMobile ? 0.6 : 0.8,
+                        delay: index * (isMobile ? 0.03 : 0.04),
                         ease: [0.22, 1, 0.36, 1],
                       }}
                       className="inline-block"
@@ -127,8 +127,8 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 0.8, 0] }}
                 transition={{
-                  duration: isMobile ? 0.3 : 0.4,
-                  times: [0, 0.1, 1],
+                  duration: isMobile ? 0.5 : 0.7,
+                  times: [0, 0.15, 1],
                   ease: "easeInOut"
                 }}
               />
@@ -144,7 +144,7 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
               }}
               exit={{ scale: 1.5, opacity: 0 }}
               transition={{ 
-                duration: isMobile ? 0.8 : 1.2, 
+                duration: isMobile ? 1.2 : 1.5, 
                 ease: [0.22, 1, 0.36, 1] 
               }}
             >
@@ -189,7 +189,7 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                     exit={{ scale: 2.4, opacity: 0 }}
                     transition={{
                       duration: 0.8,
-                      delay: i * 0.1,
+                      delay: i * 0.15,
                       ease: [0.22, 1, 0.36, 1],
                     }}
                   />
@@ -204,7 +204,7 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: isMobile ? 0.3 : 0.5 }}
+                transition={{ duration: isMobile ? 1.5 : 2 }}
               >
                 {[...Array(particleCount)].map((_, i) => (
                   <motion.div
@@ -224,8 +224,8 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                       y: [(Math.random() - 0.5) * (isMobile ? 100 : 200), (Math.random() - 0.5) * (isMobile ? 200 : 400)],
                     }}
                     transition={{
-                      duration: isMobile ? 1 : 1.5,
-                      delay: Math.random() * (isMobile ? 0.3 : 0.5),
+                      duration: isMobile ? 1.5 : 2,
+                      delay: Math.random() * (isMobile ? 0.4 : 0.6),
                       ease: "easeOut",
                     }}
                   />
@@ -243,9 +243,9 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
                   opacity: [0, 1, 1, 0]
                 }}
                 transition={{
-                  duration: isMobile ? 1 : 1.5,
-                  times: [0, 0.2, 0.6, 1],
-                  delay: 0.1,
+                  duration: isMobile ? 1.8 : 2.2,
+                  times: [0, 0.25, 0.75, 1],
+                  delay: 0.2,
                   ease: "easeInOut"
                 }}
               >
@@ -303,8 +303,8 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
           scale: isTransitioning ? 1.1 : 1,
         }}
         transition={{
-          duration: isMobile ? 0.3 : 0.5,
-          delay: isMobile ? 0.3 : 0.5,
+          duration: isMobile ? 0.5 : 0.8,
+          delay: isMobile ? 0.4 : 0.6,
           ease: "easeOut",
         }}
       >

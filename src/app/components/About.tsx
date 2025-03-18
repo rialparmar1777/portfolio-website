@@ -277,7 +277,7 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
       animate={{ 
         opacity: isInView ? 1 : 0,
         y: isInView ? 0 : 50,
-        transition: { duration: 0.8, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }
+        transition: { duration: 0.5, delay: index * 0.05, ease: [0.23, 1, 0.32, 1] }
       }}
     >
       <motion.div
@@ -416,7 +416,7 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
                 animate={{ 
                   width: isInView ? `${skill.proficiency}%` : '0%',
                 }}
-                transition={{ duration: 1.8, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }}
+                transition={{ duration: 1.2, delay: index * 0.05, ease: [0.23, 1, 0.32, 1] }}
               />
               <motion.div
                 className="absolute top-0 left-0 h-full w-full"
