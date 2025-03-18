@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import CustomCursor from './components/CustomCursor';
 import AnimatedBackground from './components/AnimatedBackground';
-import ContactForm from './components/ContactForm';
+import Contact from './components/Contact';
 import Navbar from './components/Navbar';
 import SnowEffect from './components/SnowEffect';
 import TypewriterText from './components/TypewriterText';
@@ -491,12 +491,9 @@ Proficient in modern web frameworks and database management, with a track record
             initial="initial"
             animate={activeSection === 'contact' ? "animate" : "initial"}
             exit="exit"
-            className="min-h-screen flex items-center justify-center py-20 px-4"
+            className="relative"
           >
-            <div className="max-w-4xl w-full">
-              <h2 className="text-4xl md:text-5xl font-bold mb-12 gradient-text text-center">Get in Touch</h2>
-              <ContactForm />
-            </div>
+            <Contact />
           </motion.section>
         </div>
       </PageTransition>
