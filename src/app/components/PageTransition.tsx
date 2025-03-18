@@ -268,11 +268,23 @@ const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
       {/* Subtle Mouse Trail */}
       <motion.div
         key="mouse-trail"
-        className="fixed inset-0 z-[90] pointer-events-none mix-blend-soft-light"
+        className="fixed inset-0 z-[90] pointer-events-none"
         style={{
-          background: `radial-gradient(1200px at ${mousePosition.x}px ${mousePosition.y}px, 
-            rgba(29, 78, 216, 0.15), 
-            transparent 80%)`
+          background: `
+            radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, 
+              rgba(29, 78, 216, 0.15), 
+              transparent 40%),
+            radial-gradient(800px at ${mousePosition.x}px ${mousePosition.y}px, 
+              rgba(121, 40, 202, 0.08), 
+              transparent 50%),
+            radial-gradient(1000px at ${mousePosition.x}px ${mousePosition.y}px, 
+              rgba(236, 72, 153, 0.05), 
+              transparent 60%),
+            radial-gradient(1200px at ${mousePosition.x}px ${mousePosition.y}px, 
+              rgba(14, 165, 233, 0.03), 
+              transparent 70%)
+          `,
+          mixBlendMode: 'screen'
         }}
       />
     </>
