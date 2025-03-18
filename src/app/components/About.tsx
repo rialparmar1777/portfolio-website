@@ -245,12 +245,22 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const isInView = useInView(cardRef, { once: true, margin: "-100px" });
+  const isInView = useInView(cardRef, { once: true, margin: "-50px" });
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [showDetails, setShowDetails] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    if (!isHovered) {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!isHovered && !isMobile) {
       const interval = setInterval(() => {
         setRotation({
           x: Math.sin(Date.now() / 3000) * 2,
@@ -259,45 +269,59 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
       }, 50);
       return () => clearInterval(interval);
     }
-  }, [isHovered]);
+  }, [isHovered, isMobile]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || isMobile) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width - 0.5) * 15;
     const y = ((e.clientY - rect.top) / rect.height - 0.5) * 15;
     setMousePosition({ x, y });
   };
 
+  const handleTouchStart = () => {
+    if (isMobile) {
+      setIsHovered(true);
+      setShowDetails(true);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isMobile) {
+      setIsHovered(false);
+      setShowDetails(false);
+      setMousePosition({ x: 0, y: 0 });
+    }
+  };
+
   return (
     <motion.div
       ref={cardRef}
       className="relative group"
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ 
         opacity: isInView ? 1 : 0,
-        y: isInView ? 0 : 50,
-        transition: { duration: 0.5, delay: index * 0.05, ease: [0.23, 1, 0.32, 1] }
+        y: isInView ? 0 : 30,
+        transition: { duration: 0.4, delay: index * 0.03, ease: [0.23, 1, 0.32, 1] }
       }}
     >
       <motion.div
         className="relative w-full aspect-square rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 p-6 overflow-hidden cursor-pointer transform-gpu"
         style={{
-          transform: isHovered
-            ? `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg) scale3d(1.03, 1.03, 1.03)`
-            : `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale3d(1, 1, 1)`,
-          transition: 'all 0.8s cubic-bezier(0.23, 1, 0.32, 1)',
+          transform: isMobile 
+            ? isHovered 
+              ? 'scale3d(1.02, 1.02, 1.02)'
+              : 'scale3d(1, 1, 1)'
+            : isHovered
+              ? `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg) scale3d(1.03, 1.03, 1.03)`
+              : `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale3d(1, 1, 1)`,
+          transition: isMobile ? 'all 0.3s ease-out' : 'all 0.8s cubic-bezier(0.23, 1, 0.32, 1)',
         }}
         onMouseMove={handleMouseMove}
-        onMouseEnter={() => {
-          setIsHovered(true);
-          setShowDetails(true);
-        }}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          setShowDetails(false);
-          setMousePosition({ x: 0, y: 0 });
-        }}
+        onMouseEnter={() => !isMobile && setIsHovered(true)}
+        onMouseLeave={() => !isMobile && setIsHovered(false)}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {/* Animated Border */}
         <motion.div
@@ -360,7 +384,7 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
               rotateZ: isHovered ? [0, -3, 3, 0] : 0,
               scale: isHovered ? [1, 1.05, 1] : 1,
             }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
+            transition={{ duration: isMobile ? 0.8 : 1.5, ease: "easeInOut" }}
           >
             {skill.icon}
           </motion.div>
@@ -416,7 +440,7 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
                 animate={{ 
                   width: isInView ? `${skill.proficiency}%` : '0%',
                 }}
-                transition={{ duration: 1.2, delay: index * 0.05, ease: [0.23, 1, 0.32, 1] }}
+                transition={{ duration: 0.8, delay: index * 0.03, ease: [0.23, 1, 0.32, 1] }}
               />
               <motion.div
                 className="absolute top-0 left-0 h-full w-full"
@@ -467,16 +491,26 @@ const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
 
 const About = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const y = useTransform(scrollYProgress, [0, 1], [0, isMobile ? -50 : -150]);
   const springY = useSpring(y, { 
-    stiffness: 50, 
-    damping: 20,
-    mass: 1
+    stiffness: isMobile ? 100 : 50, 
+    damping: isMobile ? 15 : 20,
+    mass: isMobile ? 0.8 : 1
   });
 
   // Group skills by category
@@ -489,7 +523,7 @@ const About = () => {
   }, {} as Record<string, Skill[]>);
 
   return (
-    <section className="min-h-screen py-32 relative overflow-hidden" ref={containerRef}>
+    <section className="min-h-screen py-20 sm:py-32 relative overflow-hidden" ref={containerRef}>
       {/* Enhanced Animated Background */}
       <motion.div 
         className="absolute inset-0 z-0"
@@ -527,18 +561,18 @@ const About = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Enhanced Introduction Section */}
-        <div className="mb-32">
+        <div className="mb-20 sm:mb-32">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16 relative"
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-50px" }}
+            className="text-center mb-12 sm:mb-16 relative"
           >
             {/* Glowing Effect behind title */}
             <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full transform scale-150" />
             
-            <h1 className="relative text-7xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-6">
+            <h1 className="relative text-5xl sm:text-7xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-4 sm:mb-6">
               Full-Stack Developer
             </h1>
             <motion.div 
@@ -557,20 +591,20 @@ const About = () => {
 
           {/* Enhanced Role Tags */}
           <motion.div 
-            className="flex flex-wrap justify-center gap-4 mb-12"
+            className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
           >
             {['Problem Solver', 'Tech Enthusiast', 'Creative Developer'].map((tag, index) => (
               <motion.span
                 key={tag}
-                className="px-6 py-2 rounded-full text-lg font-medium bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 backdrop-blur-sm relative group overflow-hidden"
+                className="px-4 sm:px-6 py-2 rounded-full text-base sm:text-lg font-medium bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 backdrop-blur-sm relative group overflow-hidden"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                viewport={{ once: true, margin: "-50px" }}
                 whileHover={{ scale: 1.05 }}
               >
                 {/* Animated background on hover */}
@@ -586,21 +620,21 @@ const About = () => {
           </motion.div>
 
           {/* Enhanced Main Introduction */}
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
             <motion.div
-              className="space-y-6"
-              initial={{ opacity: 0, x: -50 }}
+              className="space-y-4 sm:space-y-6"
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+              viewport={{ once: true, margin: "-50px" }}
             >
-              <div className="prose prose-lg prose-invert">
+              <div className="prose prose-base sm:prose-lg prose-invert">
                 <motion.p 
-                  className="text-xl text-gray-300 leading-relaxed relative"
+                  className="text-lg sm:text-xl text-gray-300 leading-relaxed relative"
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  viewport={{ once: true, margin: "-50px" }}
                 >
                   <span className="absolute -left-6 top-0 text-purple-400 text-2xl">❝</span>
                   Passionate about building high-performance web applications, I thrive on leveraging modern technologies to develop scalable, efficient, and user-friendly solutions. My goal is to craft experiences that are not only functional but also intuitive and engaging.
@@ -662,16 +696,16 @@ const About = () => {
 
         {/* Education Section */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-20 relative"
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true, margin: "-50px" }}
+          className="text-center mb-16 sm:mb-20 relative"
         >
           {/* Glowing Effect behind title */}
           <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full transform scale-150" />
           
-          <h2 className="relative text-6xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-6">
+          <h2 className="relative text-4xl sm:text-6xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-4 sm:mb-6">
             Education
           </h2>
           <motion.div 
@@ -720,16 +754,16 @@ const About = () => {
 
         {/* Enhanced Skills Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-20 relative"
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true, margin: "-50px" }}
+          className="text-center mb-16 sm:mb-20 relative"
         >
           {/* Glowing Effect behind title */}
           <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full transform scale-150" />
           
-          <h2 className="relative text-6xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-6">
+          <h2 className="relative text-4xl sm:text-6xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient mb-4 sm:mb-6">
             Technical Expertise
           </h2>
           <motion.div 
@@ -744,7 +778,7 @@ const About = () => {
               ease: "easeInOut",
             }}
           />
-          <p className="text-2xl text-gray-300 max-w-3xl mx-auto relative">
+          <p className="text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto relative">
             A comprehensive skill set that enables me to deliver end-to-end solutions 
             with efficiency and innovation.
           </p>
@@ -756,11 +790,11 @@ const About = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-blue-500/5 rounded-3xl blur-3xl" />
           
           {/* Category Navigation */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
             {Object.keys(skillsByCategory).map((category) => (
               <motion.button
                 key={category}
-                className="px-6 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 backdrop-blur-sm relative group overflow-hidden"
+                className="px-4 sm:px-6 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 backdrop-blur-sm relative group overflow-hidden whitespace-nowrap"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -776,7 +810,7 @@ const About = () => {
           </div>
 
           {/* Skills Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
             {skills.map((skill, index) => (
               <SkillCard key={skill.name} skill={skill} index={index} />
             ))}
@@ -799,6 +833,20 @@ const About = () => {
           }
           .animate-gradient {
             animation: gradient 6s linear infinite;
+          }
+          @media (max-width: 768px) {
+            .prose {
+              font-size: 0.95rem;
+            }
+            .prose p {
+              margin-bottom: 1rem;
+            }
+            .animate-gradient {
+              animation: gradient 4s linear infinite;
+            }
+            .animate-shimmer {
+              animation: shimmer 1.5s infinite;
+            }
           }
         `}</style>
       </div>
