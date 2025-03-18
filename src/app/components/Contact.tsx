@@ -113,7 +113,7 @@ const Contact = () => {
     <div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="min-h-screen relative overflow-hidden py-20 px-4"
+      className="min-h-screen relative overflow-hidden py-12 sm:py-20 px-4 sm:px-6 lg:px-8"
       style={{
         background: `radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, rgba(124, 58, 237, 0.15) 0%, rgba(0, 0, 0, 0) 50%)`
       }}
@@ -151,27 +151,27 @@ const Contact = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <motion.div 
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
           initial={{ opacity: 0, y: 50 }}
           animate={controls}
           variants={{
             visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
           }}
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6">
             <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text">
               Let's Connect
             </span>
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto px-4">
             Have an exciting project in mind? Let's bring your ideas to life!
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-12 gap-12">
+        <div className="grid lg:grid-cols-12 gap-8 sm:gap-12">
           {/* Social Links */}
           <motion.div 
-            className="lg:col-span-4 space-y-6"
+            className="lg:col-span-4 space-y-4 sm:space-y-6"
             initial={{ opacity: 0, x: -50 }}
             animate={controls}
             variants={{
@@ -198,21 +198,21 @@ const Contact = () => {
                   className="group block"
                 >
                   <div className={`
-                    relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-lg
-                    p-6 border border-white/10 transition-all duration-300
+                    relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-lg
+                    p-4 sm:p-6 border border-white/10 transition-all duration-300
                     hover:border-white/20 hover:bg-white/10
                   `}>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4">
                       <div className={`
-                        p-3 rounded-xl bg-gradient-to-br ${link.color}
+                        p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br ${link.color}
                         transform transition-transform duration-300
                         group-hover:scale-110 group-hover:rotate-3
                       `}>
                         {link.icon}
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-white">{link.name}</h3>
-                        <p className="text-gray-400 text-sm">Connect with me</p>
+                        <h3 className="text-lg sm:text-xl font-semibold text-white">{link.name}</h3>
+                        <p className="text-gray-400 text-xs sm:text-sm">Connect with me</p>
                       </div>
                     </div>
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -234,12 +234,12 @@ const Contact = () => {
             }}
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-3xl blur-xl" />
-              <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
-                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-2xl sm:rounded-3xl blur-xl" />
+              <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/10">
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                      <label htmlFor="from_name" className="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                      <label htmlFor="from_name" className="block text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">Name</label>
                       <input
                         type="text"
                         id="from_name"
@@ -247,12 +247,12 @@ const Contact = () => {
                         value={formData.from_name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 bg-white/90 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 border border-white/10 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500 text-sm sm:text-base"
                         placeholder="Your name"
                       />
                     </div>
                     <div>
-                      <label htmlFor="reply_to" className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                      <label htmlFor="reply_to" className="block text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">Email</label>
                       <input
                         type="email"
                         id="reply_to"
@@ -260,13 +260,13 @@ const Contact = () => {
                         value={formData.reply_to}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 bg-white/90 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 border border-white/10 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500 text-sm sm:text-base"
                         placeholder="your@email.com"
                       />
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">Subject</label>
                     <input
                       type="text"
                       id="subject"
@@ -274,20 +274,20 @@ const Contact = () => {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-white/90 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 border border-white/10 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500 text-sm sm:text-base"
                       placeholder="What's this about?"
                     />
                   </div>
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">Message</label>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">Message</label>
                     <textarea
                       id="message"
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      rows={6}
-                      className="w-full px-4 py-3 bg-white/90 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500"
+                      rows={5}
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 border border-white/10 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500 text-sm sm:text-base"
                       placeholder="Tell me about your project..."
                     />
                   </div>
@@ -297,7 +297,7 @@ const Contact = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={`
-                      w-full py-4 px-6 rounded-xl text-white font-medium
+                      w-full py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl text-white font-medium text-sm sm:text-base
                       bg-gradient-to-r from-purple-500 to-pink-500
                       hover:from-purple-600 hover:to-pink-600
                       transition-all duration-300 relative overflow-hidden
@@ -324,6 +324,21 @@ const Contact = () => {
         }
         .animate-shimmer {
           animation: shimmer 2s infinite;
+        }
+        @media (max-width: 768px) {
+          /* Improve tap targets */
+          button, a {
+            min-height: 44px;
+            min-width: 44px;
+          }
+          /* Adjust form spacing */
+          .space-y-4 > * + * {
+            margin-top: 1rem;
+          }
+          /* Optimize input fields */
+          input, textarea {
+            font-size: 16px; /* Prevent zoom on iOS */
+          }
         }
       `}</style>
     </div>
