@@ -60,16 +60,17 @@ const NavLink = ({ href, text, delay = 0, isMobile = false, onNavigate, onClick 
 
   const mobileStyles = isMobile ? {
     width: "100%",
-    padding: "0.75rem 1.5rem",
+    padding: "1rem 1.5rem",
     marginBottom: "0.5rem",
-    borderRadius: "0.75rem",
-    background: "linear-gradient(to right, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1))",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "1rem",
+    background: "linear-gradient(to right, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.15))",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
     backdropFilter: "blur(8px)",
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
   } : {};
 
   return (
-    <div className={`relative ${isMobile ? 'pt-0' : 'pt-10'} px-2`}>
+    <div className={`relative ${isMobile ? 'pt-0 w-full' : 'pt-10'} px-2`}>
       {!isMobile && (
         <>
           <motion.div 
@@ -150,13 +151,13 @@ const NavLink = ({ href, text, delay = 0, isMobile = false, onNavigate, onClick 
               border border-white/20 backdrop-blur-sm shadow-lg
               hover:from-purple-500/30 hover:to-pink-500/30 hover:border-white/30
               transition-colors duration-300
-              ${isMobile ? 'w-full text-center' : ''}
+              ${isMobile ? 'w-full text-center text-lg' : ''}
             `}
             whileHover={{
-              scale: 1.05,
+              scale: isMobile ? 1.02 : 1.05,
               transition: { duration: 0.2 }
             }}
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.98 }}
           >
             <span className="relative z-10 text-white font-medium text-lg">
               {text}
@@ -256,7 +257,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="flex items-center justify-center h-24 sm:h-36">
+        <div className="flex items-center justify-center h-20 sm:h-36">
           <div className="hidden md:flex items-center gap-20">
             <NavLink href="#home" text="Home" delay={0} onNavigate={onNavigate} />
             <NavLink href="#about" text="About" delay={0.1} onNavigate={onNavigate} />
@@ -265,7 +266,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
           </div>
 
           <motion.button
-            className="md:hidden menu-button relative z-50 p-2 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10"
+            className="md:hidden menu-button relative z-50 p-2.5 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-colors duration-300"
             onClick={() => setIsOpen(!isOpen)}
             whileTap={{ scale: 0.95 }}
           >
@@ -305,14 +306,14 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="md:hidden mobile-menu fixed inset-0 top-24 bg-black/90 backdrop-blur-md z-40"
+            className="md:hidden mobile-menu fixed inset-0 top-20 bg-gradient-to-b from-black/95 to-black/90 backdrop-blur-xl z-40"
             initial="closed"
             animate="open"
             exit="closed"
             variants={menuVariants}
           >
             <motion.div 
-              className="px-4 pt-6 pb-8 h-full flex flex-col items-center justify-start"
+              className="px-6 pt-8 pb-12 h-full flex flex-col items-center justify-start gap-4"
               variants={menuVariants}
             >
               <NavLink 

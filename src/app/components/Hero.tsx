@@ -34,7 +34,7 @@ const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
         >
           <div className="relative mb-8">
             <motion.span
-              className="absolute -top-10 left-0 lg:left-2 text-base lg:text-lg text-purple-400/80 font-mono"
+              className="absolute -top-10 left-0 lg:left-2 text-sm sm:text-base lg:text-lg text-purple-400/80 font-mono"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
@@ -42,7 +42,7 @@ const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
               Hello, I'm
             </motion.span>
             <motion.h1 
-              className="text-7xl lg:text-9xl font-bold gradient-text relative"
+              className="text-5xl sm:text-6xl lg:text-9xl font-bold gradient-text relative"
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ 
@@ -62,7 +62,7 @@ const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
           </div>
 
           <motion.div 
-            className="text-2xl lg:text-3xl text-gray-300 mb-8"
+            className="text-xl sm:text-2xl lg:text-3xl text-gray-300 mb-6 sm:mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
@@ -72,7 +72,7 @@ const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
 
           {/* Professional Summary */}
           <motion.p
-            className="text-lg text-gray-300/90 mb-8 leading-relaxed"
+            className="text-base sm:text-lg text-gray-300/90 mb-6 sm:mb-8 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
@@ -85,11 +85,11 @@ const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.1 }}
-            className="flex flex-wrap gap-6 justify-center lg:justify-start"
+            className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start"
           >
             <motion.a 
               href="#projects"
-              className="group relative px-8 py-4 text-lg rounded-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 transition-all duration-300 text-white font-semibold overflow-hidden"
+              className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 transition-all duration-300 text-white font-semibold overflow-hidden w-full sm:w-auto text-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -98,7 +98,7 @@ const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
             </motion.a>
             <motion.a 
               href="#contact"
-              className="group relative px-8 py-4 text-lg rounded-full border border-white/20 hover:border-white/40 transition-all duration-300 text-white font-semibold overflow-hidden"
+              className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full border border-white/20 hover:border-white/40 transition-all duration-300 text-white font-semibold overflow-hidden w-full sm:w-auto text-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -109,13 +109,13 @@ const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
             {/* Download CV Button */}
             <motion.button 
               onClick={onDownload}
-              className="group relative px-8 py-4 text-lg rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 text-white font-semibold overflow-hidden flex items-center gap-2"
+              className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 text-white font-semibold overflow-hidden flex items-center justify-center gap-2 w-full sm:w-auto"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <span className="relative z-10 flex items-center gap-2">
                 Download CV
-                <svg className="w-5 h-5 transform group-hover:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </span>
@@ -126,13 +126,13 @@ const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
 
         {/* Profile Picture */}
         <motion.div 
-          className="relative lg:flex-1 w-full max-w-md flex justify-center items-center mt-16 lg:mt-24"
+          className="relative lg:flex-1 w-full max-w-md flex justify-center items-center mt-8 sm:mt-12 lg:mt-24"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <motion.div
-            className="relative w-[320px] h-[320px] rounded-full"
+            className="relative w-[250px] h-[250px] sm:w-[320px] sm:h-[320px] rounded-full"
             whileHover={{ scale: 1.02 }}
             animate={{
               y: [0, -10, 0],
