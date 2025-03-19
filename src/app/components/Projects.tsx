@@ -265,6 +265,7 @@ const projects: Project[] = [
 
 const Projects = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [activeProject, setActiveProject] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: false, margin: "-100px" });
   const controls = useAnimation();
@@ -279,6 +280,19 @@ const Projects = () => {
     damping: 20,
     mass: 1
   });
+
+  const handleMouseMove = (e: React.MouseEvent, index: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    setMousePosition({ x, y });
+    setActiveProject(index);
+  };
+
+  const handleMouseLeave = () => {
+    setActiveProject(null);
+  };
 
   return (
     <div className="min-h-screen flex flex-col justify-start pt-10 pb-20 px-4 sm:px-6 lg:px-8" ref={containerRef}>
@@ -366,12 +380,20 @@ const Projects = () => {
               index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'
             } gap-8 items-center`}
           >
-            {/* Enhanced Project Image */}
+            {/* Enhanced Project Image with 3D Effect */}
             <div className="w-full lg:w-1/2">
               <motion.div 
                 className="relative w-full h-[400px] rounded-2xl overflow-hidden group bg-black/20"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
+                onMouseMove={(e) => handleMouseMove(e, index)}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                  transform: activeProject === index ? 
+                    `perspective(1000px) rotateX(${(mousePosition.y - 0.5) * 10}deg) rotateY(${(mousePosition.x - 0.5) * 10}deg)` : 
+                    'none',
+                  transition: 'transform 0.1s ease-out'
+                }}
               >
                 {/* Animated Border */}
                 <motion.div
@@ -399,12 +421,18 @@ const Projects = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
-                {/* Enhanced Hover Content */}
+                {/* Enhanced Hover Content with 3D Effect */}
                 <motion.div 
                   className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                   initial={{ scale: 0.9 }}
                   whileHover={{ scale: 1 }}
                   transition={{ duration: 0.3 }}
+                  style={{
+                    transform: activeProject === index ? 
+                      `translateZ(50px)` : 
+                      'none',
+                    transition: 'transform 0.1s ease-out'
+                  }}
                 >
                   <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 space-y-4">
                     <Link
@@ -434,7 +462,7 @@ const Projects = () => {
               </motion.div>
             </div>
 
-            {/* Enhanced Project Content */}
+            {/* Enhanced Project Content with Interactive Elements */}
             <div className="w-full lg:w-1/2 space-y-8">
               <motion.div 
                 className="space-y-4"
@@ -443,7 +471,7 @@ const Projects = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                <h3 className="text-4xl font-bold text-white mb-4 hover:text-purple-400 transition-colors group">
+                <h3 className="text-4xl font-bold text-white mb-4 hover:text-purple-400 transition-colors group cursor-pointer">
                   {project.title}
                   <motion.div 
                     className="w-0 h-0.5 bg-purple-500 group-hover:w-full transition-all duration-300"
@@ -456,7 +484,7 @@ const Projects = () => {
                 </p>
               </motion.div>
 
-              {/* Enhanced Tech Stack */}
+              {/* Interactive Tech Stack */}
               <motion.div 
                 className="space-y-4"
                 initial={{ opacity: 0, y: 20 }}
@@ -477,6 +505,11 @@ const Projects = () => {
                       className="px-4 py-2 text-sm bg-purple-500/10 text-purple-300 rounded-full border border-purple-500/20 hover:bg-purple-500/20 hover:scale-105 transition-all duration-300 cursor-default"
                       initial={{ opacity: 0, scale: 0.8 }}
                       whileInView={{ opacity: 1, scale: 1 }}
+                      whileHover={{ 
+                        scale: 1.1,
+                        backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                        borderColor: 'rgba(168, 85, 247, 0.4)'
+                      }}
                       transition={{ duration: 0.3, delay: i * 0.1 }}
                       viewport={{ once: true }}
                     >
@@ -498,7 +531,7 @@ const Projects = () => {
                 </div>
               </motion.div>
 
-              {/* Enhanced Features */}
+              {/* Interactive Features */}
               {project.features && (
                 <motion.div 
                   className="space-y-4"
@@ -517,9 +550,13 @@ const Projects = () => {
                     {project.features.map((feature, i) => (
                       <motion.li
                         key={i}
-                        className="flex items-center gap-3 text-sm text-gray-400 group/item hover:text-purple-300 transition-colors"
+                        className="flex items-center gap-3 text-sm text-gray-400 group/item hover:text-purple-300 transition-colors cursor-pointer"
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
+                        whileHover={{ 
+                          x: 5,
+                          color: '#a855f7'
+                        }}
                         transition={{ duration: 0.3, delay: i * 0.1 }}
                         viewport={{ once: true }}
                       >
