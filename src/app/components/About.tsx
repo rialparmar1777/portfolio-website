@@ -553,8 +553,19 @@ const IntroTag = ({ text, index }: { text: string; index: number }) => (
 
 const IntroSection = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (isMobile) return;
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
     const x = (clientX / innerWidth - 0.5) * 2;
@@ -563,7 +574,7 @@ const IntroSection = () => {
   };
 
   return (
-    <div className="mb-32 relative" onMouseMove={handleMouseMove}>
+    <div className="mb-16 sm:mb-32 relative" onMouseMove={handleMouseMove}>
       {/* Enhanced 3D Background */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
@@ -573,13 +584,13 @@ const IntroSection = () => {
             transformStyle: "preserve-3d",
           }}
         >
-          {/* Dynamic Grid Lines */}
+          {/* Dynamic Grid Lines - Reduced for mobile */}
           <div className="absolute inset-0" style={{ transform: "translateZ(-50px)" }}>
-            {[...Array(20)].map((_, i) => (
+            {[...Array(isMobile ? 10 : 20)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute h-[1px] w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"
-                style={{ top: `${i * 5}%` }}
+                style={{ top: `${i * (isMobile ? 10 : 5)}%` }}
                 animate={{
                   opacity: [0.1, 0.3, 0.1],
                   scaleX: [0.8, 1, 0.8],
@@ -592,11 +603,11 @@ const IntroSection = () => {
                 }}
               />
             ))}
-            {[...Array(20)].map((_, i) => (
+            {[...Array(isMobile ? 10 : 20)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute w-[1px] h-full bg-gradient-to-b from-transparent via-blue-500/20 to-transparent"
-                style={{ left: `${i * 5}%` }}
+                style={{ left: `${i * (isMobile ? 10 : 5)}%` }}
                 animate={{
                   opacity: [0.1, 0.3, 0.1],
                   scaleY: [0.8, 1, 0.8],
@@ -611,17 +622,17 @@ const IntroSection = () => {
             ))}
           </div>
 
-          {/* Floating Orbs */}
-          {[...Array(8)].map((_, i) => (
+          {/* Floating Orbs - Reduced for mobile */}
+          {[...Array(isMobile ? 4 : 8)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute rounded-full"
               style={{
-                width: `${20 + i * 10}px`,
-                height: `${20 + i * 10}px`,
+                width: `${isMobile ? 10 + i * 5 : 20 + i * 10}px`,
+                height: `${isMobile ? 10 + i * 5 : 20 + i * 10}px`,
                 background: `radial-gradient(circle at center, ${i % 2 ? '#A855F7' : '#3B82F6'}15, transparent)`,
-                top: `${20 + (i * 10)}%`,
-                left: `${10 + (i * 15)}%`,
+                top: `${20 + (i * (isMobile ? 20 : 10))}%`,
+                left: `${10 + (i * (isMobile ? 25 : 15))}%`,
                 filter: "blur(8px)",
                 transform: "translateZ(-30px)",
               }}
@@ -647,23 +658,23 @@ const IntroSection = () => {
         <motion.div
           className="text-center relative"
           style={{
-            transform: `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)`,
+            transform: !isMobile ? `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)` : 'none',
             transition: "transform 0.3s ease-out",
           }}
         >
-          {/* Glowing Rings */}
+          {/* Glowing Rings - Adjusted for mobile */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             {[...Array(3)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute rounded-full border"
                 style={{
-                  width: `${400 + i * 100}px`,
-                  height: `${400 + i * 100}px`,
+                  width: `${isMobile ? 200 + i * 50 : 400 + i * 100}px`,
+                  height: `${isMobile ? 200 + i * 50 : 400 + i * 100}px`,
                   borderColor: i % 2 ? '#A855F7' : '#3B82F6',
                   opacity: 0.1,
-                  left: `${-200 - i * 50}px`,
-                  top: `${-200 - i * 50}px`,
+                  left: `${isMobile ? -100 - i * 25 : -200 - i * 50}px`,
+                  top: `${isMobile ? -100 - i * 25 : -200 - i * 50}px`,
                 }}
                 animate={{
                   rotate: [0, 360],
@@ -678,10 +689,10 @@ const IntroSection = () => {
             ))}
           </div>
 
-          {/* Enhanced Title */}
-          <div className="relative mb-8">
+          {/* Enhanced Title - Adjusted for mobile */}
+          <div className="relative mb-4 sm:mb-8">
             <motion.h1 
-              className="text-8xl sm:text-9xl font-bold"
+              className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-bold"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
@@ -714,7 +725,7 @@ const IntroSection = () => {
                   }}
                 />
               </div>
-              <div className="relative inline-block mt-2">
+              <div className="relative inline-block mt-1 sm:mt-2">
                 <motion.span
                   className="block bg-gradient-to-r from-blue-400 via-purple-500 to-blue-400 text-transparent bg-clip-text"
                   animate={{
@@ -744,9 +755,9 @@ const IntroSection = () => {
             </motion.h1>
           </div>
 
-          {/* Enhanced Tags */}
+          {/* Enhanced Tags - Adjusted for mobile */}
           <motion.div 
-            className="flex flex-wrap justify-center gap-6 mb-16"
+            className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-8 sm:mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -775,20 +786,20 @@ const IntroSection = () => {
                 />
                 
                 {/* Tag Content */}
-                <div className="relative px-8 py-3 rounded-lg bg-gradient-to-r from-purple-900/50 to-blue-900/50 backdrop-blur-xl border border-white/10">
+                <div className="relative px-4 sm:px-8 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-purple-900/50 to-blue-900/50 backdrop-blur-xl border border-white/10">
                   <motion.div
                     className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20"
                     initial={{ x: '-100%' }}
                     whileHover={{ x: '100%' }}
                     transition={{ duration: 0.8 }}
                   />
-                  <span className="relative z-10 text-xl font-medium bg-gradient-to-r from-white to-purple-200 text-transparent bg-clip-text">
+                  <span className="relative z-10 text-base sm:text-xl font-medium bg-gradient-to-r from-white to-purple-200 text-transparent bg-clip-text">
                     {tag}
                   </span>
                 </div>
 
-                {/* Floating Particles */}
-                {[...Array(3)].map((_, i) => (
+                {/* Floating Particles - Reduced for mobile */}
+                {[...Array(isMobile ? 2 : 3)].map((_, i) => (
                   <motion.div
                     key={i}
                     className="absolute w-1 h-1 rounded-full bg-purple-400"
@@ -815,8 +826,8 @@ const IntroSection = () => {
           </motion.div>
         </motion.div>
 
-        {/* Enhanced Content Grid */}
-        <div className="grid lg:grid-cols-2 gap-12 items-start relative">
+        {/* Enhanced Content Grid - Adjusted for mobile */}
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-12 items-start relative">
           {/* Quote Section */}
           <motion.div
             className="relative group"
@@ -826,7 +837,7 @@ const IntroSection = () => {
             viewport={{ once: true }}
             whileHover={{ scale: 1.02 }}
           >
-            <div className="relative p-8 rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-white/10 overflow-hidden">
+            <div className="relative p-4 sm:p-8 rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-white/10 overflow-hidden">
               {/* Enhanced Border Animation */}
               <motion.div
                 className="absolute -inset-[1px] rounded-2xl"
@@ -846,7 +857,7 @@ const IntroSection = () => {
               {/* Quote Content */}
               <div className="relative">
                 <motion.span
-                  className="absolute -left-6 -top-6 text-6xl text-purple-400 font-serif"
+                  className="absolute -left-4 sm:-left-6 -top-4 sm:-top-6 text-4xl sm:text-6xl text-purple-400 font-serif"
                   animate={{
                     opacity: [0.5, 1, 0.5],
                     scale: [1, 1.2, 1],
@@ -860,7 +871,7 @@ const IntroSection = () => {
                 >
                   ❝
                 </motion.span>
-                <div className="space-y-4 text-xl text-gray-300 leading-relaxed">
+                <div className="space-y-3 sm:space-y-4 text-base sm:text-xl text-gray-300 leading-relaxed">
                   <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -879,7 +890,7 @@ const IntroSection = () => {
                   </motion.p>
                 </div>
                 <motion.span
-                  className="absolute -right-6 -bottom-6 text-6xl text-purple-400 font-serif"
+                  className="absolute -right-4 sm:-right-6 -bottom-4 sm:-bottom-6 text-4xl sm:text-6xl text-purple-400 font-serif"
                   animate={{
                     opacity: [0.5, 1, 0.5],
                     scale: [1, 1.2, 1],
@@ -895,8 +906,8 @@ const IntroSection = () => {
                 </motion.span>
               </div>
 
-              {/* Enhanced Floating Elements */}
-              {[...Array(6)].map((_, i) => (
+              {/* Enhanced Floating Elements - Reduced for mobile */}
+              {[...Array(isMobile ? 3 : 6)].map((_, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-2 h-2"
@@ -932,7 +943,7 @@ const IntroSection = () => {
             viewport={{ once: true }}
             whileHover={{ scale: 1.02 }}
           >
-            <div className="relative p-8 rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-white/10 overflow-hidden">
+            <div className="relative p-4 sm:p-8 rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-white/10 overflow-hidden">
               {/* Enhanced Border Animation */}
               <motion.div
                 className="absolute -inset-[1px] rounded-2xl"
@@ -951,7 +962,7 @@ const IntroSection = () => {
 
               {/* Section Header */}
               <motion.div
-                className="flex items-center gap-4 mb-8"
+                className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -969,7 +980,7 @@ const IntroSection = () => {
                     ease: "easeInOut",
                   }}
                 >
-                  <span className="text-5xl">🎵</span>
+                  <span className="text-3xl sm:text-5xl">🎵</span>
                   <motion.div
                     className="absolute -inset-4 rounded-full bg-purple-500/20 blur-xl"
                     animate={{
@@ -983,15 +994,15 @@ const IntroSection = () => {
                     }}
                   />
                 </motion.div>
-                <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-300 via-blue-300 to-purple-300 text-transparent bg-clip-text animate-gradient">
+                <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-300 via-blue-300 to-purple-300 text-transparent bg-clip-text animate-gradient">
                   Beyond Code
                 </h3>
               </motion.div>
 
               {/* Content */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <motion.p
-                  className="text-xl text-gray-300 leading-relaxed"
+                  className="text-base sm:text-xl text-gray-300 leading-relaxed"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
@@ -1000,7 +1011,7 @@ const IntroSection = () => {
                   Outside of tech, I'm a versatile musician & active choir member.
                 </motion.p>
                 <motion.p
-                  className="text-xl text-gray-300 leading-relaxed"
+                  className="text-base sm:text-xl text-gray-300 leading-relaxed"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
@@ -1011,7 +1022,7 @@ const IntroSection = () => {
 
                 {/* Enhanced Skill Tags */}
                 <motion.div
-                  className="flex flex-wrap gap-3 mt-8"
+                  className="flex flex-wrap gap-2 sm:gap-3 mt-6 sm:mt-8"
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
@@ -1037,8 +1048,8 @@ const IntroSection = () => {
                           ease: "easeInOut",
                         }}
                       />
-                      <div className="relative px-6 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20">
-                        <span className="text-lg bg-gradient-to-r from-purple-300 to-blue-300 text-transparent bg-clip-text">
+                      <div className="relative px-4 sm:px-6 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20">
+                        <span className="text-sm sm:text-lg bg-gradient-to-r from-purple-300 to-blue-300 text-transparent bg-clip-text">
                           {skill}
                         </span>
                       </div>
@@ -1047,11 +1058,11 @@ const IntroSection = () => {
                 </motion.div>
               </div>
 
-              {/* Enhanced Floating Music Notes */}
-              {[...Array(6)].map((_, i) => (
+              {/* Enhanced Floating Music Notes - Reduced for mobile */}
+              {[...Array(isMobile ? 3 : 6)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute text-3xl"
+                  className="absolute text-2xl sm:text-3xl"
                   style={{
                     top: `${20 + i * 15}%`,
                     left: `${10 + i * 15}%`,
@@ -1084,10 +1095,21 @@ const IntroSection = () => {
 };
 
 const EducationTimeline = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
-    <div className="relative py-16">
+    <div className="relative py-8 sm:py-16">
       {/* Central Timeline Line with Enhanced Gradient */}
-      <div className="absolute left-1/2 top-0 bottom-0 w-[2px] transform -translate-x-1/2">
+      <div className={`absolute ${isMobile ? 'left-4' : 'left-1/2'} top-0 bottom-0 w-[2px] transform ${isMobile ? '' : '-translate-x-1/2'}`}>
         {/* Solid line background */}
         <div className="absolute inset-0 bg-white/20" />
         
@@ -1105,7 +1127,7 @@ const EducationTimeline = () => {
           <React.Fragment key={i}>
             <motion.div
               className="absolute w-1.5 h-1.5 rounded-full bg-white/50"
-              style={{ top: `${i * 10}%`, left: '-3px' }}
+              style={{ top: `${i * 10}%`, left: isMobile ? '-3px' : '-3px' }}
               initial={{ opacity: 0 }}
               animate={{ 
                 opacity: [0.2, 0.5, 0.2],
@@ -1122,9 +1144,9 @@ const EducationTimeline = () => {
               className="absolute h-[1px] bg-gradient-to-r from-white/20 to-transparent"
               style={{ 
                 top: `${i * 10}%`,
-                left: i % 2 === 0 ? '0' : 'auto',
-                right: i % 2 === 0 ? 'auto' : '0',
-                width: '100px'
+                left: isMobile ? '0' : (i % 2 === 0 ? '0' : 'auto'),
+                right: isMobile ? 'auto' : (i % 2 === 0 ? 'auto' : '0'),
+                width: isMobile ? '50px' : '100px'
               }}
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
@@ -1141,7 +1163,7 @@ const EducationTimeline = () => {
           institution: "Conestoga College",
           date: "Graduated August - 2024",
           description: "Advanced programming concepts, full-stack development, and modern software practices.",
-          icon: <FaGraduationCap className="w-8 h-8" />,
+          icon: <FaGraduationCap className="w-6 h-6 sm:w-8 sm:h-8" />,
           color: "purple",
           skills: ["Full-Stack Development", "Database Design", "Cloud Computing"]
         },
@@ -1149,23 +1171,23 @@ const EducationTimeline = () => {
           title: "Bachelor of Computer Applications",
           institution: "Manipal Institute of Technology",
           description: "Foundation in computer science, algorithms, and software engineering",
-          icon: <FaCode className="w-8 h-8" />,
+          icon: <FaCode className="w-6 h-6 sm:w-8 sm:h-8" />,
           color: "blue",
           skills: ["Computer Science", "Data Structures", "Software Engineering"]
         }
       ].map((education, index) => (
         <motion.div
           key={education.title}
-          className={`relative flex items-center ${index % 2 === 0 ? 'justify-end' : ''} mb-20`}
-          initial={{ opacity: 0, x: index % 2 === 0 ? 50 : -50 }}
+          className={`relative flex items-center ${isMobile ? 'ml-12' : (index % 2 === 0 ? 'justify-end' : '')} mb-12 sm:mb-20`}
+          initial={{ opacity: 0, x: isMobile ? 0 : (index % 2 === 0 ? 50 : -50) }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: index * 0.2 }}
         >
           {/* Content Card */}
-          <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}>
+          <div className={`${isMobile ? 'w-full' : `w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}`}>
             <motion.div
-              className="relative p-6 rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-white/10 overflow-hidden group"
+              className="relative p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-white/10 overflow-hidden group"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
             >
@@ -1184,9 +1206,9 @@ const EducationTimeline = () => {
 
               {/* Connecting Lines from Corners to Timeline */}
               <motion.div
-                className={`absolute top-1/2 ${index % 2 === 0 ? 'left-0' : 'right-0'} w-8 h-[2px]`}
+                className={`absolute top-1/2 ${isMobile ? 'left-0' : (index % 2 === 0 ? 'left-0' : 'right-0')} w-8 h-[2px]`}
                 style={{
-                  background: `linear-gradient(${index % 2 === 0 ? 'to left' : 'to right'}, ${education.color === 'purple' ? '#A855F7' : '#3B82F6'}, transparent)`,
+                  background: `linear-gradient(${isMobile ? 'to right' : (index % 2 === 0 ? 'to left' : 'to right')}, ${education.color === 'purple' ? '#A855F7' : '#3B82F6'}, transparent)`,
                 }}
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: 1 }}
@@ -1195,7 +1217,7 @@ const EducationTimeline = () => {
               />
 
               {/* Decorative Corner Accents with Connecting Lines */}
-              <div className="absolute top-0 left-0 w-8 h-8">
+              <div className="absolute top-0 left-0 w-6 h-6 sm:w-8 sm:h-8">
                 <div className="absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-purple-500/30 rounded-tl-xl" />
                 <motion.div
                   className="absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-purple-500/50"
@@ -1205,7 +1227,7 @@ const EducationTimeline = () => {
                   transition={{ duration: 0.5 }}
                 />
               </div>
-              <div className="absolute top-0 right-0 w-8 h-8">
+              <div className="absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8">
                 <div className="absolute top-0 right-0 w-full h-full border-t-2 border-r-2 border-purple-500/30 rounded-tr-xl" />
                 <motion.div
                   className="absolute top-0 right-0 w-full h-full border-t-2 border-r-2 border-purple-500/50"
@@ -1215,7 +1237,7 @@ const EducationTimeline = () => {
                   transition={{ duration: 0.5, delay: 0.1 }}
                 />
               </div>
-              <div className="absolute bottom-0 left-0 w-8 h-8">
+              <div className="absolute bottom-0 left-0 w-6 h-6 sm:w-8 sm:h-8">
                 <div className="absolute bottom-0 left-0 w-full h-full border-b-2 border-l-2 border-purple-500/30 rounded-bl-xl" />
                 <motion.div
                   className="absolute bottom-0 left-0 w-full h-full border-b-2 border-l-2 border-purple-500/50"
@@ -1225,7 +1247,7 @@ const EducationTimeline = () => {
                   transition={{ duration: 0.5, delay: 0.2 }}
                 />
               </div>
-              <div className="absolute bottom-0 right-0 w-8 h-8">
+              <div className="absolute bottom-0 right-0 w-6 h-6 sm:w-8 sm:h-8">
                 <div className="absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-purple-500/30 rounded-br-xl" />
                 <motion.div
                   className="absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-purple-500/50"
@@ -1237,9 +1259,9 @@ const EducationTimeline = () => {
               </div>
 
               <div className="relative">
-                {/* Content remains the same */}
-                <div className={`flex items-center gap-3 mb-4 ${index % 2 === 0 ? 'flex-row-reverse' : ''}`}>
-                  <div className={`text-${education.color}-400 bg-${education.color}-500/10 p-3 rounded-xl relative group-hover:scale-110 transition-transform duration-300`}>
+                {/* Content */}
+                <div className={`flex items-center gap-3 mb-4 ${isMobile ? '' : (index % 2 === 0 ? 'flex-row-reverse' : '')}`}>
+                  <div className={`text-${education.color}-400 bg-${education.color}-500/10 p-2 sm:p-3 rounded-xl relative group-hover:scale-110 transition-transform duration-300`}>
                     {education.icon}
                     <motion.div
                       className="absolute inset-0 rounded-xl bg-white/20"
@@ -1253,19 +1275,19 @@ const EducationTimeline = () => {
                     />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-gray-300 text-transparent bg-clip-text">
+                    <h3 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-white to-gray-300 text-transparent bg-clip-text">
                       {education.title}
                     </h3>
-                    <p className="text-gray-400">{education.institution}</p>
+                    <p className="text-sm sm:text-base text-gray-400">{education.institution}</p>
                   </div>
                 </div>
 
-                <p className="text-gray-300 text-sm mb-2">{education.description}</p>
+                <p className="text-sm sm:text-base text-gray-300 mb-2">{education.description}</p>
 
                 {education.date && (
                   <div className="relative inline-block">
                     <motion.p 
-                      className="text-sm text-purple-400 mb-4 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20"
+                      className="text-xs sm:text-sm text-purple-400 mb-4 px-2 sm:px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20"
                       whileHover={{ scale: 1.05 }}
                     >
                       {education.date}
@@ -1284,11 +1306,11 @@ const EducationTimeline = () => {
                   </div>
                 )}
 
-                <div className={`flex flex-wrap gap-2 ${index % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex flex-wrap gap-2 ${isMobile ? 'justify-start' : (index % 2 === 0 ? 'justify-end' : 'justify-start')}`}>
                   {education.skills.map((skill, i) => (
                     <motion.span
                       key={skill}
-                      className={`px-3 py-1 text-xs rounded-full bg-${education.color}-500/10 text-${education.color}-400 border border-${education.color}-500/20`}
+                      className={`px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-full bg-${education.color}-500/10 text-${education.color}-400 border border-${education.color}-500/20`}
                       initial={{ opacity: 0, scale: 0.8 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       whileHover={{ scale: 1.05 }}
@@ -1303,12 +1325,12 @@ const EducationTimeline = () => {
           </div>
 
           {/* Timeline Node with Enhanced Design and Connecting Lines */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
+          <div className={`absolute ${isMobile ? 'left-4' : 'left-1/2'} -translate-x-1/2 flex items-center justify-center`}>
             {/* Connecting line to content */}
             <motion.div
-              className={`absolute w-24 h-[2px] ${index % 2 === 0 ? '-right-24' : '-left-24'}`}
+              className={`absolute w-12 sm:w-24 h-[2px] ${isMobile ? '-right-12' : (index % 2 === 0 ? '-right-24' : '-left-24')}`}
               style={{
-                background: `linear-gradient(${index % 2 === 0 ? 'to right' : 'to left'}, ${education.color === 'purple' ? '#A855F7' : '#3B82F6'}, transparent)`,
+                background: `linear-gradient(${isMobile ? 'to right' : (index % 2 === 0 ? 'to right' : 'to left')}, ${education.color === 'purple' ? '#A855F7' : '#3B82F6'}, transparent)`,
               }}
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
@@ -1317,7 +1339,7 @@ const EducationTimeline = () => {
             />
 
             <motion.div
-              className={`w-4 h-4 rounded-full bg-${education.color}-500 relative z-10`}
+              className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-${education.color}-500 relative z-10`}
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
@@ -1340,7 +1362,7 @@ const EducationTimeline = () => {
             {[1, 2].map((ring) => (
               <motion.div
                 key={ring}
-                className={`absolute w-${ring * 6} h-${ring * 6} rounded-full border-2 border-${education.color}-500/50`}
+                className={`absolute w-${ring * 4} h-${ring * 4} sm:w-${ring * 6} sm:h-${ring * 6} rounded-full border-2 border-${education.color}-500/50`}
                 initial={{ scale: 0, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
                 viewport={{ once: true }}
@@ -1388,7 +1410,7 @@ const About = () => {
   }, {} as Record<string, Skill[]>);
 
   return (
-    <section className="min-h-screen py-20 sm:py-32 relative overflow-hidden" ref={containerRef}>
+    <section className="min-h-screen py-12 sm:py-20 lg:py-32 relative overflow-hidden" ref={containerRef}>
       {/* Enhanced Animated Background */}
       <motion.div 
         className="absolute inset-0 z-0"
@@ -1428,9 +1450,9 @@ const About = () => {
         <IntroSection />
         
         {/* Education Section */}
-        <div className="py-20">
+        <div className="py-12 sm:py-20">
           <motion.h2
-            className="text-4xl sm:text-5xl font-bold text-center mb-20"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-12 sm:mb-20"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -1448,7 +1470,7 @@ const About = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true, margin: "-50px" }}
-          className="text-center mb-24 relative"
+          className="text-center mb-16 sm:mb-24 relative"
         >
           {/* Enhanced Glowing Effect */}
           <div className="absolute inset-0">
@@ -1482,16 +1504,26 @@ const About = () => {
           
           <div className="relative">
             <motion.h2 
-              className="text-6xl sm:text-7xl font-bold"
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <span className="inline-block relative">
-                <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient">
+              <div className="relative inline-block">
+                <motion.span
+                  className="block bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                >
                   Technical
-                </span>
+                </motion.span>
                 <motion.div
                   className="absolute -inset-2 bg-purple-500/20 blur-xl rounded-full"
                   animate={{
@@ -1504,12 +1536,21 @@ const About = () => {
                     ease: "easeInOut",
                   }}
                 />
-              </span>
-              <br />
-              <span className="inline-block relative mt-2">
-                <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-blue-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient">
+              </div>
+              <div className="relative inline-block mt-2">
+                <motion.span
+                  className="block bg-gradient-to-r from-blue-400 via-purple-500 to-blue-400 text-transparent bg-clip-text"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                >
                   Expertise
-                </span>
+                </motion.span>
                 <motion.div
                   className="absolute -inset-2 bg-blue-500/20 blur-xl rounded-full"
                   animate={{
@@ -1522,11 +1563,11 @@ const About = () => {
                     ease: "easeInOut",
                   }}
                 />
-              </span>
+              </div>
             </motion.h2>
 
             {/* Animated Underline */}
-            <div className="relative h-1 w-40 mx-auto my-8 overflow-hidden rounded-full">
+            <div className="relative h-1 w-32 sm:w-40 mx-auto my-6 sm:my-8 overflow-hidden rounded-full">
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500"
                 animate={{
@@ -1541,7 +1582,7 @@ const About = () => {
             </div>
 
             <motion.p
-              className="text-2xl text-gray-300 max-w-3xl mx-auto relative leading-relaxed"
+              className="text-lg sm:text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto relative leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -1550,9 +1591,8 @@ const About = () => {
               A comprehensive skill set that enables me to deliver
             </motion.p>
             
-            {/* Separated the span with motion.div into its own container */}
             <motion.div 
-              className="relative inline-block mx-2 my-2 text-2xl"
+              className="relative inline-block mx-2 my-2 text-lg sm:text-xl lg:text-2xl"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
@@ -1575,7 +1615,7 @@ const About = () => {
             </motion.div>
 
             <motion.p
-              className="text-2xl text-gray-300 max-w-3xl mx-auto relative leading-relaxed"
+              className="text-lg sm:text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto relative leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
@@ -1588,7 +1628,7 @@ const About = () => {
 
         {/* Enhanced Category Navigation */}
         <motion.div 
-          className="relative mb-16"
+          className="relative mb-12 sm:mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -1611,7 +1651,7 @@ const About = () => {
             }}
           />
 
-          <div className="relative flex flex-wrap justify-center gap-4 p-2">
+          <div className="relative flex flex-wrap justify-center gap-2 sm:gap-4 p-2">
             {Object.keys(skillsByCategory).map((category, index) => (
               <motion.button
                 key={category}
@@ -1636,14 +1676,14 @@ const About = () => {
                 />
                 
                 {/* Button Content */}
-                <div className="relative px-6 py-3 rounded-lg bg-gradient-to-r from-purple-900/50 to-blue-900/50 backdrop-blur-xl border border-white/10 overflow-hidden">
+                <div className="relative px-4 sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-purple-900/50 to-blue-900/50 backdrop-blur-xl border border-white/10 overflow-hidden">
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20"
                     initial={{ x: '-100%' }}
                     whileHover={{ x: '100%' }}
                     transition={{ duration: 1 }}
                   />
-                  <span className="relative z-10 text-lg font-medium bg-gradient-to-r from-white to-purple-200 text-transparent bg-clip-text">
+                  <span className="relative z-10 text-base sm:text-lg font-medium bg-gradient-to-r from-white to-purple-200 text-transparent bg-clip-text">
                     {category}
                   </span>
                 </div>
@@ -1661,6 +1701,7 @@ const About = () => {
                       y: [-10, 10, -10],
                       x: [-5, 5, -5],
                       opacity: [0, 0.8, 0],
+                      scale: [1, 1.5, 1],
                     }}
                     transition={{
                       duration: 2 + i,
@@ -1694,7 +1735,7 @@ const About = () => {
             }}
           />
 
-          <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {skills.map((skill, index) => (
               <SkillCard key={skill.name} skill={skill} index={index} />
             ))}
