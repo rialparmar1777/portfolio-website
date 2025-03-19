@@ -3,14 +3,19 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import TypewriterText from './TypewriterText';
+import { useState, useRef } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { useAnimation } from 'framer-motion';
 
-interface HeroProps {
-  onDownload: () => void;
-  isDownloading: boolean;
-  downloadProgress: number;
-}
+const Hero = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { ref: containerRef, inView } = useInView({
+    threshold: 0,
+    triggerOnce: false,
+    rootMargin: "-100px",
+  });
+  const controls = useAnimation();
 
-const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
   return (
     <div className="h-full flex items-center justify-center relative px-4 overflow-hidden">
       {/* Background Decorative Elements */}
@@ -108,7 +113,6 @@ const Hero = ({ onDownload, isDownloading, downloadProgress }: HeroProps) => {
             
             {/* Download CV Button */}
             <motion.button 
-              onClick={onDownload}
               className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 text-white font-semibold overflow-hidden flex items-center justify-center gap-2 w-full sm:w-auto"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

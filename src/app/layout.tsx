@@ -10,20 +10,28 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://rialparmar.vercel.app'),
   title: "Rial Parmar | Full Stack Developer",
-  description: "An Accomplished Full Stack Developer with expertise in both Front-End and Back-End Technologies. View my portfolio to see my latest projects and skills.",
-  keywords: "Rial Parmar, Full Stack Developer, Web Developer, Software Engineer, React, Node.js, TypeScript",
+  description: "Portfolio of Rial Parmar, a passionate Full Stack Developer specializing in modern web technologies and creating exceptional digital experiences.",
+  keywords: "Full Stack Developer, Web Development, React, Next.js, TypeScript, Portfolio",
   authors: [{ name: "Rial Parmar" }],
+  creator: "Rial Parmar",
+  publisher: "Rial Parmar",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://rialparmar.dev",
-    siteName: "Rial Parmar Portfolio",
+    url: "https://rialparmar.vercel.app",
     title: "Rial Parmar | Full Stack Developer",
-    description: "An Accomplished Full Stack Developer with expertise in both Front-End and Back-End Technologies.",
+    description: "Portfolio of Rial Parmar, a passionate Full Stack Developer specializing in modern web technologies and creating exceptional digital experiences.",
+    siteName: "Rial Parmar Portfolio",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Rial Parmar Portfolio",
@@ -33,8 +41,23 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Rial Parmar | Full Stack Developer",
-    description: "An Accomplished Full Stack Developer with expertise in both Front-End and Back-End Technologies.",
-    images: ["/og-image.png"],
+    description: "Portfolio of Rial Parmar, a passionate Full Stack Developer specializing in modern web technologies and creating exceptional digital experiences.",
+    images: ["/og-image.jpg"],
+    creator: "@rialparmar",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-site-verification",
   },
 };
 
@@ -45,6 +68,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} scroll-smooth`}>
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className="bg-black text-white antialiased">
         <Toaster
           position="top-right"

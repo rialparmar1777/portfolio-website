@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useRef } from 'react';
-import { useScroll, useTransform, useSpring } from 'framer-motion';
+import { useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { useAnimation } from 'framer-motion';
 
 interface Project {
   title: string;
@@ -263,8 +264,10 @@ const projects: Project[] = [
 ];
 
 const Projects = () => {
-  const [activeProject, setActiveProject] = useState<number | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: false, margin: "-100px" });
+  const controls = useAnimation();
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]

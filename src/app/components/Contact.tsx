@@ -16,7 +16,6 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -58,7 +57,6 @@ const Contact = () => {
       );
 
       if (result.text === 'OK') {
-        setSubmitStatus('success');
         setFormData({ from_name: '', reply_to: '', subject: '', message: '' });
         toast.success('Message sent successfully! I will get back to you soon.');
       } else {
@@ -66,11 +64,9 @@ const Contact = () => {
       }
     } catch (error) {
       console.error('Email error:', error);
-      setSubmitStatus('error');
       toast.error('Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
-      setTimeout(() => setSubmitStatus('idle'), 3000);
     }
   };
 
