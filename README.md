@@ -2,7 +2,8 @@
 
 A stunning, responsive portfolio website built with Next.js 14, TypeScript, and Tailwind CSS. Features smooth animations, interactive UI elements, and a beautiful design that showcases your work effectively.
 
-![Portfolio Preview](public/images/preview.png)
+Portfolio Preview![PreviewPortfolio](https://github.com/user-attachments/assets/d971640a-b3ef-49f1-b359-2cc85a39474a)
+
 
 ## 🌟 Features
 
