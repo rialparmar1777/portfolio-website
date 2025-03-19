@@ -390,8 +390,10 @@ const Hero = () => {
             </motion.a>
             
             {/* Download CV Button */}
-            <motion.button 
-              className="group relative px-8 py-4 text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold"
+            <motion.a 
+              href="/Resume.pdf"
+              download="Rial_Parmar_Resume.pdf"
+              className="group relative px-8 py-4 text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -436,7 +438,7 @@ const Hero = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </motion.svg>
               </span>
-            </motion.button>
+            </motion.a>
           </motion.div>
         </motion.div>
 
