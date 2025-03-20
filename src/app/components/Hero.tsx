@@ -391,7 +391,7 @@ const Hero = () => {
             
             {/* Download CV Button */}
             <motion.a 
-              href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/Resume.pdf`}
+              href="/Resume.pdf"
               download="Rial_Parmar_Resume.pdf"
               className="group relative px-8 py-4 text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold cursor-pointer"
               whileHover={{ scale: 1.05 }}
