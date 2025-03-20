@@ -4,9 +4,10 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
     formats: ['image/avif', 'image/webp'],
+    unoptimized: true,
   },
   // Enable static exports for better performance
-  output: 'standalone',
+  output: 'export',
   // Enable compression
   compress: true,
   // Enable production source maps
@@ -15,6 +16,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  basePath: '/Portfolio',
 }
 
 module.exports = nextConfig 
