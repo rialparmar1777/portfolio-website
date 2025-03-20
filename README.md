@@ -14,11 +14,13 @@ Portfolio Preview![PreviewPortfolio](https://github.com/user-attachments/assets/
   - Smooth scroll animations
   - Interactive project cards
   - Dynamic background effects
+  - Animated skill cards
 - **Performance Optimized**: Built with Next.js for optimal performance
 - **SEO Friendly**: Optimized for search engines
 - **PWA Support**: Installable as a Progressive Web App
 - **Contact Form**: Integrated EmailJS for seamless communication
 - **Dark Mode**: Beautiful dark theme with gradient accents
+- **CV Download**: Easy access to download resume/CV
 
 ## 🛠️ Tech Stack
 
@@ -28,7 +30,7 @@ Portfolio Preview![PreviewPortfolio](https://github.com/user-attachments/assets/
 - **Animations**: Framer Motion
 - **Icons**: React Icons
 - **Email Service**: EmailJS
-- **Deployment**: Vercel
+- **Deployment**: Vercel (Optimized for best performance)
 
 ## 🚀 Getting Started
 
@@ -41,7 +43,7 @@ Portfolio Preview![PreviewPortfolio](https://github.com/user-attachments/assets/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/portfolio.git
+git clone https://github.com/rialparmar1777/Portfolio.git
 cd portfolio
 ```
 
@@ -113,15 +115,19 @@ The portfolio is fully responsive and optimized for:
 - Code splitting and lazy loading
 - Optimized animations for mobile devices
 - Efficient CSS with Tailwind's JIT compiler
+- Server-side rendering for better performance
 
 ## 📦 Deployment
 
-The portfolio is configured for deployment on Vercel:
+The portfolio is optimized for deployment on Vercel:
 
 1. Push your code to GitHub
-2. Connect your repository to Vercel
+2. Import your repository on [Vercel](https://vercel.com)
 3. Add environment variables in Vercel dashboard
-4. Deploy!
+4. Vercel will automatically deploy your site
+5. Get a production URL instantly!
+
+Your site will be deployed to a URL like: `https://your-portfolio.vercel.app`
 
 ## 🤝 Contributing
 
@@ -144,6 +150,7 @@ Rial Parmar
 - [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
 - [Framer Motion](https://www.framer.com/motion/) for the animation library
 - [EmailJS](https://www.emailjs.com/) for the email service
+- [Vercel](https://vercel.com) for the excellent hosting platform
 
 ---
 
