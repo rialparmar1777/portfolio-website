@@ -244,7 +244,7 @@ export default function Home() {
                 >
                   An Accomplished Full Stack Developer with expertise in both Front-End and Back-End Technologies.
 
-Proficient in modern web frameworks and database management, with a track record of delivering high-performance, scalable websites and applications.
+                  Proficient in diagnosing and resolving technical issues across web stacks (JavaScript, SQL, Docker) with strong skills in log analysis, database optimization, and incident documentation for enterprise systems.
                 </motion.p>
 
                 {/* CTA Buttons */}
