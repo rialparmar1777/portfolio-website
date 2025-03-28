@@ -19,9 +19,9 @@ const NavLink = ({ href, text, delay = 0, isMobile = false, onNavigate, onClick 
   useEffect(() => {
     if (!isMobile) {
       controls.start({
-        rotate: [0, 2, -2, 1.5, -1.5, 0],
+        y: [0, -2, 0],
         transition: {
-          duration: 5,
+          duration: 3,
           ease: "easeInOut",
           repeat: Infinity,
           repeatType: "reverse",
@@ -33,27 +33,13 @@ const NavLink = ({ href, text, delay = 0, isMobile = false, onNavigate, onClick 
 
   const sectionId = href.replace('#', '');
 
-  const stringVariants = {
-    initial: { 
-      height: isMobile ? "0" : "2rem",
-      background: "linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 100%)"
-    },
-    hover: { 
-      height: isMobile ? "0" : "2.5rem",
-      background: "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.3) 100%)",
-      transition: { duration: 0.3 }
-    }
-  };
-
   const boxVariants = {
     initial: { y: 0 },
     hover: { 
-      y: isMobile ? 0 : [0, -5, 5, -3, 0],
-      rotate: isMobile ? 0 : [0, 15, -15, 10, -5, 0],
+      y: isMobile ? 0 : -4,
       transition: {
-        duration: 2,
-        ease: "easeInOut",
-        repeat: Infinity
+        duration: 0.2,
+        ease: "easeOut"
       }
     }
   };
@@ -75,33 +61,11 @@ const NavLink = ({ href, text, delay = 0, isMobile = false, onNavigate, onClick 
         <>
           <motion.div 
             className="absolute top-0 left-1/2 w-[1px] origin-top"
-            initial="initial"
-            animate={{
-              scaleY: [1, 1.02, 0.98, 1],
-              transition: {
-                duration: 4,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }
-            }}
-            whileHover="hover"
-            variants={stringVariants}
+            initial={{ height: 0 }}
+            animate={{ height: "2rem" }}
+            transition={{ duration: 0.5, delay: delay }}
             style={{ 
-              background: "linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 100%)",
-              transformOrigin: "top"
-            }}
-          />
-          
-          <motion.div
-            className="absolute -top-1 left-1/2 w-2 h-2 rounded-full bg-white/40 shadow-glow"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.4, 0.6, 0.4],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              repeatType: "reverse"
+              background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.5), transparent)",
             }}
           />
         </>
@@ -118,9 +82,9 @@ const NavLink = ({ href, text, delay = 0, isMobile = false, onNavigate, onClick 
           setIsHovered(false);
           if (!isMobile) {
             controls.start({
-              rotate: [0, 2, -2, 1.5, -1.5, 0],
+              y: [0, -2, 0],
               transition: {
-                duration: 5,
+                duration: 3,
                 ease: "easeInOut",
                 repeat: Infinity,
                 repeatType: "reverse",
@@ -147,10 +111,12 @@ const NavLink = ({ href, text, delay = 0, isMobile = false, onNavigate, onClick 
         >
           <motion.div
             className={`
-              px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 
-              border border-white/20 backdrop-blur-sm shadow-lg
-              hover:from-purple-500/30 hover:to-pink-500/30 hover:border-white/30
-              transition-colors duration-300
+              px-6 py-3 rounded-lg 
+              bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10
+              border border-white/10 backdrop-blur-sm
+              hover:from-purple-500/20 hover:via-pink-500/20 hover:to-purple-500/20
+              hover:border-white/20
+              transition-all duration-300
               ${isMobile ? 'w-full text-center text-lg' : ''}
             `}
             whileHover={{
@@ -166,20 +132,6 @@ const NavLink = ({ href, text, delay = 0, isMobile = false, onNavigate, onClick 
               className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg opacity-0 hover:opacity-10 transition-opacity duration-300"
             />
           </motion.div>
-          {!isMobile && (
-            <motion.div
-              className="absolute -bottom-1 left-0 right-0 h-8 bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-lg"
-              animate={{
-                opacity: [0.3, 0.5, 0.3],
-                scale: [1, 1.1, 1],
-                transition: {
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "mirror"
-                }
-              }}
-            />
-          )}
         </motion.a>
       </motion.div>
     </div>
@@ -205,7 +157,6 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
     }
   });
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -250,15 +201,74 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
       className="fixed top-0 left-0 right-0 z-50"
     >
       <motion.div 
-        className="absolute inset-0 bg-black/30 backdrop-blur-md"
+        className="absolute inset-0 bg-gradient-to-b from-black/95 via-black/80 to-black/60 backdrop-blur-2xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       />
 
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-[1px]"
+        style={{
+          background: "linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent)",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      />
+
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-[1px]"
+        style={{
+          background: "linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent)",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      />
+
+      <motion.div
+        className="absolute left-0 top-0 bottom-0 w-[1px]"
+        style={{
+          background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent)",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      />
+      <motion.div
+        className="absolute right-0 top-0 bottom-0 w-[1px]"
+        style={{
+          background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent)",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="flex items-center justify-center h-20 sm:h-36">
-          <div className="hidden md:flex items-center gap-20">
+        <div className="flex items-center justify-between h-20 sm:h-24">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative group"
+          >
+            <motion.div
+              className="text-white text-2xl font-bold tracking-wider"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                RP
+              </span>
+            </motion.div>
+            <motion.div
+              className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+            />
+          </motion.div>
+
+          <div className="hidden md:flex items-center gap-16">
             <NavLink href="#home" text="Home" delay={0} onNavigate={onNavigate} />
             <NavLink href="#about" text="About" delay={0.1} onNavigate={onNavigate} />
             <NavLink href="#projects" text="Projects" delay={0.2} onNavigate={onNavigate} />
@@ -266,9 +276,10 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
           </div>
 
           <motion.button
-            className="md:hidden menu-button relative z-50 p-2.5 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-colors duration-300"
+            className="md:hidden menu-button relative z-50 p-3 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-colors duration-300"
             onClick={() => setIsOpen(!isOpen)}
             whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.05 }}
           >
             <motion.div
               className="w-6 h-6 relative"
@@ -306,7 +317,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="md:hidden mobile-menu fixed inset-0 top-20 bg-gradient-to-b from-black/95 to-black/90 backdrop-blur-xl z-40"
+            className="md:hidden mobile-menu fixed inset-0 top-20 bg-gradient-to-b from-black/95 to-black/90 backdrop-blur-2xl z-40"
             initial="closed"
             animate="open"
             exit="closed"
