@@ -3,13 +3,14 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import TypewriterText from './TypewriterText';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useAnimation } from 'framer-motion';
 
 const Hero = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
   const { ref: containerRef, inView } = useInView({
     threshold: 0,
     triggerOnce: false,
@@ -17,7 +18,20 @@ const Hero = () => {
   });
   const controls = useAnimation();
 
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (isMobile) return;
+    
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
     const x = (clientX / innerWidth - 0.5) * 2;
@@ -28,7 +42,7 @@ const Hero = () => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center relative px-4 overflow-hidden bg-gradient-to-b from-black via-purple-950/20 to-black"
+      className="min-h-screen flex items-center justify-center relative px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-black via-purple-950/20 to-black"
       onMouseMove={handleMouseMove}
     >
       {/* Enhanced Background Elements */}
@@ -38,39 +52,41 @@ const Hero = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        {/* Animated Cursor Glow */}
-        <motion.div
-          className="absolute w-[500px] h-[500px] pointer-events-none"
-          style={{
-            background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.15), transparent 50%)',
-            left: cursorPosition.x - 250,
-            top: cursorPosition.y - 250,
-            transform: 'translate3d(0, 0, 0)',
-          }}
-          animate={{
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+        {/* Animated Cursor Glow - Hidden on Mobile */}
+        {!isMobile && (
+          <motion.div
+            className="absolute w-[500px] h-[500px] pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.15), transparent 50%)',
+              left: cursorPosition.x - 250,
+              top: cursorPosition.y - 250,
+              transform: 'translate3d(0, 0, 0)',
+            }}
+            animate={{
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        )}
 
-        {/* Enhanced Grid Lines */}
+        {/* Enhanced Grid Lines - Reduced on Mobile */}
         <div className="absolute inset-0" style={{ perspective: "1000px" }}>
-          {[...Array(30)].map((_, i) => (
+          {[...Array(isMobile ? 15 : 30)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute h-[1px] w-full"
               style={{ 
-                top: `${i * 3.33}%`,
+                top: `${i * (isMobile ? 6.66 : 3.33)}%`,
                 background: `linear-gradient(90deg, 
                   transparent,
                   ${i % 2 ? 'rgba(168, 85, 247, 0.15)' : 'rgba(59, 130, 246, 0.15)'} 50%,
                   transparent
                 )`,
-                transform: `rotateX(${mousePosition.y * 5}deg)`,
+                transform: `rotateX(${mousePosition.y * (isMobile ? 2 : 5)}deg)`,
               }}
               animate={{
                 opacity: [0.1, 0.3, 0.1],
@@ -86,9 +102,9 @@ const Hero = () => {
           ))}
         </div>
 
-        {/* Enhanced Gradient Orbs */}
+        {/* Enhanced Gradient Orbs - Adjusted for Mobile */}
         <motion.div 
-          className="absolute top-0 left-0 w-[800px] h-[800px] opacity-50"
+          className="absolute top-0 left-0 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] opacity-50"
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360],
@@ -99,11 +115,11 @@ const Hero = () => {
             ease: "linear",
           }}
         >
-          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[120px]" />
+          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[60px] sm:blur-[120px]" />
         </motion.div>
         
         <motion.div 
-          className="absolute bottom-0 right-0 w-[800px] h-[800px] opacity-50"
+          className="absolute bottom-0 right-0 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] opacity-50"
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [360, 180, 0],
@@ -114,17 +130,17 @@ const Hero = () => {
             ease: "linear",
           }}
         >
-          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[120px]" />
+          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[60px] sm:blur-[120px]" />
         </motion.div>
 
-        {/* Enhanced Floating Particles */}
-        {[...Array(30)].map((_, i) => (
+        {/* Enhanced Floating Particles - Reduced on Mobile */}
+        {[...Array(isMobile ? 15 : 30)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute rounded-full"
             style={{
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
+              width: `${Math.random() * (isMobile ? 2 : 3) + 1}px`,
+              height: `${Math.random() * (isMobile ? 2 : 3) + 1}px`,
               background: i % 2 ? 'rgba(168, 85, 247, 0.5)' : 'rgba(59, 130, 246, 0.5)',
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
@@ -146,22 +162,22 @@ const Hero = () => {
         ))}
       </motion.div>
 
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-12 max-w-7xl mx-auto w-full relative z-10">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-8 sm:gap-12 max-w-7xl mx-auto w-full relative z-10">
         {/* Enhanced Text Content */}
         <motion.div 
-          className="text-center lg:text-left lg:flex-1 max-w-2xl backdrop-blur-sm rounded-3xl p-8 bg-white/5"
+          className="text-center lg:text-left lg:flex-1 max-w-2xl backdrop-blur-sm rounded-3xl p-6 sm:p-8 bg-white/5"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           style={{
-            transform: `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)`,
+            transform: isMobile ? 'none' : `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)`,
             transition: "transform 0.3s ease-out",
             boxShadow: '0 0 40px rgba(168, 85, 247, 0.1)',
           }}
         >
-          <div className="relative mb-8">
+          <div className="relative mb-6 sm:mb-8">
             <motion.span
-              className="absolute -top-10 left-0 lg:left-2 text-sm sm:text-base lg:text-lg font-mono"
+              className="absolute -top-8 sm:-top-10 left-0 lg:left-2 text-sm sm:text-base lg:text-lg font-mono"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
@@ -174,7 +190,7 @@ const Hero = () => {
               Hello, I'm
             </motion.span>
             <motion.h1 
-              className="text-5xl sm:text-6xl lg:text-9xl font-bold relative"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-9xl font-bold relative"
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ 
@@ -207,7 +223,7 @@ const Hero = () => {
               </span>
               {/* Enhanced Animated Underline */}
               <motion.div 
-                className="absolute -bottom-3 left-0 w-full h-1.5 rounded-full overflow-hidden"
+                className="absolute -bottom-2 sm:-bottom-3 left-0 w-full h-1 sm:h-1.5 rounded-full overflow-hidden"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.8, duration: 0.6 }}
@@ -233,12 +249,12 @@ const Hero = () => {
 
           {/* Enhanced Typewriter Section */}
           <motion.div 
-            className="text-xl sm:text-2xl lg:text-3xl mb-6 sm:mb-8 relative"
+            className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-4 sm:mb-6 md:mb-8 relative"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
           >
-            <div className="relative p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10">
+            <div className="relative p-3 sm:p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10">
               <TypewriterText />
               <motion.div
                 className="absolute inset-0 rounded-xl"
@@ -259,12 +275,12 @@ const Hero = () => {
 
           {/* Enhanced Professional Summary */}
           <motion.p
-            className="text-base sm:text-lg text-gray-300/90 mb-6 sm:mb-8 leading-relaxed relative"
+            className="text-sm sm:text-base md:text-lg text-gray-300/90 mb-4 sm:mb-6 md:mb-8 leading-relaxed relative"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
           >
-            <span className="relative inline-block p-4 rounded-xl bg-gradient-to-r from-purple-500/5 to-blue-500/5">
+            <span className="relative inline-block p-3 sm:p-4 rounded-xl bg-gradient-to-r from-purple-500/5 to-blue-500/5">
               An Accomplished Full Stack Developer with expertise in both Front-End and Back-End Technologies.
               <motion.div
                 className="absolute inset-0 rounded-xl"
@@ -288,12 +304,12 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.1 }}
-            className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 justify-center lg:justify-start"
           >
             {/* View Projects Button */}
             <motion.a 
               href="#projects"
-              className="group relative px-8 py-4 text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold"
+              className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -321,7 +337,7 @@ const Hero = () => {
               <span className="relative z-10 flex items-center justify-center gap-2">
                 View Projects
                 <motion.svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 sm:w-5 sm:h-5"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -342,7 +358,7 @@ const Hero = () => {
             {/* Contact Me Button */}
             <motion.a 
               href="#contact"
-              className="group relative px-8 py-4 text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold"
+              className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -371,7 +387,7 @@ const Hero = () => {
               <span className="relative z-10 flex items-center justify-center gap-2">
                 Contact Me
                 <motion.svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 sm:w-5 sm:h-5"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -393,7 +409,7 @@ const Hero = () => {
             <motion.a 
               href="/Resume.pdf"
               download="Rial_Parmar_Resume.pdf"
-              className="group relative px-8 py-4 text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold cursor-pointer"
+              className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -422,7 +438,7 @@ const Hero = () => {
               <span className="relative z-10 flex items-center justify-center gap-2">
                 Download CV
                 <motion.svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 sm:w-5 sm:h-5"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -444,17 +460,17 @@ const Hero = () => {
 
         {/* Enhanced Profile Picture */}
         <motion.div 
-          className="relative lg:flex-1 w-full max-w-md flex justify-center items-center"
+          className="relative lg:flex-1 w-full max-w-[280px] sm:max-w-[350px] flex justify-center items-center"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           style={{
-            transform: `perspective(1000px) rotateX(${mousePosition.y * -2}deg) rotateY(${mousePosition.x * -2}deg)`,
+            transform: isMobile ? 'none' : `perspective(1000px) rotateX(${mousePosition.y * -2}deg) rotateY(${mousePosition.x * -2}deg)`,
             transition: "transform 0.3s ease-out",
           }}
         >
           <motion.div
-            className="relative w-[280px] h-[280px] sm:w-[350px] sm:h-[350px]"
+            className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[350px] md:h-[350px]"
             whileHover={{ scale: 1.02 }}
             animate={{
               y: [0, -10, 0],
@@ -554,7 +570,7 @@ const Hero = () => {
 
       {/* Enhanced Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5 }}
@@ -570,9 +586,9 @@ const Hero = () => {
             ease: "easeInOut",
           }}
         >
-          <span className="text-sm text-gray-400">Scroll Down</span>
+          <span className="text-xs sm:text-sm text-gray-400">Scroll Down</span>
           <motion.div
-            className="w-6 h-10 rounded-full border-2 border-gray-400 p-1"
+            className="w-5 h-8 sm:w-6 sm:h-10 rounded-full border-2 border-gray-400 p-1"
             animate={{
               scale: [1, 1.1, 1],
             }}
@@ -583,7 +599,7 @@ const Hero = () => {
             }}
           >
             <motion.div
-              className="w-1.5 h-1.5 rounded-full bg-gray-400 mx-auto"
+              className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-gray-400 mx-auto"
               animate={{
                 y: [0, 12, 0],
               }}
