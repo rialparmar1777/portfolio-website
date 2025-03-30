@@ -1754,6 +1754,174 @@ const About = () => {
     ? skills.filter(skill => skill.category === selectedCategory)
     : skills;
 
+  // Mobile Layout Component
+  const MobileLayout = () => (
+    <section 
+      id="about" 
+      className="min-h-screen py-12 sm:py-16 px-4 sm:px-6 relative overflow-hidden bg-gradient-to-b from-black via-purple-950/20 to-black"
+    >
+      {/* Mobile Background Elements */}
+      <motion.div 
+        className="absolute inset-0 w-full h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        {/* Mobile Gradient Orbs - Reduced Size */}
+        <motion.div 
+          className="absolute top-0 left-0 w-[200px] h-[200px] opacity-20"
+          animate={{
+            scale: [1, 1.1, 1],
+            rotate: [0, 90, 180],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[30px]" />
+        </motion.div>
+        
+        <motion.div 
+          className="absolute bottom-0 right-0 w-[200px] h-[200px] opacity-20"
+          animate={{
+            scale: [1.1, 1, 1.1],
+            rotate: [180, 90, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[30px]" />
+        </motion.div>
+
+        {/* Mobile Grid Lines - Reduced Count */}
+        <div className="absolute inset-0">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute h-[1px] w-full"
+              style={{ 
+                top: `${i * 12.5}%`,
+                background: `linear-gradient(90deg, 
+                  transparent,
+                  ${i % 2 ? 'rgba(168, 85, 247, 0.1)' : 'rgba(59, 130, 246, 0.1)'} 50%,
+                  transparent
+                )`,
+              }}
+              animate={{
+                opacity: [0.1, 0.2, 0.1],
+                scaleX: [0.8, 1, 0.8],
+              }}
+              transition={{
+                duration: 2 + i % 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.1,
+              }}
+            />
+          ))}
+        </div>
+      </motion.div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Mobile Section Header */}
+        <motion.div 
+          className="text-center mb-8 sm:mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2 
+            className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-6"
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ 
+              duration: 0.6, 
+              type: "spring",
+              stiffness: 100
+            }}
+          >
+            <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient">
+              About Me
+            </span>
+          </motion.h2>
+          <motion.p 
+            className="text-gray-300/90 text-base sm:text-lg max-w-xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            A passionate Full Stack Developer with expertise in modern web technologies
+          </motion.p>
+        </motion.div>
+
+        {/* Mobile Content Stack */}
+        <div className="space-y-6 sm:space-y-8">
+          {/* Mobile Intro Section */}
+          <motion.div 
+            className="bg-white/5 backdrop-blur-sm rounded-xl p-6 sm:p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <IntroSection />
+          </motion.div>
+
+          {/* Mobile Skills Section */}
+          <motion.div 
+            className="bg-white/5 backdrop-blur-sm rounded-xl p-6 sm:p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <SkillsSection />
+          </motion.div>
+
+          {/* Mobile Education Timeline */}
+          <motion.div 
+            className="bg-white/5 backdrop-blur-sm rounded-xl p-6 sm:p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <EducationTimeline />
+          </motion.div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .animate-gradient {
+          animation: gradient 4s linear infinite;
+        }
+
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        @media (max-width: 768px) {
+          .prose {
+            font-size: 0.95rem;
+          }
+          .prose p {
+            margin-bottom: 1rem;
+          }
+          .animate-gradient {
+            animation: gradient 4s linear infinite;
+          }
+          .animate-shimmer {
+            animation: shimmer 1.5s infinite;
+          }
+        }
+      `}</style>
+    </section>
+  );
+
   return (
     <section className="min-h-screen py-12 sm:py-20 lg:py-32 relative overflow-hidden" ref={containerRef}>
       {/* Enhanced Animated Background */}

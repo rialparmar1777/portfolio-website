@@ -40,7 +40,400 @@ const Hero = () => {
     setCursorPosition({ x: clientX, y: clientY });
   };
 
-  return (
+  // Mobile Layout Component
+  const MobileLayout = () => (
+    <div className="min-h-screen flex flex-col items-center justify-start pt-16 pb-10 px-4 relative overflow-hidden bg-gradient-to-b from-black via-purple-950/20 to-black">
+      {/* Mobile Background Elements */}
+      <motion.div 
+        className="absolute inset-0 w-full h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
+      >
+        {/* Mobile Gradient Orbs - Enhanced */}
+        <motion.div 
+          className="absolute top-0 left-0 w-[200px] h-[200px] opacity-40"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[30px]" />
+        </motion.div>
+        
+        <motion.div 
+          className="absolute bottom-0 right-0 w-[200px] h-[200px] opacity-40"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[30px]" />
+        </motion.div>
+
+        {/* Mobile Grid Lines - Enhanced */}
+        <div className="absolute inset-0">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute h-[1px] w-full"
+              style={{ 
+                top: `${i * 12.5}%`,
+                background: `linear-gradient(90deg, 
+                  transparent,
+                  ${i % 2 ? 'rgba(168, 85, 247, 0.15)' : 'rgba(59, 130, 246, 0.15)'} 50%,
+                  transparent
+                )`,
+              }}
+              animate={{
+                opacity: [0.1, 0.3, 0.1],
+                scaleX: [0.8, 1, 0.8],
+              }}
+              transition={{
+                duration: 3 + i % 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.1,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Mobile Floating Particles - Enhanced */}
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: `${Math.random() * 2 + 1}px`,
+              height: `${Math.random() * 2 + 1}px`,
+              background: i % 2 ? 'rgba(168, 85, 247, 0.5)' : 'rgba(59, 130, 246, 0.5)',
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              filter: 'blur(1px)',
+            }}
+            animate={{
+              y: [0, -20, 0],
+              x: [-10, 10, -10],
+              scale: [1, 1.5, 1],
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: 2 + Math.random() * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </motion.div>
+
+      {/* Mobile Profile Picture - Enhanced */}
+      <motion.div 
+        className="relative w-[180px] h-[180px] mb-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="relative w-full h-full rounded-full overflow-hidden">
+          <motion.div 
+            className="absolute -inset-2"
+            style={{
+              background: 'conic-gradient(from 0deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2), rgba(168, 85, 247, 0.2))',
+              filter: 'blur(15px)',
+            }}
+            animate={{
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+          
+          <div className="relative w-full h-full rounded-full overflow-hidden backdrop-blur-sm">
+            <Image
+              src="/images/ProfilePicture.jpeg"
+              alt="Rial Parmar"
+              width={400}
+              height={400}
+              className="w-full h-full object-cover"
+              priority
+            />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Mobile Text Content - Enhanced */}
+      <motion.div 
+        className="text-center max-w-sm mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+      >
+        <motion.span
+          className="text-sm font-mono mb-2 block"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          style={{
+            background: 'linear-gradient(to right, #a855f7, #3b82f6)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          Hello, I'm
+        </motion.span>
+
+        <motion.h1 
+          className="text-3xl font-bold mb-3"
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ 
+            duration: 0.8, 
+            type: "spring",
+            stiffness: 100
+          }}
+        >
+          <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient">
+            Rial Parmar
+          </span>
+        </motion.h1>
+
+        {/* Mobile Typewriter Section - Enhanced */}
+        <motion.div 
+          className="text-base mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <div className="relative p-2 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10">
+            <TypewriterText />
+          </div>
+        </motion.div>
+
+        {/* Mobile Professional Summary - Enhanced */}
+        <motion.p
+          className="text-sm text-gray-300/90 mb-6 leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+        >
+          An Accomplished Full Stack Developer with expertise in both Front-End and Back-End Technologies.
+        </motion.p>
+
+        {/* Mobile CTA Buttons - Enhanced */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1 }}
+          className="flex flex-col gap-3"
+        >
+          {/* View Projects Button */}
+          <motion.a 
+            href="#projects"
+            className="group relative px-5 py-2.5 text-sm rounded-lg overflow-hidden w-full text-center font-semibold"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <motion.div
+              className="absolute inset-0 rounded-lg"
+              style={{
+                background: 'linear-gradient(45deg, #a855f7, #3b82f6)',
+              }}
+              animate={{
+                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              View Projects
+              <motion.svg
+                className="w-3.5 h-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                animate={{
+                  x: [0, 5, 0],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </motion.svg>
+            </span>
+          </motion.a>
+
+          {/* Contact Me Button */}
+          <motion.a 
+            href="#contact"
+            className="group relative px-5 py-2.5 text-sm rounded-lg overflow-hidden w-full text-center font-semibold"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <motion.div
+              className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/10 to-blue-500/10"
+              animate={{
+                opacity: [0.5, 0.8, 0.5],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+            <motion.div
+              className="absolute inset-0 rounded-lg border border-purple-500/20"
+              animate={{
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              Contact Me
+              <motion.svg
+                className="w-3.5 h-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                animate={{
+                  y: [0, -3, 0],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </motion.svg>
+            </span>
+          </motion.a>
+          
+          {/* Download CV Button */}
+          <motion.a 
+            href="/Resume.pdf"
+            download="Rial_Parmar_Resume.pdf"
+            className="group relative px-5 py-2.5 text-sm rounded-lg overflow-hidden w-full text-center font-semibold cursor-pointer"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <motion.div
+              className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/5 to-white/10"
+              animate={{
+                opacity: [0.3, 0.5, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+            <motion.div
+              className="absolute inset-0 rounded-lg border border-white/10"
+              animate={{
+                opacity: [0.2, 0.4, 0.2],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              Download CV
+              <motion.svg
+                className="w-3.5 h-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                animate={{
+                  y: [0, 3, 0],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </motion.svg>
+            </span>
+          </motion.a>
+        </motion.div>
+      </motion.div>
+
+      {/* Mobile Scroll Indicator - Enhanced */}
+      <motion.div
+        className="absolute bottom-4 left-1/2 -translate-x-1/2"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5 }}
+      >
+        <motion.div
+          className="flex flex-col items-center gap-1"
+          animate={{
+            y: [0, 8, 0],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          <span className="text-xs text-gray-400">Scroll Down</span>
+          <motion.div
+            className="w-4 h-6 rounded-full border border-gray-400 p-1"
+            animate={{
+              scale: [1, 1.05, 1],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <motion.div
+              className="w-1 h-1 rounded-full bg-gray-400 mx-auto"
+              animate={{
+                y: [0, 8, 0],
+              }}
+              transition={{
+                duration: 1.2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+
+  // Desktop Layout Component
+  const DesktopLayout = () => (
     <div 
       className="min-h-screen flex items-center justify-center relative px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-black via-purple-950/20 to-black"
       onMouseMove={handleMouseMove}
@@ -626,6 +1019,8 @@ const Hero = () => {
       `}</style>
     </div>
   );
+
+  return isMobile ? <MobileLayout /> : <DesktopLayout />;
 };
 
 export default Hero; 
