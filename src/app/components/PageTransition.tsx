@@ -1,340 +1,367 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useThemeStyles } from '../hooks/useThemeStyles';
+import { FaRocket, FaFire } from 'react-icons/fa';
 
 interface PageTransitionProps {
   children: React.ReactNode;
-  isTransitioning: boolean;
 }
 
-const PageTransition = ({ children, isTransitioning }: PageTransitionProps) => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isReducedMotion, setIsReducedMotion] = useState(false);
+const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [rocketLaunched, setRocketLaunched] = useState(false);
+  const [rocketBlasted, setRocketBlasted] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showCountdown, setShowCountdown] = useState(false);
+  const { getBackgroundColor, getTextColor, isDark } = useThemeStyles();
 
   useEffect(() => {
-    setMounted(true);
-    
-    // Check for mobile and reduced motion preferences
-    const checkDevicePreferences = () => {
-      setIsMobile(window.innerWidth <= 768);
-      const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-      setIsReducedMotion(mediaQuery.matches);
-    };
+    // Show welcome message first
+    const welcomeTimer = setTimeout(() => {
+      setShowWelcome(true);
+    }, 500);
 
-    checkDevicePreferences();
-    setDimensions({
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
+    // Start countdown after welcome message
+    const countdownTimer = setTimeout(() => {
+      setShowCountdown(true);
+      const interval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            // Add a small delay before launching the rocket
+            setTimeout(() => {
+              setRocketLaunched(true);
+              // Add a delay before the blast effect
+              setTimeout(() => {
+                setRocketBlasted(true);
+              }, 1200);
+            }, 800);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
 
-    const handleResize = () => {
-      setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-      checkDevicePreferences();
-    };
+      return () => clearInterval(interval);
+    }, 2000);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isMobile) {
-        setMousePosition({ x: e.clientX, y: e.clientY });
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
+    // Hide loading screen after rocket launch
+    const launchTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 5500);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(welcomeTimer);
+      clearTimeout(countdownTimer);
+      clearTimeout(launchTimer);
     };
-  }, [isMobile]);
-
-  const welcomeText = "Welcome to Rial's Portfolio".split('');
-  const particleCount = isMobile ? 30 : 100;
-
-  if (!mounted) return null;
+  }, []);
 
   return (
     <>
       <AnimatePresence mode="wait">
-        {isTransitioning && (
+        {isLoading ? (
           <motion.div
-            key="transition"
-            className="fixed inset-0 z-[150] pointer-events-none"
+            key="loading"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            style={{ 
+              background: isDark 
+                ? 'radial-gradient(circle at center, rgba(17, 24, 39, 0.95), rgba(0, 0, 0, 0.98))' 
+                : 'radial-gradient(circle at center, rgba(243, 244, 246, 0.95), rgba(229, 231, 235, 0.98))'
+            }}
           >
-            {/* Welcome Text */}
-            <motion.div 
-              className="absolute inset-0 flex items-center justify-center z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: isMobile ? 0.5 : 0.8 }}
-            >
-              <div className="relative">
-                {/* Text Background Glow */}
+            <div className="text-center max-w-md px-4">
+              {/* Welcome Message */}
+              <AnimatePresence>
+                {showWelcome && !showCountdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="mb-8"
+                  >
+                    <motion.h2 
+                      className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      Welcome to Rial's Portfolio
+                    </motion.h2>
+                    <motion.p 
+                      className="text-lg mb-6"
+                      style={{ color: getTextColor('secondary') }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      Exploring the universe of web development
+                    </motion.p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Rocket Animation */}
+              <div className="relative h-80 flex items-center justify-center">
+                {/* Initial Rocket */}
                 <motion.div
-                  className="absolute inset-0 blur-2xl sm:blur-3xl opacity-50"
-                  style={{
-                    background: 'linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899)',
+                  className="relative z-10"
+                  initial={{ y: 0 }}
+                  animate={rocketLaunched ? {
+                    y: [-20, -350],
+                    opacity: [1, 1],
+                    scale: [1, 1.2],
+                    rotate: [0, 0]
+                  } : {}}
+                  transition={{ 
+                    duration: 1.8,
+                    ease: [0.16, 1, 0.3, 1] // Custom easing for more dramatic launch
                   }}
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.3, 0.5, 0.3],
+                >
+                  <FaRocket 
+                    className="w-20 h-20 text-purple-500" 
+                    style={{ 
+                      filter: "drop-shadow(0 0 15px rgba(147, 51, 234, 0.7))",
+                      transform: "rotate(-90deg)"
+                    }}
+                  />
+                  
+                  {/* Rocket Fire */}
+                  <motion.div
+                    className="absolute -bottom-2 left-1/2 transform -translate-x-1/2"
+                    animate={rocketLaunched ? {
+                      scale: [1, 1.5, 1],
+                      opacity: [1, 0.9, 0.7]
+                    } : {}}
+                    transition={{ 
+                      duration: 0.3,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                  >
+                    <FaFire className="w-10 h-10 text-orange-500" />
+                  </motion.div>
+                </motion.div>
+                
+                {/* Rocket Trail */}
+                <motion.div
+                  className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-24"
+                  style={{ 
+                    background: "linear-gradient(to bottom, #9333EA, transparent)",
+                    borderRadius: "0 0 4px 4px"
                   }}
-                  transition={{
-                    duration: isMobile ? 1.5 : 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
+                  animate={rocketLaunched ? {
+                    height: [24, 48, 24],
+                    opacity: [1, 0.8, 0],
+                    y: [0, 30, 60]
+                  } : {}}
+                  transition={{ 
+                    duration: 1.8,
+                    ease: "easeOut"
                   }}
                 />
                 
-                {/* Animated Text */}
-                <div className={`relative flex gap-[2px] overflow-hidden ${
-                  isMobile ? 'text-2xl sm:text-3xl' : 'text-4xl md:text-6xl'
-                } font-bold text-white tracking-wider`}>
-                  {welcomeText.map((char, index) => (
-                    <motion.span
-                      key={index}
-                      initial={{ y: 100, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -100, opacity: 0 }}
-                      transition={{
-                        duration: isMobile ? 0.6 : 0.8,
-                        delay: index * (isMobile ? 0.03 : 0.04),
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                      className="inline-block"
+                {/* Blast Effect - Only appears after rocket has gone up */}
+                {rocketBlasted && (
+                  <>
+                    {/* Blast Shockwave */}
+                    <motion.div
+                      className="absolute top-0 left-1/2 transform -translate-x-1/2 rounded-full"
                       style={{
-                        textShadow: '0 0 20px rgba(255,255,255,0.5)',
+                        width: "250px",
+                        height: "250px",
+                        background: "radial-gradient(circle, rgba(147, 51, 234, 0.9) 0%, rgba(59, 130, 246, 0.7) 50%, transparent 100%)",
+                        filter: "blur(10px)"
+                      }}
+                      initial={{ scale: 0, opacity: 1 }}
+                      animate={{ 
+                        scale: [0, 2.5, 4],
+                        opacity: [1, 0.8, 0]
+                      }}
+                      transition={{ 
+                        duration: 1.2,
+                        ease: "easeOut"
+                      }}
+                    />
+                    
+                    {/* Blast Particles */}
+                    {Array.from({ length: 100 }).map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 rounded-full"
+                        style={{ 
+                          left: `${Math.random() * 100}%`,
+                          top: `${Math.random() * 100}%`,
+                          background: i % 3 === 0 ? '#9333EA' : i % 3 === 1 ? '#3B82F6' : '#F59E0B',
+                          filter: "blur(1px)"
+                        }}
+                        initial={{ 
+                          scale: 0,
+                          opacity: 1
+                        }}
+                        animate={{ 
+                          scale: [0, 2, 0],
+                          opacity: [1, 0.9, 0],
+                          x: [0, (Math.random() - 0.5) * 400],
+                          y: [0, (Math.random() - 0.5) * 400]
+                        }}
+                        transition={{ 
+                          duration: 1.8,
+                          delay: i * 0.02
+                        }}
+                      />
+                    ))}
+                    
+                    {/* Rocket Blast Animation */}
+                    <motion.div
+                      className="absolute top-0 left-1/2 transform -translate-x-1/2 z-20"
+                      initial={{ y: -350, scale: 1.2, opacity: 1 }}
+                      animate={{ 
+                        y: [-350, -600],
+                        scale: [1.2, 2],
+                        opacity: [1, 0],
+                        rotate: [0, 15]
+                      }}
+                      transition={{ 
+                        duration: 1.8,
+                        ease: "easeOut"
                       }}
                     >
-                      {char === ' ' ? '\u00A0' : char}
-                    </motion.span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Initial Flash Effect */}
-            {!isReducedMotion && (
-              <motion.div
-                className="absolute inset-0 bg-white"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.8, 0] }}
-                transition={{
-                  duration: isMobile ? 0.5 : 0.7,
-                  times: [0, 0.15, 1],
-                  ease: "easeInOut"
-                }}
-              />
-            )}
-
-            {/* Galaxy Explosion Effect */}
-            <motion.div
-              className="absolute inset-0 backdrop-blur-2xl sm:backdrop-blur-3xl"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ 
-                scale: [0, 1.2, 1],
-                opacity: [0, 1, 0]
-              }}
-              exit={{ scale: 1.5, opacity: 0 }}
-              transition={{ 
-                duration: isMobile ? 1.2 : 1.5, 
-                ease: [0.22, 1, 0.36, 1] 
-              }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 to-blue-900/60" />
-              <motion.div
-                className="absolute inset-0"
-                animate={{
-                  opacity: [0.4, 0.6, 0.4],
-                  background: [
-                    'radial-gradient(circle at center, rgba(147,51,234,0.7) 0%, rgba(59,130,246,0.7) 100%)',
-                    'radial-gradient(circle at center, rgba(236,72,153,0.7) 0%, rgba(147,51,234,0.7) 100%)',
-                    'radial-gradient(circle at center, rgba(147,51,234,0.7) 0%, rgba(59,130,246,0.7) 100%)',
-                  ]
-                }}
-                transition={{ 
-                  duration: isMobile ? 4 : 6, 
-                  repeat: Infinity, 
-                  ease: 'linear' 
-                }}
-              />
-            </motion.div>
-
-            {/* Animated Rings - Only show on non-mobile */}
-            {!isMobile && !isReducedMotion && (
-              <div className="absolute inset-0 overflow-hidden">
-                {[...Array(3)].map((_, i) => (
+                      <FaRocket 
+                        className="w-20 h-20 text-purple-500" 
+                        style={{ 
+                          filter: "drop-shadow(0 0 20px rgba(147, 51, 234, 0.9))",
+                          transform: "rotate(-90deg)"
+                        }}
+                      />
+                      
+                      {/* Enhanced Rocket Fire */}
+                      <motion.div
+                        className="absolute -bottom-2 left-1/2 transform -translate-x-1/2"
+                        animate={{
+                          scale: [1, 2.5, 1],
+                          opacity: [1, 0.9, 0.7]
+                        }}
+                        transition={{ 
+                          duration: 0.3,
+                          repeat: Infinity,
+                          repeatType: "reverse"
+                        }}
+                      >
+                        <FaFire className="w-20 h-20 text-orange-500" />
+                      </motion.div>
+                    </motion.div>
+                    
+                    {/* Secondary Blast Wave */}
+                    <motion.div
+                      className="absolute top-0 left-1/2 transform -translate-x-1/2 rounded-full"
+                      style={{
+                        width: "150px",
+                        height: "150px",
+                        background: "radial-gradient(circle, rgba(245, 158, 11, 0.9) 0%, rgba(239, 68, 68, 0.7) 50%, transparent 100%)",
+                        filter: "blur(8px)"
+                      }}
+                      initial={{ scale: 0, opacity: 1 }}
+                      animate={{ 
+                        scale: [0, 2, 3],
+                        opacity: [1, 0.7, 0]
+                      }}
+                      transition={{ 
+                        duration: 1,
+                        delay: 0.3,
+                        ease: "easeOut"
+                      }}
+                    />
+                  </>
+                )}
+                
+                {/* Countdown */}
+                <AnimatePresence>
+                  {showCountdown && !rocketLaunched && countdown > 0 && (
+                    <motion.div
+                      className="absolute top-0 left-1/2 transform -translate-x-1/2"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ 
+                        scale: [0, 1.2, 1],
+                        opacity: [0, 1, 1]
+                      }}
+                      exit={{ 
+                        scale: [1, 1.2, 0],
+                        opacity: [1, 1, 0]
+                      }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <div className="w-24 h-24 rounded-full flex items-center justify-center text-5xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg">
+                        {countdown}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                
+                {/* Launch Text */}
+                {rocketLaunched && !rocketBlasted && (
                   <motion.div
-                    key={`ring-${i}`}
-                    className="absolute rounded-full border border-white/25"
-                    style={{
-                      width: `${800 + i * 160}px`,
-                      height: `${800 + i * 160}px`,
-                      left: `calc(50% - ${400 + i * 80}px)`,
-                      top: `calc(50% - ${400 + i * 80}px)`,
-                    }}
-                    initial={{ scale: 2.4, opacity: 0 }}
-                    animate={{
-                      scale: [2.4, 1.4, 0.98, 1],
-                      opacity: [0, 0.6, 0.4],
-                      rotate: [0, 360],
-                    }}
-                    exit={{ scale: 2.4, opacity: 0 }}
-                    transition={{
-                      duration: 0.8,
-                      delay: i * 0.15,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Particle Explosion - Reduced particles on mobile */}
-            {!isReducedMotion && (
-              <motion.div
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: isMobile ? 1.5 : 2 }}
-              >
-                {[...Array(particleCount)].map((_, i) => (
-                  <motion.div
-                    key={`particle-${i}`}
-                    className={`absolute rounded-full ${
-                      isMobile ? 'w-1 h-1' : 'w-2 h-2'
-                    } bg-white`}
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
-                    }}
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{
-                      scale: [0, 1, 0],
-                      opacity: [0, 1, 0],
-                      x: [(Math.random() - 0.5) * (isMobile ? 100 : 200), (Math.random() - 0.5) * (isMobile ? 200 : 400)],
-                      y: [(Math.random() - 0.5) * (isMobile ? 100 : 200), (Math.random() - 0.5) * (isMobile ? 200 : 400)],
-                    }}
-                    transition={{
-                      duration: isMobile ? 1.5 : 2,
-                      delay: Math.random() * (isMobile ? 0.4 : 0.6),
-                      ease: "easeOut",
-                    }}
-                  />
-                ))}
-              </motion.div>
-            )}
-
-            {/* Rocket Effect - Simplified on mobile */}
-            {!isReducedMotion && (
-              <motion.div
-                className="absolute left-1/2 -translate-x-1/2"
-                initial={{ y: "110vh", opacity: 0 }}
-                animate={{ 
-                  y: [null, "80vh", "40vh", "-10vh"],
-                  opacity: [0, 1, 1, 0]
-                }}
-                transition={{
-                  duration: isMobile ? 1.8 : 2.2,
-                  times: [0, 0.25, 0.75, 1],
-                  delay: 0.2,
-                  ease: "easeInOut"
-                }}
-              >
-                <div className={`relative ${isMobile ? 'scale-75' : 'scale-100'}`}>
-                  {/* Rocket Body */}
-                  <div className={`${
-                    isMobile ? 'w-8 h-16' : 'w-12 h-24'
-                  } bg-white rounded-full relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-blue-500" />
-                  </div>
-                  {/* Rocket Window */}
-                  <div className={`absolute ${
-                    isMobile ? 'top-4 w-4 h-4' : 'top-5 w-6 h-6'
-                  } left-1/2 -translate-x-1/2 bg-blue-200 rounded-full`} />
-                  {/* Rocket Fins */}
-                  <div className={`absolute bottom-0 ${
-                    isMobile ? '-left-3 w-4 h-4' : '-left-4 w-5 h-6'
-                  } bg-purple-500 -skew-x-[30deg]`} />
-                  <div className={`absolute bottom-0 ${
-                    isMobile ? '-right-3 w-4 h-4' : '-right-4 w-5 h-6'
-                  } bg-purple-500 skew-x-[30deg]`} />
-                  {/* Rocket Flame */}
-                  <motion.div
-                    className={`absolute ${
-                      isMobile ? '-bottom-8' : '-bottom-12'
-                    } left-1/2 -translate-x-1/2`}
-                    animate={{
-                      scaleY: [1, 1.5, 1],
-                      opacity: [0.5, 0.8, 0.5]
-                    }}
-                    transition={{
-                      duration: 0.3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
+                    className="absolute top-0 left-1/2 transform -translate-x-1/2 text-center"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
                   >
-                    <div className={`${
-                      isMobile ? 'w-6 h-12' : 'w-8 h-16'
-                    } bg-gradient-to-b from-yellow-500 via-orange-500 to-transparent rounded-full`} />
+                    <h3 className="text-2xl font-bold text-purple-500 mb-2">Launching Portfolio</h3>
+                    <div className="h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-purple-500 to-blue-500" />
                   </motion.div>
-                </div>
-              </motion.div>
-            )}
+                )}
+                
+                {/* Blast Text */}
+                {rocketBlasted && (
+                  <motion.div
+                    className="absolute top-0 left-1/2 transform -translate-x-1/2 text-center"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <h3 className="text-2xl font-bold text-orange-500 mb-2">Blast Off!</h3>
+                    <div className="h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-orange-500 to-red-500" />
+                  </motion.div>
+                )}
+              </div>
+              
+              {/* Loading Bar */}
+              {showCountdown && !rocketLaunched && (
+                <motion.div
+                  className="h-1 w-48 mx-auto rounded-full overflow-hidden mt-8"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 3, ease: "easeInOut" }}
+                  />
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="relative z-0 w-full"
+          >
+            {children}
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Content Wrapper */}
-      <motion.div
-        key="content"
-        className="relative z-[100]"
-        initial={{ opacity: 0, scale: 1.1 }}
-        animate={{ 
-          opacity: isTransitioning ? 0 : 1,
-          scale: isTransitioning ? 1.1 : 1,
-        }}
-        transition={{
-          duration: isMobile ? 0.5 : 0.8,
-          delay: isMobile ? 0.4 : 0.6,
-          ease: "easeOut",
-        }}
-      >
-        {children}
-      </motion.div>
-
-      {/* Subtle Mouse Trail - Only on non-mobile */}
-      {!isMobile && !isReducedMotion && (
-        <motion.div
-          key="mouse-trail"
-          className="fixed inset-0 z-[90] pointer-events-none"
-          style={{
-            background: `
-              radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, 
-                rgba(29, 78, 216, 0.15), 
-                transparent 40%),
-              radial-gradient(800px at ${mousePosition.x}px ${mousePosition.y}px, 
-                rgba(121, 40, 202, 0.08), 
-                transparent 50%),
-              radial-gradient(1000px at ${mousePosition.x}px ${mousePosition.y}px, 
-                rgba(236, 72, 153, 0.05), 
-                transparent 60%),
-              radial-gradient(1200px at ${mousePosition.x}px ${mousePosition.y}px, 
-                rgba(14, 165, 233, 0.03), 
-                transparent 70%)
-            `,
-            mixBlendMode: 'screen'
-          }}
-        />
-      )}
     </>
   );
 };

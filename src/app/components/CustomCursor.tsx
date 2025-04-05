@@ -7,6 +7,7 @@ const CustomCursor = () => {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
   const [isHovering, setIsHovering] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   const springConfig = { damping: 25, stiffness: 700 };
   const cursorXSpring = useSpring(cursorX, springConfig);
@@ -16,6 +17,7 @@ const CustomCursor = () => {
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
+      setIsVisible(true);
     };
 
     const handleMouseDown = () => setIsHovering(true);
@@ -40,6 +42,7 @@ const CustomCursor = () => {
           x: cursorXSpring,
           y: cursorYSpring,
           scale: isHovering ? 1.5 : 1,
+          opacity: isVisible ? 1 : 0,
         }}
       />
       <motion.div
@@ -48,7 +51,7 @@ const CustomCursor = () => {
           x: cursorXSpring,
           y: cursorYSpring,
           scale: isHovering ? 1.5 : 1,
-          opacity: 0.5,
+          opacity: isVisible ? 0.5 : 0,
         }}
       />
     </>

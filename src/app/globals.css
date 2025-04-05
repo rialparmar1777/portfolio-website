@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 :root {
+  --foreground-rgb: 17, 24, 39;
+  --background-start-rgb: 249, 250, 251;
+  --background-end-rgb: 249, 250, 251;
+}
+
+:root[class~="dark"] {
   --foreground-rgb: 255, 255, 255;
   --background-start-rgb: 0, 0, 0;
   --background-end-rgb: 0, 0, 0;
@@ -12,11 +18,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  cursor: none;
 }
 
 html {
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -28,28 +35,36 @@ body {
   );
   overflow-x: hidden;
   min-height: 100vh;
+  cursor: none;
+  font-family: var(--font-inter);
 }
 
 .custom-cursor {
   width: 20px;
   height: 20px;
-  border: 2px solid white;
+  border: 2px solid rgb(var(--foreground-rgb));
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: difference;
+  transition: transform 0.2s ease;
+}
+
+.custom-cursor.hover {
+  transform: scale(1.5);
 }
 
 .cursor-trail {
   width: 8px;
   height: 8px;
-  background: white;
+  background: rgb(var(--foreground-rgb));
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
   z-index: 9998;
   mix-blend-mode: difference;
+  transition: transform 0.2s ease;
 }
 
 @keyframes gradient {
@@ -69,7 +84,9 @@ body {
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
 }
 
 .parallax {
@@ -83,13 +100,104 @@ body {
 }
 
 @keyframes glitch {
-  2%, 64% {
-    transform: translate(2px, 0) skew(0deg);
+  0% {
+    transform: translate(0);
   }
-  4%, 60% {
-    transform: translate(-2px, 0) skew(0deg);
+  20% {
+    transform: translate(-2px, 2px);
   }
-  62% {
-    transform: translate(0, 0) skew(5deg);
+  40% {
+    transform: translate(-2px, -2px);
   }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--background-start-rgb));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--foreground-rgb));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--foreground-rgb), 0.8);
+}
+
+::selection {
+  background: rgba(var(--foreground-rgb), 0.2);
+  color: rgb(var(--foreground-rgb));
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--foreground-rgb));
+  outline-offset: 2px;
+}
+
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Ensure Next.js logo is visible in both light and dark modes */
+.dark .next-logo {
+  filter: brightness(0) invert(1);
+}
+
+.light .next-logo {
+  filter: brightness(0) invert(0);
 }

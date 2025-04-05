@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import CustomCursor from "./components/CustomCursor";
+import { ThemeProvider } from "./context/ThemeContext";
+import ErrorBoundaryWrapper from "./components/ErrorBoundaryWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -57,7 +60,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "your-google-site-verification",
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
   },
 };
 
@@ -72,35 +75,44 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="bg-black text-white antialiased">
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: "rgba(0, 0, 0, 0.9)",
-              color: "#fff",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              backdropFilter: "blur(10px)",
-            },
-            success: {
-              iconTheme: {
-                primary: "#10B981",
-                secondary: "#fff",
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: "#EF4444",
-                secondary: "#fff",
-              },
-            },
-          }}
-        />
-        <main className="relative min-h-screen">
-          {children}
-        </main>
+        <ErrorBoundaryWrapper>
+          <ThemeProvider>
+            <CustomCursor />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  background: "rgba(0, 0, 0, 0.9)",
+                  color: "#fff",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  backdropFilter: "blur(10px)",
+                },
+                success: {
+                  iconTheme: {
+                    primary: "#10B981",
+                    secondary: "#fff",
+                  },
+                },
+                error: {
+                  iconTheme: {
+                    primary: "#EF4444",
+                    secondary: "#fff",
+                  },
+                },
+              }}
+            />
+            <main className="relative min-h-screen">
+              {children}
+            </main>
+          </ThemeProvider>
+        </ErrorBoundaryWrapper>
       </body>
     </html>
   );

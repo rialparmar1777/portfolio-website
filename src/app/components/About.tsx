@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useInView, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import React from 'react';
 import { 
@@ -13,7 +13,10 @@ import {
 } from 'react-icons/si';
 import { TbApi, TbBrandWebflow as TbWebSocket, TbBrandAzure, TbChartBar } from 'react-icons/tb';
 import { BiData as BiDatabase } from 'react-icons/bi';
-import { FaGraduationCap, FaCode } from 'react-icons/fa';
+import { FaGraduationCap, FaCode, FaMusic, FaBrain, FaLightbulb, FaUsers, FaRocket } from 'react-icons/fa';
+import { useThemeStyles } from '../hooks/useThemeStyles';
+import GlassCard from './GlassCard';
+import Image from 'next/image';
 
 interface Skill {
   name: string;
@@ -82,8 +85,8 @@ const skills: Skill[] = [
   },
   {
     name: "Next.js",
-    icon: <SiNextdotjs className="w-12 h-12" style={{ color: "#ffffff" }} />,
-    color: "#ffffff",
+    icon: <SiNextdotjs className="w-12 h-12 next-logo" />,
+    color: "#000000",
     category: "Frontend",
     proficiency: 90,
     description: "Full-stack React framework",
@@ -136,8 +139,8 @@ const skills: Skill[] = [
   },
   {
     name: "Express.js",
-    icon: <SiExpress className="w-12 h-12" style={{ color: "#ffffff" }} />,
-    color: "#ffffff",
+    icon: <SiExpress className="w-12 h-12" style={{ color: "#666666" }} />,
+    color: "#666666",
     category: "Backend",
     proficiency: 90,
     description: "Web application framework",
@@ -334,1686 +337,634 @@ const skills: Skill[] = [
   }
 ];
 
-const SkillCard = ({ skill, index }: { skill: Skill; index: number }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const isInView = useInView(cardRef, { once: true, margin: "-50px" });
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-  const [showDetails, setShowDetails] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    if (!isHovered && !isMobile) {
-      const interval = setInterval(() => {
-        setRotation({
-          x: Math.sin(Date.now() / 3000) * 2,
-          y: Math.cos(Date.now() / 3000) * 2,
-        });
-      }, 50);
-      return () => clearInterval(interval);
-    }
-  }, [isHovered, isMobile]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || isMobile) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 15;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 15;
-    setMousePosition({ x, y });
-  };
-
+const SkillOrb = ({ skill, index, isActive, onClick }: { 
+  skill: Skill; 
+  index: number; 
+  isActive: boolean; 
+  onClick: () => void;
+}) => {
+  const { getTextColor } = useThemeStyles();
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
   return (
     <motion.div
-      ref={cardRef}
-      className="relative group"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ 
-        opacity: isInView ? 1 : 0,
-        y: isInView ? 0 : 30,
-        transition: { duration: 0.4, delay: index * 0.03, ease: [0.23, 1, 0.32, 1] }
+      ref={ref}
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={isInView ? { 
+        opacity: 1, 
+        scale: isActive ? 1.2 : 1,
+      } : { opacity: 0, scale: 0.5 }}
+      transition={{ 
+        duration: 0.5, 
+        delay: index * 0.05,
+        type: "spring",
+        stiffness: 100
       }}
+      onClick={onClick}
+      className={`relative cursor-pointer ${isActive ? 'z-10' : 'z-0'}`}
     >
-      {/* Enhanced Outer Glow */}
       <motion.div
-        className="absolute -inset-4 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        animate={{
-          background: [
-            `radial-gradient(circle at 50% 50%, ${skill.color}20, transparent 70%)`,
-            `radial-gradient(circle at 50% 0%, ${skill.color}20, transparent 70%)`,
-            `radial-gradient(circle at 50% 100%, ${skill.color}20, transparent 70%)`,
-          ],
+        className="w-24 h-24 rounded-full flex items-center justify-center"
+        style={{ 
+          backgroundColor: `${skill.color}20`,
+          boxShadow: isActive 
+            ? `0 0 30px ${skill.color}80, 0 0 60px ${skill.color}40` 
+            : `0 0 15px ${skill.color}40`
         }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
+        whileHover={{ 
+          scale: 1.1,
+          boxShadow: `0 0 30px ${skill.color}80, 0 0 60px ${skill.color}40`
         }}
-      />
-
-      <motion.div
-        className="relative w-full aspect-square rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 p-6 overflow-hidden cursor-pointer transform-gpu"
-        style={{
-          transform: isMobile 
-            ? isHovered 
-              ? 'scale3d(1.02, 1.02, 1.02)'
-              : 'scale3d(1, 1, 1)'
-            : isHovered
-              ? `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg) scale3d(1.05, 1.05, 1.05)`
-              : `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale3d(1, 1, 1)`,
-          transition: 'all 0.8s cubic-bezier(0.23, 1, 0.32, 1)',
-        }}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => !isMobile && setIsHovered(true)}
-        onMouseLeave={() => !isMobile && setIsHovered(false)}
-        onClick={() => setShowDetails(!showDetails)}
       >
-        {/* Enhanced Animated Border */}
         <motion.div
-          className="absolute -inset-[1px] rounded-2xl"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${skill.color}40, transparent)`,
-          }}
-          animate={{
-            x: ['-200%', '200%'],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-
-        {/* Enhanced Background Effects */}
-        <motion.div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100"
-          style={{
-            background: `
-              radial-gradient(circle at ${mousePosition.x + 50}% ${mousePosition.y + 50}%, ${skill.color}20, transparent 50%),
-              linear-gradient(45deg, ${skill.color}10, transparent 60%)
-            `,
-            transition: 'opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1)',
-          }}
-        />
-
-        {/* Enhanced Floating Particles */}
-        <div className="absolute inset-0 overflow-hidden">
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 rounded-full"
-              style={{
-                backgroundColor: skill.color,
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                filter: 'blur(1px)',
-              }}
-              animate={{
-                y: [0, -30, 0],
-                x: [-20, 20, -20],
-                scale: [1, 1.5, 1],
-                opacity: [0.3, 0.6, 0.3],
-              }}
-              transition={{
-                duration: 3 + i,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.2,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Content Container */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-between">
-          {/* Enhanced Icon Animation */}
-          <motion.div 
-            className="mb-4 relative"
-            animate={{
-              rotateZ: isHovered ? [0, -5, 5, 0] : 0,
-              scale: isHovered ? [1, 1.1, 1] : 1,
-            }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-          >
-            <motion.div
-              className="absolute -inset-4 rounded-full"
-              style={{
-                background: `radial-gradient(circle at center, ${skill.color}30, transparent)`,
-              }}
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 0.8, 0.5],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-            {skill.icon}
-          </motion.div>
-
-          {/* Enhanced Content Section */}
-          <div className="text-center w-full">
-            <motion.h3 
-              className="text-xl font-semibold mb-2"
-              animate={{
-                color: isHovered ? skill.color : '#ffffff',
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              {skill.name}
-            </motion.h3>
-
-            {/* Enhanced Description */}
-            <motion.div
-              className="overflow-hidden"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ 
-                height: showDetails ? 'auto' : 0,
-                opacity: showDetails ? 1 : 0,
-              }}
-              transition={{ duration: 0.4 }}
-            >
-              <p className="text-sm text-white/70 mb-3">{skill.description}</p>
-              <div className="flex flex-wrap gap-2 justify-center mb-4">
-                {skill.highlights.map((highlight, i) => (
-                  <motion.span
-                    key={highlight}
-                    className="px-2 py-1 rounded-full text-xs"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: i * 0.1 }}
-                    style={{ 
-                      backgroundColor: `${skill.color}15`,
-                      color: skill.color,
-                      border: `1px solid ${skill.color}30`,
-                    }}
-                  >
-                    {highlight}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Enhanced Progress Bar */}
-            <div className="relative w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-              <motion.div
-                className="absolute top-0 left-0 h-full rounded-full"
-                style={{ backgroundColor: skill.color }}
-                initial={{ width: '0%' }}
-                animate={{ width: isInView ? `${skill.proficiency}%` : '0%' }}
-                transition={{ duration: 1, delay: index * 0.1 }}
-              />
-              <motion.div
-                className="absolute top-0 left-0 h-full w-full"
-                style={{
-                  background: `linear-gradient(90deg, transparent, ${skill.color}50, transparent)`,
-                }}
-                animate={{
-                  x: ['-100%', '100%'],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-            </div>
-
-            {/* Enhanced Proficiency Display */}
-            <motion.div 
-              className="relative mt-2"
-              animate={{
-                scale: isHovered ? [1, 1.1, 1] : 1,
-              }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-            >
-              <span 
-                className="text-sm font-medium"
-                style={{ color: skill.color }}
-              >
-                {skill.proficiency}%
-              </span>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Enhanced Card Effects */}
-        <motion.div
-          className="absolute inset-0 rounded-2xl pointer-events-none"
-          animate={{
-            boxShadow: isHovered 
-              ? [
-                  `0 0 20px ${skill.color}20`,
-                  `0 0 30px ${skill.color}30`,
-                  `0 0 20px ${skill.color}20`
-                ]
-              : `0 0 0px transparent`
+          animate={{ 
+            rotate: isActive ? 360 : 0,
+            scale: isActive ? 1.2 : 1
           }}
           transition={{ 
-            duration: 2, 
-            repeat: Infinity,
-            ease: "easeInOut"
+            duration: 1.5,
+            repeat: isActive ? Infinity : 0,
+            ease: "linear"
           }}
-        />
+        >
+          {skill.icon}
+        </motion.div>
       </motion.div>
+      
+      <AnimatePresence>
+        {isActive && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+            className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 w-64 p-4 rounded-lg"
+            style={{ 
+              backgroundColor: `${skill.color}10`,
+              border: `1px solid ${skill.color}30`,
+              boxShadow: `0 0 20px ${skill.color}30`
+            }}
+          >
+            <h3 className="text-lg font-bold mb-2" style={{ color: skill.color }}>
+              {skill.name}
+            </h3>
+            <div className="w-full h-2 bg-gray-800/50 rounded-full mb-2">
+              <motion.div
+                className="h-full rounded-full"
+                style={{ backgroundColor: skill.color }}
+                initial={{ width: 0 }}
+                animate={{ width: `${skill.proficiency}%` }}
+                transition={{ duration: 1 }}
+              />
+            </div>
+            <p className="text-sm mb-2" style={{ color: getTextColor('secondary') }}>
+              {skill.description}
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {skill.highlights.map((highlight, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.2, delay: i * 0.05 }}
+                  className="px-2 py-0.5 text-xs rounded-full"
+                  style={{ 
+                    backgroundColor: `${skill.color}20`,
+                    color: skill.color
+                  }}
+                >
+                  {highlight}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
 
-const IntroTag = ({ text, index }: { text: string; index: number }) => (
-  <motion.span
-    className="px-6 py-2.5 rounded-full text-lg font-medium relative overflow-hidden group"
-    initial={{ opacity: 0, scale: 0.8 }}
-    whileInView={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.3, delay: index * 0.1 }}
-    viewport={{ once: true, margin: "-50px" }}
-    whileHover={{ scale: 1.05 }}
-  >
-    <motion.div
-      className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 backdrop-blur-sm border border-white/10"
-      animate={{
-        opacity: [0.5, 0.8, 0.5],
-      }}
-      transition={{
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-    />
-    <motion.div
-      className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20"
-      initial={{ x: '-100%' }}
-      whileHover={{ x: '100%' }}
-      transition={{ duration: 1, ease: "easeInOut" }}
-    />
-    <span className="relative z-10 bg-gradient-to-r from-white to-purple-100 text-transparent bg-clip-text">
-      {text}
-    </span>
-  </motion.span>
-);
-
-const IntroSection = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isMobile) return;
-    const { clientX, clientY } = e;
-    const { innerWidth, innerHeight } = window;
-    const x = (clientX / innerWidth - 0.5) * 2;
-    const y = (clientY / innerHeight - 0.5) * 2;
-    setMousePosition({ x, y });
-  };
-
-  return (
-    <div className="mb-16 sm:mb-32 relative" onMouseMove={handleMouseMove}>
-      {/* Enhanced 3D Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div 
-          className="absolute inset-0"
-          style={{
-            perspective: "1000px",
-            transformStyle: "preserve-3d",
-          }}
-        >
-          {/* Dynamic Grid Lines - Reduced for mobile */}
-          <div className="absolute inset-0" style={{ transform: "translateZ(-50px)" }}>
-            {[...Array(isMobile ? 10 : 20)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute h-[1px] w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"
-                style={{ top: `${i * (isMobile ? 10 : 5)}%` }}
-                animate={{
-                  opacity: [0.1, 0.3, 0.1],
-                  scaleX: [0.8, 1, 0.8],
-                }}
-                transition={{
-                  duration: 3 + i % 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.1,
-                }}
-              />
-            ))}
-            {[...Array(isMobile ? 10 : 20)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-[1px] h-full bg-gradient-to-b from-transparent via-blue-500/20 to-transparent"
-                style={{ left: `${i * (isMobile ? 10 : 5)}%` }}
-                animate={{
-                  opacity: [0.1, 0.3, 0.1],
-                  scaleY: [0.8, 1, 0.8],
-                }}
-                transition={{
-                  duration: 3 + i % 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.1,
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Floating Orbs - Reduced for mobile */}
-          {[...Array(isMobile ? 4 : 8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full"
-              style={{
-                width: `${isMobile ? 10 + i * 5 : 20 + i * 10}px`,
-                height: `${isMobile ? 10 + i * 5 : 20 + i * 10}px`,
-                background: `radial-gradient(circle at center, ${i % 2 ? '#A855F7' : '#3B82F6'}15, transparent)`,
-                top: `${20 + (i * (isMobile ? 20 : 10))}%`,
-                left: `${10 + (i * (isMobile ? 25 : 15))}%`,
-                filter: "blur(8px)",
-                transform: "translateZ(-30px)",
-              }}
-              animate={{
-                y: [-(10 + i * 2), (10 + i * 2), -(10 + i * 2)],
-                x: [-(5 + i * 2), (5 + i * 2), -(5 + i * 2)],
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0.6, 0.3],
-              }}
-              transition={{
-                duration: 5 + i,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Main Content */}
-      <div className="relative z-10">
-        {/* Enhanced Title Section */}
-        <motion.div
-          className="text-center relative"
-          style={{
-            transform: !isMobile ? `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)` : 'none',
-            transition: "transform 0.3s ease-out",
-          }}
-        >
-          {/* Glowing Rings - Adjusted for mobile */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute rounded-full border"
-                style={{
-                  width: `${isMobile ? 200 + i * 50 : 400 + i * 100}px`,
-                  height: `${isMobile ? 200 + i * 50 : 400 + i * 100}px`,
-                  borderColor: i % 2 ? '#A855F7' : '#3B82F6',
-                  opacity: 0.1,
-                  left: `${isMobile ? -100 - i * 25 : -200 - i * 50}px`,
-                  top: `${isMobile ? -100 - i * 25 : -200 - i * 50}px`,
-                }}
-                animate={{
-                  rotate: [0, 360],
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{
-                  duration: 20 + i * 5,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Enhanced Title - Adjusted for mobile */}
-          <div className="relative mb-4 sm:mb-8">
-            <motion.h1 
-              className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-bold"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              viewport={{ once: true }}
-            >
-              <div className="relative inline-block">
-                <motion.span
-                  className="block bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text"
-                  animate={{
-                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                  }}
-                  transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                >
-                  Full-Stack
-                </motion.span>
-                <motion.div
-                  className="absolute -inset-2 bg-purple-500/20 blur-xl rounded-full"
-                  animate={{
-                    opacity: [0.5, 0.8, 0.5],
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
-              </div>
-              <div className="relative inline-block mt-1 sm:mt-2">
-                <motion.span
-                  className="block bg-gradient-to-r from-blue-400 via-purple-500 to-blue-400 text-transparent bg-clip-text"
-                  animate={{
-                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                  }}
-                  transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                >
-                  Developer
-                </motion.span>
-                <motion.div
-                  className="absolute -inset-2 bg-blue-500/20 blur-xl rounded-full"
-                  animate={{
-                    opacity: [0.5, 0.8, 0.5],
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
-              </div>
-            </motion.h1>
-          </div>
-
-          {/* Enhanced Tags - Adjusted for mobile */}
-          <motion.div 
-            className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-8 sm:mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            {['Problem Solver', 'Tech Enthusiast', 'Creative Developer'].map((tag, index) => (
-              <motion.div
-                key={tag}
-                className="relative group cursor-pointer"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                {/* Glowing Background */}
-                <motion.div
-                  className="absolute -inset-2 rounded-lg bg-gradient-to-r from-purple-600/50 via-blue-600/50 to-purple-600/50 blur-lg group-hover:blur-xl"
-                  animate={{
-                    opacity: [0.3, 0.6, 0.3],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
-                
-                {/* Tag Content */}
-                <div className="relative px-4 sm:px-8 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-purple-900/50 to-blue-900/50 backdrop-blur-xl border border-white/10">
-                  <motion.div
-                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20"
-                    initial={{ x: '-100%' }}
-                    whileHover={{ x: '100%' }}
-                    transition={{ duration: 0.8 }}
-                  />
-                  <span className="relative z-10 text-base sm:text-xl font-medium bg-gradient-to-r from-white to-purple-200 text-transparent bg-clip-text">
-                    {tag}
-                  </span>
-                </div>
-
-                {/* Floating Particles - Reduced for mobile */}
-                {[...Array(isMobile ? 2 : 3)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute w-1 h-1 rounded-full bg-purple-400"
-                    style={{
-                      top: `${50 + (i * 20)}%`,
-                      left: `${20 + (i * 30)}%`,
-                    }}
-                    animate={{
-                      y: [-10, 10, -10],
-                      x: [-5, 5, -5],
-                      opacity: [0, 0.8, 0],
-                      scale: [1, 1.5, 1],
-                    }}
-                    transition={{
-                      duration: 2 + i,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: i * 0.2,
-                    }}
-                  />
-                ))}
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* Enhanced Content Grid - Adjusted for mobile */}
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-12 items-start relative">
-          {/* Quote Section */}
-          <motion.div
-            className="relative group"
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="relative p-4 sm:p-8 rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-white/10 overflow-hidden">
-              {/* Enhanced Border Animation */}
-              <motion.div
-                className="absolute -inset-[1px] rounded-2xl"
-                style={{
-                  background: `linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2), transparent)`,
-                }}
-                animate={{
-                  x: ['-200%', '200%'],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-
-              {/* Quote Content */}
-              <div className="relative">
-                <motion.span
-                  className="absolute -left-4 sm:-left-6 -top-4 sm:-top-6 text-4xl sm:text-6xl text-purple-400 font-serif"
-                  animate={{
-                    opacity: [0.5, 1, 0.5],
-                    scale: [1, 1.2, 1],
-                    rotate: [-5, 5, -5],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  ❝
-                </motion.span>
-                <div className="space-y-3 sm:space-y-4 text-base sm:text-xl text-gray-300 leading-relaxed">
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    viewport={{ once: true }}
-                  >
-                    Passionate about building high-performance web applications, I thrive on leveraging modern technologies to develop scalable, efficient, and user-friendly solutions.
-                  </motion.p>
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    viewport={{ once: true }}
-                  >
-                    My goal is to craft experiences that are not only functional but also intuitive and engaging.
-                  </motion.p>
-                </div>
-                <motion.span
-                  className="absolute -right-4 sm:-right-6 -bottom-4 sm:-bottom-6 text-4xl sm:text-6xl text-purple-400 font-serif"
-                  animate={{
-                    opacity: [0.5, 1, 0.5],
-                    scale: [1, 1.2, 1],
-                    rotate: [-5, 5, -5],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  ❞
-                </motion.span>
-              </div>
-
-              {/* Enhanced Floating Elements - Reduced for mobile */}
-              {[...Array(isMobile ? 3 : 6)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2"
-                  style={{
-                    top: `${20 + i * 15}%`,
-                    left: `${10 + i * 15}%`,
-                    background: `radial-gradient(circle at center, ${i % 2 ? '#A855F7' : '#3B82F6'}40, transparent)`,
-                    borderRadius: '50%',
-                  }}
-                  animate={{
-                    y: [-20, 20, -20],
-                    x: [-10, 10, -10],
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.6, 0.3],
-                  }}
-                  transition={{
-                    duration: 4 + i,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: i * 0.2,
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Beyond Code Section */}
-          <motion.div
-            className="relative group"
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="relative p-4 sm:p-8 rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-white/10 overflow-hidden">
-              {/* Enhanced Border Animation */}
-              <motion.div
-                className="absolute -inset-[1px] rounded-2xl"
-                style={{
-                  background: `linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2), transparent)`,
-                }}
-                animate={{
-                  x: ['-200%', '200%'],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-
-              {/* Section Header */}
-              <motion.div
-                className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-              >
-                <motion.div
-                  className="relative"
-                  animate={{
-                    rotate: [0, 10, -10, 0],
-                    scale: [1, 1.2, 0.8, 1],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <span className="text-3xl sm:text-5xl">🎵</span>
-                  <motion.div
-                    className="absolute -inset-4 rounded-full bg-purple-500/20 blur-xl"
-                    animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.3, 0.6, 0.3],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  />
-                </motion.div>
-                <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-300 via-blue-300 to-purple-300 text-transparent bg-clip-text animate-gradient">
-                  Beyond Code
-                </h3>
-              </motion.div>
-
-              {/* Content */}
-              <div className="space-y-4 sm:space-y-6">
-                <motion.p
-                  className="text-base sm:text-xl text-gray-300 leading-relaxed"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  viewport={{ once: true }}
-                >
-                  Outside of tech, I'm a versatile musician & active choir member.
-                </motion.p>
-                <motion.p
-                  className="text-base sm:text-xl text-gray-300 leading-relaxed"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  viewport={{ once: true }}
-                >
-                  Music enhances my creativity, precision, and teamwork—qualities that seamlessly translate into my development work.
-                </motion.p>
-
-                {/* Enhanced Skill Tags */}
-                <motion.div
-                  className="flex flex-wrap gap-2 sm:gap-3 mt-6 sm:mt-8"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  viewport={{ once: true }}
-                >
-                  {['Creativity', 'Precision', 'Teamwork'].map((skill, i) => (
-                    <motion.div
-                      key={skill}
-                      className="relative group"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.3, delay: i * 0.1 }}
-                    >
-                      <motion.div
-                        className="absolute -inset-1 rounded-full bg-gradient-to-r from-purple-600/30 via-blue-600/30 to-purple-600/30 blur-lg group-hover:blur-xl"
-                        animate={{
-                          opacity: [0.3, 0.6, 0.3],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                      />
-                      <div className="relative px-4 sm:px-6 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20">
-                        <span className="text-sm sm:text-lg bg-gradient-to-r from-purple-300 to-blue-300 text-transparent bg-clip-text">
-                          {skill}
-                        </span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </div>
-
-              {/* Enhanced Floating Music Notes - Reduced for mobile */}
-              {[...Array(isMobile ? 3 : 6)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute text-2xl sm:text-3xl"
-                  style={{
-                    top: `${20 + i * 15}%`,
-                    left: `${10 + i * 15}%`,
-                    color: i % 2 ? '#A855F7' : '#3B82F6',
-                    opacity: 0.3,
-                  }}
-                  animate={{
-                    y: [-30, 30, -30],
-                    x: [-15, 15, -15],
-                    rotate: [0, 10, -10, 0],
-                    opacity: [0.2, 0.4, 0.2],
-                    scale: [1, 1.2, 1],
-                  }}
-                  transition={{
-                    duration: 4 + i,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: i * 0.2,
-                  }}
-                >
-                  {i % 2 ? '♪' : '♫'}
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const EducationTimeline = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  return (
-    <div className="relative py-8 sm:py-16">
-      {/* Central Timeline Line with Enhanced Gradient */}
-      <div className={`absolute ${isMobile ? 'left-4' : 'left-1/2'} top-0 bottom-0 w-[2px] transform ${isMobile ? '' : '-translate-x-1/2'}`}>
-        {/* Solid line background */}
-        <div className="absolute inset-0 bg-white/20" />
-        
-        {/* Animated gradient overlay */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-purple-500 via-blue-500 to-purple-500"
-          initial={{ height: 0 }}
-          whileInView={{ height: '100%' }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-        />
-
-        {/* Decorative dots with connecting lines */}
-        {[...Array(10)].map((_, i) => (
-          <React.Fragment key={i}>
-            <motion.div
-              className="absolute w-1.5 h-1.5 rounded-full bg-white/50"
-              style={{ top: `${i * 10}%`, left: isMobile ? '-3px' : '-3px' }}
-              initial={{ opacity: 0 }}
-              animate={{ 
-                opacity: [0.2, 0.5, 0.2],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                delay: i * 0.2,
-              }}
-            />
-            {/* Horizontal connecting line */}
-            <motion.div
-              className="absolute h-[1px] bg-gradient-to-r from-white/20 to-transparent"
-              style={{ 
-                top: `${i * 10}%`,
-                left: isMobile ? '0' : (i % 2 === 0 ? '0' : 'auto'),
-                right: isMobile ? 'auto' : (i % 2 === 0 ? 'auto' : '0'),
-                width: isMobile ? '50px' : '100px'
-              }}
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: i * 0.1 }}
-            />
-          </React.Fragment>
-        ))}
-      </div>
-
-      {[
-        {
-          title: "Diploma in Computer Programming",
-          institution: "Conestoga College",
-          date: "Graduated August - 2024",
-          description: "Advanced programming concepts, full-stack development, and modern software practices.",
-          icon: <FaGraduationCap className="w-6 h-6 sm:w-8 sm:h-8" />,
-          color: "purple",
-          skills: ["Full-Stack Development", "Database Design", "Cloud Computing"]
-        },
-        {
-          title: "Bachelor of Computer Applications",
-          institution: "Manipal Institute of Technology",
-          description: "Foundation in computer science, algorithms, and software engineering",
-          icon: <FaCode className="w-6 h-6 sm:w-8 sm:h-8" />,
-          color: "blue",
-          skills: ["Computer Science", "Data Structures", "Software Engineering"]
-        }
-      ].map((education, index) => (
-        <motion.div
-          key={education.title}
-          className={`relative flex items-center ${isMobile ? 'ml-12' : (index % 2 === 0 ? 'justify-end' : '')} mb-12 sm:mb-20`}
-          initial={{ opacity: 0, x: isMobile ? 0 : (index % 2 === 0 ? 50 : -50) }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: index * 0.2 }}
-        >
-          {/* Content Card */}
-          <div className={`${isMobile ? 'w-full' : `w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}`}>
-            <motion.div
-              className="relative p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-white/10 overflow-hidden group"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Animated Border */}
-              <motion.div
-                className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20"
-                animate={{
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-
-              {/* Connecting Lines from Corners to Timeline */}
-              <motion.div
-                className={`absolute top-1/2 ${isMobile ? 'left-0' : (index % 2 === 0 ? 'left-0' : 'right-0')} w-8 h-[2px]`}
-                style={{
-                  background: `linear-gradient(${isMobile ? 'to right' : (index % 2 === 0 ? 'to left' : 'to right')}, ${education.color === 'purple' ? '#A855F7' : '#3B82F6'}, transparent)`,
-                }}
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              />
-
-              {/* Decorative Corner Accents with Connecting Lines */}
-              <div className="absolute top-0 left-0 w-6 h-6 sm:w-8 sm:h-8">
-                <div className="absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-purple-500/30 rounded-tl-xl" />
-                <motion.div
-                  className="absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-purple-500/50"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                />
-              </div>
-              <div className="absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8">
-                <div className="absolute top-0 right-0 w-full h-full border-t-2 border-r-2 border-purple-500/30 rounded-tr-xl" />
-                <motion.div
-                  className="absolute top-0 right-0 w-full h-full border-t-2 border-r-2 border-purple-500/50"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 w-6 h-6 sm:w-8 sm:h-8">
-                <div className="absolute bottom-0 left-0 w-full h-full border-b-2 border-l-2 border-purple-500/30 rounded-bl-xl" />
-                <motion.div
-                  className="absolute bottom-0 left-0 w-full h-full border-b-2 border-l-2 border-purple-500/50"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                />
-              </div>
-              <div className="absolute bottom-0 right-0 w-6 h-6 sm:w-8 sm:h-8">
-                <div className="absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-purple-500/30 rounded-br-xl" />
-                <motion.div
-                  className="absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-purple-500/50"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                />
-              </div>
-
-              <div className="relative">
-                {/* Content */}
-                <div className={`flex items-center gap-3 mb-4 ${isMobile ? '' : (index % 2 === 0 ? 'flex-row-reverse' : '')}`}>
-                  <div className={`text-${education.color}-400 bg-${education.color}-500/10 p-2 sm:p-3 rounded-xl relative group-hover:scale-110 transition-transform duration-300`}>
-                    {education.icon}
-                    <motion.div
-                      className="absolute inset-0 rounded-xl bg-white/20"
-                      animate={{
-                        opacity: [0, 0.5, 0],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-white to-gray-300 text-transparent bg-clip-text">
-                      {education.title}
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-400">{education.institution}</p>
-                  </div>
-                </div>
-
-                <p className="text-sm sm:text-base text-gray-300 mb-2">{education.description}</p>
-
-                {education.date && (
-                  <div className="relative inline-block">
-                    <motion.p 
-                      className="text-xs sm:text-sm text-purple-400 mb-4 px-2 sm:px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      {education.date}
-                    </motion.p>
-                    <motion.div
-                      className="absolute inset-0 rounded-full bg-purple-500/5"
-                      animate={{
-                        scale: [1, 1.1, 1],
-                        opacity: [0.5, 0.2, 0.5],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                      }}
-                    />
-                  </div>
-                )}
-
-                <div className={`flex flex-wrap gap-2 ${isMobile ? 'justify-start' : (index % 2 === 0 ? 'justify-end' : 'justify-start')}`}>
-                  {education.skills.map((skill, i) => (
-                    <motion.span
-                      key={skill}
-                      className={`px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-full bg-${education.color}-500/10 text-${education.color}-400 border border-${education.color}-500/20`}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.3, delay: i * 0.1 }}
-                    >
-                      {skill}
-                    </motion.span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Timeline Node with Enhanced Design and Connecting Lines */}
-          <div className={`absolute ${isMobile ? 'left-4' : 'left-1/2'} -translate-x-1/2 flex items-center justify-center`}>
-            {/* Connecting line to content */}
-            <motion.div
-              className={`absolute w-12 sm:w-24 h-[2px] ${isMobile ? '-right-12' : (index % 2 === 0 ? '-right-24' : '-left-24')}`}
-              style={{
-                background: `linear-gradient(${isMobile ? 'to right' : (index % 2 === 0 ? 'to right' : 'to left')}, ${education.color === 'purple' ? '#A855F7' : '#3B82F6'}, transparent)`,
-              }}
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            />
-
-            <motion.div
-              className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-${education.color}-500 relative z-10`}
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-            >
-              {/* Pulsing effect */}
-              <motion.div
-                className="absolute inset-0 rounded-full bg-white"
-                animate={{
-                  scale: [1, 1.8, 1],
-                  opacity: [0.5, 0, 0.5],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                }}
-              />
-            </motion.div>
-            
-            {/* Outer rings with connecting lines */}
-            {[1, 2].map((ring) => (
-              <motion.div
-                key={ring}
-                className={`absolute w-${ring * 4} h-${ring * 4} sm:w-${ring * 6} sm:h-${ring * 6} rounded-full border-2 border-${education.color}-500/50`}
-                initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 * ring }}
-              />
-            ))}
-          </div>
-        </motion.div>
-      ))}
-    </div>
-  );
-};
-
-const SkillCluster = ({ category, skills, isActive, onHover }: { 
+const SkillCategory = ({ 
+  category, 
+  skills, 
+  index, 
+  activeSkill, 
+  setActiveSkill 
+}: { 
   category: string; 
   skills: Skill[]; 
-  isActive: boolean;
-  onHover: (active: boolean) => void;
+  index: number; 
+  activeSkill: string | null; 
+  setActiveSkill: (skill: string | null) => void;
 }) => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-  const clusterRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(clusterRef, { once: true, margin: "-50px" });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    setMousePosition({ x, y });
-  };
-
+  const { getTextColor } = useThemeStyles();
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
   return (
     <motion.div
-      ref={clusterRef}
-      className="relative group"
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ 
-        opacity: isInView ? 1 : 0,
-        scale: isInView ? 1 : 0.8,
-        transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] }
-      }}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        onHover(true);
-      }}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        onHover(false);
-      }}
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="mb-16"
     >
-      {/* Cluster Background */}
-      <motion.div
-        className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10"
-        style={{
-          transform: isHovered ? `perspective(1000px) rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg)` : 'none',
-          transition: 'transform 0.3s ease-out',
-        }}
-      />
-
-      {/* Animated Border */}
-      <motion.div
-        className="absolute -inset-[1px] rounded-3xl"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${skills[0]?.color || '#A855F7'}40, transparent)`,
-        }}
-        animate={{
-          x: ['-200%', '200%'],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative p-6">
-        {/* Category Header */}
-        <motion.div
-          className="flex items-center gap-3 mb-6"
-          animate={{
-            scale: isHovered ? 1.05 : 1,
+      <motion.h3
+        initial={{ opacity: 0, x: -20 }}
+        animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+        transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
+        className="text-2xl font-bold mb-8 flex items-center"
+        style={{ color: getTextColor('primary') }}
+      >
+        <span className="w-8 h-8 rounded-full flex items-center justify-center mr-3" 
+          style={{ 
+            backgroundColor: skills[0]?.color ? `${skills[0].color}20` : 'rgba(100, 100, 255, 0.2)',
+            color: skills[0]?.color || '#6366f1'
           }}
-          transition={{ duration: 0.3 }}
         >
-          <div className={`text-${skills[0]?.color || 'purple'}-400 bg-${skills[0]?.color || 'purple'}-500/10 p-2 rounded-xl`}>
-            {skills[0]?.icon}
-          </div>
-          <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-gray-300 text-transparent bg-clip-text">
-            {category}
-          </h3>
-        </motion.div>
-
-        {/* Skills Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          {skills.map((skill, index) => (
-            <motion.div
-              key={skill.name}
-              className="relative group/skill"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ 
-                opacity: isInView ? 1 : 0,
-                y: isInView ? 0 : 20,
-              }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-            >
-              <div className="relative p-3 rounded-xl bg-white/5 border border-white/10 overflow-hidden">
-                {/* Skill Icon */}
-                <div className="flex items-center gap-2 mb-2">
-                  <div style={{ color: skill.color }}>{skill.icon}</div>
-                  <span className="text-sm font-medium text-white/90">{skill.name}</span>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="relative h-1 bg-white/10 rounded-full overflow-hidden">
-                  <motion.div
-                    className="absolute top-0 left-0 h-full rounded-full"
-                    style={{ backgroundColor: skill.color }}
-                    initial={{ width: 0 }}
-                    animate={{ width: isInView ? `${skill.proficiency}%` : 0 }}
-                    transition={{ duration: 1, delay: index * 0.1 }}
-                  />
-                  <motion.div
-                    className="absolute top-0 left-0 h-full w-full"
-                    style={{
-                      background: `linear-gradient(90deg, transparent, ${skill.color}50, transparent)`,
-                    }}
-                    animate={{
-                      x: ['-100%', '100%'],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  />
-                </div>
-
-                {/* Proficiency */}
-                <motion.span 
-                  className="absolute top-2 right-2 text-xs font-medium"
-                  style={{ color: skill.color }}
-                  animate={{
-                    scale: isHovered ? [1, 1.1, 1] : 1,
-                  }}
-                  transition={{ duration: 1, ease: "easeInOut" }}
-                >
-                  {skill.proficiency}%
-                </motion.span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+          {category === "Languages" && <FaCode />}
+          {category === "Frontend" && <SiReact />}
+          {category === "Backend" && <SiNodedotjs />}
+          {category === "Database" && <BiDatabase />}
+          {category === "DevOps" && <SiDocker />}
+          {category === "Cloud" && <SiAmazon />}
+          {category === "Monitoring" && <TbChartBar />}
+          {category === "Automation" && <SiPowers />}
+          {category === "Tools" && <SiPostman />}
+        </span>
+        {category}
+      </motion.h3>
+      
+      <div className="flex flex-wrap justify-center gap-6">
+        {skills.map((skill, skillIndex) => (
+          <SkillOrb
+            key={skill.name}
+            skill={skill}
+            index={skillIndex}
+            isActive={activeSkill === skill.name}
+            onClick={() => setActiveSkill(activeSkill === skill.name ? null : skill.name)}
+          />
+        ))}
       </div>
     </motion.div>
   );
 };
 
-const SkillsSection = () => {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Group skills by category
-  const skillsByCategory = skills.reduce((acc, skill) => {
-    if (!acc[skill.category]) {
-      acc[skill.category] = [];
-    }
-    acc[skill.category].push(skill);
-    return acc;
-  }, {} as Record<string, Skill[]>);
-
+const MusicianSection = () => {
+  const { getTextColor, getBackgroundColor } = useThemeStyles();
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
   return (
-    <div ref={sectionRef} className="relative py-16 sm:py-24">
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          animate={{
-            background: [
-              'radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.1), transparent 70%)',
-              'radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1), transparent 70%)',
-              'radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.1), transparent 70%)',
-            ],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-
-        {/* Animated Grid */}
-        <div className="absolute inset-0" style={{ transform: "translateZ(-50px)" }}>
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute h-[1px] w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"
-              style={{ top: `${i * 5}%` }}
-              animate={{
-                opacity: [0.1, 0.3, 0.1],
-                scaleX: [0.8, 1, 0.8],
-              }}
-              transition={{
-                duration: 3 + i % 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.1,
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text">
-              Technical Expertise
-            </span>
-          </h2>
-          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto">
-            A comprehensive skill set that enables me to deliver innovative solutions
-          </p>
-        </motion.div>
-
-        {/* Skills Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {Object.entries(skillsByCategory).map(([category, categorySkills], index) => (
-            <SkillCluster
-              key={category}
-              category={category}
-              skills={categorySkills}
-              isActive={activeCategory === category}
-              onHover={(active) => setActiveCategory(active ? category : null)}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const About = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const y = useTransform(scrollYProgress, [0, 1], [0, isMobile ? -50 : -150]);
-  const springY = useSpring(y, { 
-    stiffness: isMobile ? 100 : 50, 
-    damping: isMobile ? 15 : 20,
-    mass: isMobile ? 0.8 : 1
-  });
-
-  // Group skills by category
-  const skillsByCategory = skills.reduce((acc, skill) => {
-    if (!acc[skill.category]) {
-      acc[skill.category] = [];
-    }
-    acc[skill.category].push(skill);
-    return acc;
-  }, {} as Record<string, Skill[]>);
-
-  // Filter skills based on selected category
-  const filteredSkills = selectedCategory 
-    ? skills.filter(skill => skill.category === selectedCategory)
-    : skills;
-
-  // Mobile Layout Component
-  const MobileLayout = () => (
-    <section 
-      id="about" 
-      className="min-h-screen py-12 sm:py-16 px-4 sm:px-6 relative overflow-hidden bg-gradient-to-b from-black via-purple-950/20 to-black"
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+      transition={{ duration: 0.8 }}
+      className="min-h-screen py-20 px-4 relative overflow-hidden"
+      style={{ background: getBackgroundColor('default') }}
     >
-      {/* Mobile Background Elements */}
+      {/* Background Elements */}
       <motion.div 
         className="absolute inset-0 w-full h-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 1.5 }}
       >
-        {/* Mobile Gradient Orbs - Reduced Size */}
+        {/* Musical Notes Animation */}
+        <div className="absolute inset-0 overflow-hidden">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute text-4xl"
+              style={{ 
+                color: i % 2 ? 'rgba(168, 85, 247, 0.3)' : 'rgba(59, 130, 246, 0.3)',
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -100, 0],
+                x: [0, Math.random() * 50 - 25, 0],
+                rotate: [0, 360],
+                opacity: [0.3, 0.7, 0.3],
+              }}
+              transition={{
+                duration: Math.random() * 10 + 10,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.5,
+              }}
+            >
+              {i % 3 === 0 ? '♪' : i % 3 === 1 ? '♫' : '♬'}
+            </motion.div>
+          ))}
+        </div>
+        
+        {/* Gradient Orbs */}
         <motion.div 
-          className="absolute top-0 left-0 w-[200px] h-[200px] opacity-20"
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] opacity-20"
           animate={{
-            scale: [1, 1.1, 1],
-            rotate: [0, 90, 180],
+            scale: [1, 1.2, 1],
+            rotate: [0, 180, 360],
           }}
           transition={{
-            duration: 10,
+            duration: 20,
             repeat: Infinity,
             ease: "linear",
           }}
         >
-          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[30px]" />
+          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[60px]" />
         </motion.div>
         
         <motion.div 
-          className="absolute bottom-0 right-0 w-[200px] h-[200px] opacity-20"
+          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] opacity-20"
           animate={{
-            scale: [1.1, 1, 1.1],
-            rotate: [180, 90, 0],
+            scale: [1.2, 1, 1.2],
+            rotate: [360, 180, 0],
           }}
           transition={{
-            duration: 10,
+            duration: 20,
             repeat: Infinity,
             ease: "linear",
           }}
         >
-          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[30px]" />
+          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[60px]" />
         </motion.div>
-
-        {/* Mobile Grid Lines - Reduced Count */}
-        <div className="absolute inset-0">
-          {[...Array(8)].map((_, i) => (
+      </motion.div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text">
+            Beyond Code
+          </h2>
+          <p className="text-lg" style={{ color: getTextColor('secondary') }}>
+            The intersection of technology and creativity
+          </p>
+        </motion.div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative"
+          >
+            <div className="relative w-full h-[400px] rounded-2xl overflow-hidden">
+              <Image
+                src="/images/church-website.jpg"
+                alt="Music Studio"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="absolute bottom-0 left-0 right-0 p-6"
+              >
+                <h3 className="text-2xl font-bold mb-2" style={{ color: getTextColor('primary') }}>
+                  Choir Tenor & Musician
+                </h3>
+                <p className="text-lg" style={{ color: getTextColor('secondary') }}>
+                  Applying creative discipline to development
+                </p>
+              </motion.div>
+            </div>
+            
             <motion.div
-              key={i}
-              className="absolute h-[1px] w-full"
-              style={{ 
-                top: `${i * 12.5}%`,
-                background: `linear-gradient(90deg, 
-                  transparent,
-                  ${i % 2 ? 'rgba(168, 85, 247, 0.1)' : 'rgba(59, 130, 246, 0.1)'} 50%,
-                  transparent
-                )`,
-              }}
-              animate={{
-                opacity: [0.1, 0.2, 0.1],
-                scaleX: [0.8, 1, 0.8],
-              }}
-              transition={{
-                duration: 2 + i % 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.1,
-              }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full overflow-hidden border-4 border-purple-500/30 shadow-lg"
+            >
+              <Image
+                src="/images/ProfilePicture.jpeg"
+                alt="Rial Parmar"
+                fill
+                className="object-cover"
+              />
+            </motion.div>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <h3 className="text-3xl font-bold mb-6" style={{ color: getTextColor('primary') }}>
+              The Harmony of Code & Creativity
+            </h3>
+            
+            <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="flex items-start space-x-4"
+              >
+                <div className="p-3 rounded-lg bg-purple-500/20 text-purple-500">
+                  <FaMusic className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
+                    Musical Background
+                  </h4>
+                  <p className="text-base" style={{ color: getTextColor('secondary') }}>
+                    As a choir tenor, I've developed a keen ear for harmony and rhythm, which translates to creating balanced and well-structured code.
+                  </p>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="flex items-start space-x-4"
+              >
+                <div className="p-3 rounded-lg bg-blue-500/20 text-blue-500">
+                  <FaBrain className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
+                    Creative Problem Solving
+                  </h4>
+                  <p className="text-base" style={{ color: getTextColor('secondary') }}>
+                    My musical training has enhanced my ability to think creatively and approach problems from multiple angles, leading to innovative solutions.
+                  </p>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="flex items-start space-x-4"
+              >
+                <div className="p-3 rounded-lg bg-indigo-500/20 text-indigo-500">
+                  <FaLightbulb className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
+                    Attention to Detail
+                  </h4>
+                  <p className="text-base" style={{ color: getTextColor('secondary') }}>
+                    Just as a musician must pay attention to every note and timing, I bring this precision to my code, ensuring every detail is considered.
+                  </p>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: 0.9 }}
+                className="flex items-start space-x-4"
+              >
+                <div className="p-3 rounded-lg bg-pink-500/20 text-pink-500">
+                  <FaUsers className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
+                    Collaborative Mindset
+                  </h4>
+                  <p className="text-base" style={{ color: getTextColor('secondary') }}>
+                    Choir experience has taught me the importance of collaboration and listening, skills that are essential in agile development teams.
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </motion.section>
+  );
+};
+
+const SkillsSection = () => {
+  const { getTextColor } = useThemeStyles();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeSkill, setActiveSkill] = useState<string | null>(null);
+  
+  const categories = Array.from(new Set(skills.map(skill => skill.category)));
+  
+  return (
+    <section id="skills" className="min-h-screen py-20 px-4">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
+            Technical Skills
+          </h2>
+          <p className="text-lg" style={{ color: getTextColor('secondary') }}>
+            A comprehensive overview of my technical expertise
+          </p>
+        </motion.div>
+        
+        <div className="space-y-12">
+          {categories.map((category, categoryIndex) => (
+            <SkillCategory
+              key={category}
+              category={category}
+              skills={skills.filter(skill => skill.category === category)}
+              index={categoryIndex}
+              activeSkill={activeSkill}
+              setActiveSkill={setActiveSkill}
             />
           ))}
         </div>
-      </motion.div>
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Mobile Section Header */}
-        <motion.div 
-          className="text-center mb-8 sm:mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.h2 
-            className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-6"
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ 
-              duration: 0.6, 
-              type: "spring",
-              stiffness: 100
-            }}
-          >
-            <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient">
-              About Me
-            </span>
-          </motion.h2>
-          <motion.p 
-            className="text-gray-300/90 text-base sm:text-lg max-w-xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            A passionate Full Stack Developer with expertise in modern web technologies
-          </motion.p>
-        </motion.div>
-
-        {/* Mobile Content Stack */}
-        <div className="space-y-6 sm:space-y-8">
-          {/* Mobile Intro Section */}
-          <motion.div 
-            className="bg-white/5 backdrop-blur-sm rounded-xl p-6 sm:p-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <IntroSection />
-          </motion.div>
-
-          {/* Mobile Skills Section */}
-          <motion.div 
-            className="bg-white/5 backdrop-blur-sm rounded-xl p-6 sm:p-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <SkillsSection />
-          </motion.div>
-
-          {/* Mobile Education Timeline */}
-          <motion.div 
-            className="bg-white/5 backdrop-blur-sm rounded-xl p-6 sm:p-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <EducationTimeline />
-          </motion.div>
-        </div>
       </div>
-
-      <style jsx>{`
-        .animate-gradient {
-          animation: gradient 4s linear infinite;
-        }
-
-        @keyframes gradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        @media (max-width: 768px) {
-          .prose {
-            font-size: 0.95rem;
-          }
-          .prose p {
-            margin-bottom: 1rem;
-          }
-          .animate-gradient {
-            animation: gradient 4s linear infinite;
-          }
-          .animate-shimmer {
-            animation: shimmer 1.5s infinite;
-          }
-        }
-      `}</style>
     </section>
   );
+};
 
+const IntroductionSection = () => {
+  const { getTextColor, getBackgroundColor } = useThemeStyles();
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
   return (
-    <section className="min-h-screen py-12 sm:py-20 lg:py-32 relative overflow-hidden" ref={containerRef}>
-      {/* Enhanced Animated Background */}
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+      transition={{ duration: 0.8 }}
+      className="min-h-screen py-20 px-4 relative overflow-hidden flex items-center"
+      style={{ background: getBackgroundColor('default') }}
+    >
+      {/* Background Elements */}
       <motion.div 
-        className="absolute inset-0 z-0"
-        style={{ y: springY }}
+        className="absolute inset-0 w-full h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
       >
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-purple-500/10 to-blue-500/10" />
-        <div className="absolute inset-0" style={{ 
-          backgroundImage: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.1) 0%, transparent 70%)',
-          backgroundSize: '100% 100%',
-          backgroundPosition: 'center'
-        }} />
-        {/* Animated Particles */}
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 rounded-full bg-purple-500/20"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 0.5, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </motion.div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <IntroSection />
+        {/* Gradient Orbs */}
+        <motion.div 
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] opacity-20"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[60px]" />
+        </motion.div>
         
-        {/* Education Section */}
-        <div className="py-12 sm:py-20">
-          <motion.h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-12 sm:mb-20"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+        <motion.div 
+          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] opacity-20"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[60px]" />
+        </motion.div>
+      </motion.div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text">
-              Education Journey
-            </span>
-          </motion.h2>
-          <EducationTimeline />
+            <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{ color: getTextColor('primary') }}>
+              <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
+                Innovative
+              </span>{" "}
+              Full-Stack Developer
+            </h1>
+            
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mr-4"></div>
+              <h2 className="text-2xl font-semibold" style={{ color: getTextColor('secondary') }}>
+                Cloud & Performance Optimizer
+              </h2>
+            </div>
+            
+            <p className="text-lg mb-8" style={{ color: getTextColor('secondary') }}>
+              I combine technical expertise with creative problem-solving to build exceptional digital experiences. My background in both technology and music gives me a unique perspective on creating harmonious, efficient, and user-friendly applications.
+            </p>
+            
+            <div className="flex flex-wrap gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="flex items-center space-x-2"
+              >
+                <div className="p-2 rounded-lg bg-blue-500/20 text-blue-500">
+                  <FaCode className="w-5 h-5" />
+                </div>
+                <span style={{ color: getTextColor('secondary') }}>Full-Stack Development</span>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="flex items-center space-x-2"
+              >
+                <div className="p-2 rounded-lg bg-purple-500/20 text-purple-500">
+                  <FaRocket className="w-5 h-5" />
+                </div>
+                <span style={{ color: getTextColor('secondary') }}>Performance Optimization</span>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="flex items-center space-x-2"
+              >
+                <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-500">
+                  <FaMusic className="w-5 h-5" />
+                </div>
+                <span style={{ color: getTextColor('secondary') }}>Musician & Creative Thinker</span>
+              </motion.div>
+            </div>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="relative"
+          >
+            <div className="relative w-full h-[500px] rounded-2xl overflow-hidden">
+              <Image
+                src="/images/ProfilePicture.jpeg"
+                alt="Rial Parmar"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="absolute bottom-0 left-0 right-0 p-6"
+              >
+                <h3 className="text-2xl font-bold mb-2" style={{ color: getTextColor('primary') }}>
+                  Problem Solver
+                </h3>
+                <p className="text-lg" style={{ color: getTextColor('secondary') }}>
+                  Turning complex challenges into elegant solutions
+                </p>
+              </motion.div>
+            </div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full overflow-hidden border-4 border-purple-500/30 shadow-lg"
+            >
+              <Image
+                src="/images/ProfilePicture.jpeg"
+                alt="Rial Parmar"
+                fill
+                className="object-cover"
+              />
+            </motion.div>
+          </motion.div>
         </div>
-
-        {/* New Skills Section */}
-        <SkillsSection />
-
-        {/* Add shimmer animation */}
-        <style jsx global>{`
-          @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-          }
-          .animate-shimmer {
-            animation: shimmer 2s infinite;
-          }
-          @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-          .animate-gradient {
-            animation: gradient 6s linear infinite;
-          }
-          @media (max-width: 768px) {
-            .prose {
-              font-size: 0.95rem;
-            }
-            .prose p {
-              margin-bottom: 1rem;
-            }
-            .animate-gradient {
-              animation: gradient 4s linear infinite;
-            }
-            .animate-shimmer {
-              animation: shimmer 1.5s infinite;
-            }
-          }
-        `}</style>
       </div>
-    </section>
+    </motion.section>
+  );
+};
+
+const About = () => {
+  return (
+    <div id="about" className="min-h-screen">
+      <IntroductionSection />
+      <SkillsSection />
+      <MusicianSection />
+    </div>
   );
 };
 

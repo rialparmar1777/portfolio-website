@@ -1,401 +1,308 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, useAnimation, useInView, useScroll, useTransform } from 'framer-motion';
+import { useThemeStyles } from '../hooks/useThemeStyles';
 import TypewriterText from './TypewriterText';
-import { useState, useRef, useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { useAnimation } from 'framer-motion';
+import SocialLinks from './SocialLinks';
+import Image from 'next/image';
+import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
 
 const Hero = () => {
+  const { getTextColor, getBackgroundColor, getBorderColor } = useThemeStyles();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const [isMobile, setIsMobile] = useState(false);
-  const { ref: containerRef, inView } = useInView({
-    threshold: 0,
-    triggerOnce: false,
-    rootMargin: "-100px",
-  });
+  const [isHovered, setIsHovered] = useState(false);
   const controls = useAnimation();
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isMobile) return;
-    
-    const { clientX, clientY } = e;
-    const { innerWidth, innerHeight } = window;
-    const x = (clientX / innerWidth - 0.5) * 2;
-    const y = (clientY / innerHeight - 0.5) * 2;
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, amount: 0.1 });
+  const { scrollY } = useScroll();
+  
+  // Parallax effect for the hero section
+  const y = useTransform(scrollY, [0, 500], [0, 150]);
+  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
+  
+  // Mouse move effect for the profile picture
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - left) / width;
+    const y = (e.clientY - top) / height;
     setMousePosition({ x, y });
-    setCursorPosition({ x: clientX, y: clientY });
   };
-
-  // Mobile Layout Component
-  const MobileLayout = () => (
-    <div className="min-h-screen flex flex-col items-center justify-start pt-16 pb-10 px-4 relative overflow-hidden bg-gradient-to-b from-black via-purple-950/20 to-black">
-      {/* Mobile Background Elements */}
-      <motion.div 
-        className="absolute inset-0 w-full h-full"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5 }}
-      >
-        {/* Mobile Gradient Orbs - Enhanced */}
-        <motion.div 
-          className="absolute top-0 left-0 w-[200px] h-[200px] opacity-40"
+  
+  // Reset mouse position when not hovering
+  const handleMouseLeave = () => {
+    setMousePosition({ x: 0.5, y: 0.5 });
+  };
+  
+  useEffect(() => {
+    // Start animation after a short delay to ensure it works with PageTransition
+    const timer = setTimeout(() => {
+      controls.start("visible");
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [controls]);
+  
+  const containerVariants = {
+    hidden: { opacity: 0.5 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100
+      }
+    }
+  };
+  
+  const imageVariants = {
+    hidden: { scale: 0.8, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100,
+        delay: 0.5
+      }
+    }
+  };
+  
+  return (
+    <motion.div
+      ref={ref}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      style={{ y, opacity }}
+      variants={containerVariants}
+      initial="hidden"
+      animate={controls}
+    >
+      {/* Background Effects */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(147,51,234,0.15),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.15),transparent_50%)]" />
+        
+        {/* Animated circles */}
+        <motion.div
+          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-purple-500/10 blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
+            opacity: [0.3, 0.5, 0.3],
           }}
           transition={{
-            duration: 15,
+            duration: 8,
             repeat: Infinity,
-            ease: "linear",
+            ease: "easeInOut",
           }}
-        >
-          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[30px]" />
-        </motion.div>
-        
-        <motion.div 
-          className="absolute bottom-0 right-0 w-[200px] h-[200px] opacity-40"
+        />
+        <motion.div
+          className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl"
           animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.5, 0.3],
           }}
           transition={{
-            duration: 15,
+            duration: 10,
             repeat: Infinity,
-            ease: "linear",
+            ease: "easeInOut",
           }}
-        >
-          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[30px]" />
-        </motion.div>
-
-        {/* Mobile Grid Lines - Enhanced */}
-        <div className="absolute inset-0">
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute h-[1px] w-full"
-              style={{ 
-                top: `${i * 12.5}%`,
-                background: `linear-gradient(90deg, 
-                  transparent,
-                  ${i % 2 ? 'rgba(168, 85, 247, 0.15)' : 'rgba(59, 130, 246, 0.15)'} 50%,
-                  transparent
-                )`,
-              }}
-              animate={{
-                opacity: [0.1, 0.3, 0.1],
-                scaleX: [0.8, 1, 0.8],
-              }}
-              transition={{
-                duration: 3 + i % 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.1,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Mobile Floating Particles - Enhanced */}
-        {[...Array(12)].map((_, i) => (
+        />
+      </div>
+      
+      <div className="max-w-7xl mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          {/* Text Content */}
           <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: `${Math.random() * 2 + 1}px`,
-              height: `${Math.random() * 2 + 1}px`,
-              background: i % 2 ? 'rgba(168, 85, 247, 0.5)' : 'rgba(59, 130, 246, 0.5)',
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              filter: 'blur(1px)',
-            }}
-            animate={{
-              y: [0, -20, 0],
-              x: [-10, 10, -10],
-              scale: [1, 1.5, 1],
-              opacity: [0.3, 0.6, 0.3],
-            }}
-            transition={{
-              duration: 2 + Math.random() * 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </motion.div>
-
-      {/* Mobile Profile Picture - Enhanced */}
-      <motion.div 
-        className="relative w-[180px] h-[180px] mb-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className="relative w-full h-full rounded-full overflow-hidden">
-          <motion.div 
-            className="absolute -inset-2"
-            style={{
-              background: 'conic-gradient(from 0deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2), rgba(168, 85, 247, 0.2))',
-              filter: 'blur(15px)',
-            }}
-            animate={{
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
+            className="text-center lg:text-left max-w-xl mx-auto lg:mx-0"
+            variants={containerVariants}
+          >
+            <motion.h1
+              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4"
+              style={{ color: getTextColor('primary') }}
+              variants={itemVariants}
+            >
+              Hi, I'm{' '}
+              <span className="relative inline-block">
+                Rial Parmar
+                <motion.span
+                  className="absolute -bottom-1 left-0 h-1 bg-gradient-to-r from-purple-500 to-blue-500"
+                  initial={{ width: 0 }}
+                  animate={{ width: '100%' }}
+                  transition={{ delay: 1, duration: 0.5 }}
+                />
+              </span>
+            </motion.h1>
+            
+            <motion.h2
+              className="text-2xl md:text-3xl font-medium mb-6"
+              style={{ color: getTextColor('secondary') }}
+              variants={itemVariants}
+            >
+              <TypewriterText
+                words={[
+                  'Full Stack Developer',
+                  'Cloud Architect',
+                  'Performance Optimizer',
+                  'Creative Problem Solver'
+                ]}
+              />
+            </motion.h2>
+            
+            <motion.p
+              className="text-lg mb-8 max-w-2xl mx-auto lg:mx-0"
+              style={{ color: getTextColor('secondary') }}
+              variants={itemVariants}
+            >
+              I craft exceptional digital experiences that combine technical expertise with creative innovation.
+              Specializing in building scalable, high-performance applications that deliver real business value.
+            </motion.p>
+            
+            <motion.div
+              className="flex flex-wrap justify-center lg:justify-start gap-4 mb-8"
+              variants={itemVariants}
+            >
+              <motion.a
+                href="#contact"
+                className="px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Let's Collaborate
+              </motion.a>
+              <motion.a
+                href="#projects"
+                className="px-6 py-3 rounded-lg font-medium border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300"
+                style={{ color: getTextColor('primary') }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Explore My Work
+              </motion.a>
+            </motion.div>
+            
+            <motion.div
+              className="flex justify-center lg:justify-start"
+              variants={itemVariants}
+            >
+              <SocialLinks size="md" />
+            </motion.div>
+          </motion.div>
           
-          <div className="relative w-full h-full rounded-full overflow-hidden backdrop-blur-sm">
-            <Image
-              src="/images/ProfilePicture.jpeg"
-              alt="Rial Parmar"
-              width={400}
-              height={400}
-              className="w-full h-full object-cover"
-              priority
-            />
-          </div>
+          {/* Profile Picture */}
+          <motion.div
+            className="relative flex justify-center lg:justify-end"
+            variants={imageVariants}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => {
+              setIsHovered(false);
+              handleMouseLeave();
+            }}
+          >
+            <div className="relative w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96">
+              {/* Glow effect */}
+              <motion.div
+                className="absolute -inset-8 bg-gradient-to-r from-purple-500/30 to-blue-500/30 rounded-full blur-3xl"
+                animate={{
+                  scale: isHovered ? [1, 1.2, 1] : 1,
+                  opacity: isHovered ? [0.3, 0.5, 0.3] : 0.3,
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              {/* Profile image */}
+              <motion.div
+                className="relative w-full h-full rounded-full overflow-hidden border-4 border-purple-500/30 shadow-2xl shadow-purple-500/20"
+                style={{
+                  transform: isHovered
+                    ? `perspective(1000px) rotateX(${(mousePosition.y - 0.5) * 10}deg) rotateY(${(mousePosition.x - 0.5) * 10}deg)`
+                    : 'none',
+                  transition: 'transform 0.1s ease-out',
+                }}
+              >
+                <Image
+                  src="/images/ProfilePicture.jpeg"
+                  alt="Rial Parmar"
+                  fill
+                  className="object-cover"
+                  priority
+                  style={{
+                    objectPosition: "center 20%"
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
+                
+                {/* Glasses Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 mix-blend-overlay" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 mix-blend-multiply" />
+              </motion.div>
+              
+              {/* Floating elements */}
+              <motion.div
+                className="absolute -top-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 shadow-lg"
+                animate={{
+                  y: [0, -15, 0],
+                  rotate: [0, 5, 0],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <motion.div
+                className="absolute -bottom-8 -left-8 w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 shadow-lg"
+                animate={{
+                  y: [0, 15, 0],
+                  rotate: [0, -5, 0],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              
+              {/* Glasses Frame */}
+              <div className="absolute inset-0 rounded-full border-2 border-white/20" />
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
-
-      {/* Mobile Text Content - Enhanced */}
-      <motion.div 
-        className="text-center max-w-sm mx-auto"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
-        <motion.span
-          className="text-sm font-mono mb-2 block"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          style={{
-            background: 'linear-gradient(to right, #a855f7, #3b82f6)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          Hello, I'm
-        </motion.span>
-
-        <motion.h1 
-          className="text-3xl font-bold mb-3"
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ 
-            duration: 0.8, 
-            type: "spring",
-            stiffness: 100
-          }}
-        >
-          <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient">
-            Rial Parmar
-          </span>
-        </motion.h1>
-
-        {/* Mobile Typewriter Section - Enhanced */}
-        <motion.div 
-          className="text-base mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
-          <div className="relative p-2 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10">
-            <TypewriterText />
-          </div>
-        </motion.div>
-
-        {/* Mobile Professional Summary - Enhanced */}
-        <motion.p
-          className="text-sm text-gray-300/90 mb-6 leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-        >
-          An Accomplished Full Stack Developer with expertise in both Front-End and Back-End Technologies.
-        </motion.p>
-
-        {/* Mobile CTA Buttons - Enhanced */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1 }}
-          className="flex flex-col gap-3"
-        >
-          {/* View Projects Button */}
-          <motion.a 
-            href="#projects"
-            className="group relative px-5 py-2.5 text-sm rounded-lg overflow-hidden w-full text-center font-semibold"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <motion.div
-              className="absolute inset-0 rounded-lg"
-              style={{
-                background: 'linear-gradient(45deg, #a855f7, #3b82f6)',
-              }}
-              animate={{
-                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-            />
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              View Projects
-              <motion.svg
-                className="w-3.5 h-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                animate={{
-                  x: [0, 5, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </motion.svg>
-            </span>
-          </motion.a>
-
-          {/* Contact Me Button */}
-          <motion.a 
-            href="#contact"
-            className="group relative px-5 py-2.5 text-sm rounded-lg overflow-hidden w-full text-center font-semibold"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <motion.div
-              className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/10 to-blue-500/10"
-              animate={{
-                opacity: [0.5, 0.8, 0.5],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-            <motion.div
-              className="absolute inset-0 rounded-lg border border-purple-500/20"
-              animate={{
-                opacity: [0.3, 0.6, 0.3],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              Contact Me
-              <motion.svg
-                className="w-3.5 h-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                animate={{
-                  y: [0, -3, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </motion.svg>
-            </span>
-          </motion.a>
-          
-          {/* Download CV Button */}
-          <motion.a 
-            href="/Resume.pdf"
-            download="Rial_Parmar_Resume.pdf"
-            className="group relative px-5 py-2.5 text-sm rounded-lg overflow-hidden w-full text-center font-semibold cursor-pointer"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <motion.div
-              className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/5 to-white/10"
-              animate={{
-                opacity: [0.3, 0.5, 0.3],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-            <motion.div
-              className="absolute inset-0 rounded-lg border border-white/10"
-              animate={{
-                opacity: [0.2, 0.4, 0.2],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              Download CV
-              <motion.svg
-                className="w-3.5 h-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                animate={{
-                  y: [0, 3, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </motion.svg>
-            </span>
-          </motion.a>
-        </motion.div>
-      </motion.div>
-
-      {/* Mobile Scroll Indicator - Enhanced */}
+      </div>
+      
+      {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-4 left-1/2 -translate-x-1/2"
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5 }}
+        transition={{ delay: 1.5, duration: 0.5 }}
       >
+        <span className="text-sm mb-2" style={{ color: getTextColor('secondary') }}>
+          Discover More
+        </span>
         <motion.div
-          className="flex flex-col items-center gap-1"
+          className="w-6 h-10 border-2 rounded-full flex justify-center p-1"
+          style={{ borderColor: getBorderColor('light') }}
           animate={{
-            y: [0, 8, 0],
+            y: [0, 10, 0],
           }}
           transition={{
             duration: 1.5,
@@ -403,624 +310,22 @@ const Hero = () => {
             ease: "easeInOut",
           }}
         >
-          <span className="text-xs text-gray-400">Scroll Down</span>
           <motion.div
-            className="w-4 h-6 rounded-full border border-gray-400 p-1"
+            className="w-1 h-1 rounded-full"
+            style={{ background: getTextColor('primary') }}
             animate={{
-              scale: [1, 1.05, 1],
+              y: [0, 8, 0],
             }}
             transition={{
               duration: 1.5,
               repeat: Infinity,
               ease: "easeInOut",
             }}
-          >
-            <motion.div
-              className="w-1 h-1 rounded-full bg-gray-400 mx-auto"
-              animate={{
-                y: [0, 8, 0],
-              }}
-              transition={{
-                duration: 1.2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    </div>
-  );
-
-  // Desktop Layout Component
-  const DesktopLayout = () => (
-    <div 
-      className="min-h-screen flex items-center justify-center relative px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-black via-purple-950/20 to-black"
-      onMouseMove={handleMouseMove}
-    >
-      {/* Enhanced Background Elements */}
-      <motion.div 
-        className="absolute inset-0 w-full h-full"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5 }}
-      >
-        {/* Animated Cursor Glow - Hidden on Mobile */}
-        {!isMobile && (
-          <motion.div
-            className="absolute w-[500px] h-[500px] pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.15), transparent 50%)',
-              left: cursorPosition.x - 250,
-              top: cursorPosition.y - 250,
-              transform: 'translate3d(0, 0, 0)',
-            }}
-            animate={{
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
           />
-        )}
-
-        {/* Enhanced Grid Lines - Reduced on Mobile */}
-        <div className="absolute inset-0" style={{ perspective: "1000px" }}>
-          {[...Array(isMobile ? 15 : 30)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute h-[1px] w-full"
-              style={{ 
-                top: `${i * (isMobile ? 6.66 : 3.33)}%`,
-                background: `linear-gradient(90deg, 
-                  transparent,
-                  ${i % 2 ? 'rgba(168, 85, 247, 0.15)' : 'rgba(59, 130, 246, 0.15)'} 50%,
-                  transparent
-                )`,
-                transform: `rotateX(${mousePosition.y * (isMobile ? 2 : 5)}deg)`,
-              }}
-              animate={{
-                opacity: [0.1, 0.3, 0.1],
-                scaleX: [0.8, 1, 0.8],
-              }}
-              transition={{
-                duration: 3 + i % 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.1,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Enhanced Gradient Orbs - Adjusted for Mobile */}
-        <motion.div 
-          className="absolute top-0 left-0 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] opacity-50"
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        >
-          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[60px] sm:blur-[120px]" />
-        </motion.div>
-        
-        <motion.div 
-          className="absolute bottom-0 right-0 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] opacity-50"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        >
-          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[60px] sm:blur-[120px]" />
-        </motion.div>
-
-        {/* Enhanced Floating Particles - Reduced on Mobile */}
-        {[...Array(isMobile ? 15 : 30)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: `${Math.random() * (isMobile ? 2 : 3) + 1}px`,
-              height: `${Math.random() * (isMobile ? 2 : 3) + 1}px`,
-              background: i % 2 ? 'rgba(168, 85, 247, 0.5)' : 'rgba(59, 130, 246, 0.5)',
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              filter: 'blur(1px)',
-            }}
-            animate={{
-              y: [0, -30, 0],
-              x: [-20, 20, -20],
-              scale: [1, 2, 1],
-              opacity: [0.3, 0.8, 0.3],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </motion.div>
-
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-8 sm:gap-12 max-w-7xl mx-auto w-full relative z-10">
-        {/* Enhanced Text Content */}
-        <motion.div 
-          className="text-center lg:text-left lg:flex-1 max-w-2xl backdrop-blur-sm rounded-3xl p-6 sm:p-8 bg-white/5"
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          style={{
-            transform: isMobile ? 'none' : `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)`,
-            transition: "transform 0.3s ease-out",
-            boxShadow: '0 0 40px rgba(168, 85, 247, 0.1)',
-          }}
-        >
-          <div className="relative mb-6 sm:mb-8">
-            <motion.span
-              className="absolute -top-8 sm:-top-10 left-0 lg:left-2 text-sm sm:text-base lg:text-lg font-mono"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              style={{
-                background: 'linear-gradient(to right, #a855f7, #3b82f6)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              Hello, I'm
-            </motion.span>
-            <motion.h1 
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-9xl font-bold relative"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ 
-                duration: 0.8, 
-                type: "spring",
-                stiffness: 100
-              }}
-            >
-              <span className="relative inline-block">
-                <span className="relative z-10 bg-gradient-to-r from-purple-400 via-blue-500 to-purple-400 text-transparent bg-clip-text bg-[length:200%_auto] animate-gradient">
-                  Rial Parmar
-                </span>
-                {/* Enhanced Name Glow */}
-                <motion.div
-                  className="absolute -inset-2 rounded-lg opacity-75"
-                  style={{
-                    background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.3), transparent)',
-                    filter: 'blur(20px)',
-                  }}
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.5, 0.8, 0.5],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
-              </span>
-              {/* Enhanced Animated Underline */}
-              <motion.div 
-                className="absolute -bottom-2 sm:-bottom-3 left-0 w-full h-1 sm:h-1.5 rounded-full overflow-hidden"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.8, duration: 0.6 }}
-              >
-                <motion.div
-                  className="w-full h-full"
-                  style={{
-                    background: 'linear-gradient(90deg, #a855f7, #3b82f6, #a855f7)',
-                    backgroundSize: '200% 100%',
-                  }}
-                  animate={{
-                    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                />
-              </motion.div>
-            </motion.h1>
-          </div>
-
-          {/* Enhanced Typewriter Section */}
-          <motion.div 
-            className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-4 sm:mb-6 md:mb-8 relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-          >
-            <div className="relative p-3 sm:p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10">
-              <TypewriterText />
-              <motion.div
-                className="absolute inset-0 rounded-xl"
-                style={{
-                  background: 'linear-gradient(45deg, rgba(168, 85, 247, 0.1), rgba(59, 130, 246, 0.1))',
-                }}
-                animate={{
-                  opacity: [0.3, 0.5, 0.3],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-            </div>
-          </motion.div>
-
-          {/* Enhanced Professional Summary */}
-          <motion.p
-            className="text-sm sm:text-base md:text-lg text-gray-300/90 mb-4 sm:mb-6 md:mb-8 leading-relaxed relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9 }}
-          >
-            <span className="relative inline-block p-3 sm:p-4 rounded-xl bg-gradient-to-r from-purple-500/5 to-blue-500/5">
-              An Accomplished Full Stack Developer with expertise in both Front-End and Back-End Technologies.
-              <motion.div
-                className="absolute inset-0 rounded-xl"
-                style={{
-                  background: 'linear-gradient(45deg, rgba(168, 85, 247, 0.05), rgba(59, 130, 246, 0.05))',
-                }}
-                animate={{
-                  opacity: [0.3, 0.5, 0.3],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-            </span>
-          </motion.p>
-
-          {/* Enhanced CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 justify-center lg:justify-start"
-          >
-            {/* View Projects Button */}
-            <motion.a 
-              href="#projects"
-              className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <motion.div
-                className="absolute inset-0 rounded-xl"
-                style={{
-                  background: 'linear-gradient(45deg, #a855f7, #3b82f6)',
-                }}
-                animate={{
-                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-              <motion.div
-                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100"
-                style={{
-                  background: 'linear-gradient(45deg, #9333ea, #2563eb)',
-                }}
-                transition={{ duration: 0.3 }}
-              />
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                View Projects
-                <motion.svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  animate={{
-                    x: [0, 5, 0],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </motion.svg>
-              </span>
-            </motion.a>
-
-            {/* Contact Me Button */}
-            <motion.a 
-              href="#contact"
-              className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <motion.div
-                className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10"
-                animate={{
-                  opacity: [0.5, 0.8, 0.5],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.div
-                className="absolute inset-0 rounded-xl border border-purple-500/20"
-                animate={{
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                Contact Me
-                <motion.svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  animate={{
-                    y: [0, -3, 0],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </motion.svg>
-              </span>
-            </motion.a>
-            
-            {/* Download CV Button */}
-            <motion.a 
-              href="/Resume.pdf"
-              download="Rial_Parmar_Resume.pdf"
-              className="group relative px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-xl overflow-hidden w-full sm:w-auto text-center font-semibold cursor-pointer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <motion.div
-                className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/5 to-white/10"
-                animate={{
-                  opacity: [0.3, 0.5, 0.3],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.div
-                className="absolute inset-0 rounded-xl border border-white/10"
-                animate={{
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                Download CV
-                <motion.svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  animate={{
-                    y: [0, 3, 0],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </motion.svg>
-              </span>
-            </motion.a>
-          </motion.div>
-        </motion.div>
-
-        {/* Enhanced Profile Picture */}
-        <motion.div 
-          className="relative lg:flex-1 w-full max-w-[280px] sm:max-w-[350px] flex justify-center items-center"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          style={{
-            transform: isMobile ? 'none' : `perspective(1000px) rotateX(${mousePosition.y * -2}deg) rotateY(${mousePosition.x * -2}deg)`,
-            transition: "transform 0.3s ease-out",
-          }}
-        >
-          <motion.div
-            className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[350px] md:h-[350px]"
-            whileHover={{ scale: 1.02 }}
-            animate={{
-              y: [0, -10, 0],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            {/* Enhanced Glow Effects */}
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute -inset-4 rounded-full"
-                style={{
-                  background: `conic-gradient(from ${i * 120}deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2), rgba(168, 85, 247, 0.2))`,
-                  transform: `rotate(${i * 120}deg)`,
-                }}
-                animate={{
-                  rotate: [`${i * 120}deg`, `${i * 120 + 360}deg`],
-                }}
-                transition={{
-                  duration: 10,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-            ))}
-            
-            <div className="relative w-full h-full rounded-2xl overflow-hidden">
-              <motion.div 
-                className="absolute -inset-2"
-                style={{
-                  background: 'conic-gradient(from 0deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2), rgba(168, 85, 247, 0.2))',
-                  filter: 'blur(20px)',
-                }}
-                animate={{
-                  rotate: [0, 360],
-                }}
-                transition={{
-                  duration: 10,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-              
-              <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm group">
-                <Image
-                  src="/images/ProfilePicture.jpeg"
-                  alt="Rial Parmar"
-                  width={400}
-                  height={400}
-                  className="w-full h-full object-cover scale-105 transition-transform duration-500 group-hover:scale-110"
-                  priority
-                />
-                
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"
-                  animate={{
-                    opacity: [0.4, 0.6, 0.4],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
-
-                {/* Enhanced Floating Particles */}
-                {[...Array(12)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute w-1 h-1 rounded-full bg-white/70"
-                    style={{
-                      top: `${50 + Math.cos(i * 30) * 45}%`,
-                      left: `${50 + Math.sin(i * 30) * 45}%`,
-                      filter: 'blur(1px)',
-                    }}
-                    animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.3, 0.7, 0.3],
-                    }}
-                    transition={{
-                      duration: 2 + i * 0.2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: i * 0.1,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      </div>
-
-      {/* Enhanced Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5 }}
-      >
-        <motion.div
-          className="flex flex-col items-center gap-2"
-          animate={{
-            y: [0, 10, 0],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          <span className="text-xs sm:text-sm text-gray-400">Scroll Down</span>
-          <motion.div
-            className="w-5 h-8 sm:w-6 sm:h-10 rounded-full border-2 border-gray-400 p-1"
-            animate={{
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <motion.div
-              className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-gray-400 mx-auto"
-              animate={{
-                y: [0, 12, 0],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-          </motion.div>
         </motion.div>
       </motion.div>
-
-      <style jsx>{`
-        .animate-gradient {
-          animation: gradient 6s linear infinite;
-        }
-
-        @keyframes gradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
-    </div>
+    </motion.div>
   );
-
-  return isMobile ? <MobileLayout /> : <DesktopLayout />;
 };
 
 export default Hero; 

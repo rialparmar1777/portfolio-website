@@ -1,502 +1,181 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import CustomCursor from './components/CustomCursor';
-import AnimatedBackground from './components/AnimatedBackground';
-import Contact from './components/Contact';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeProvider } from './context/ThemeContext';
+import { useThemeStyles } from './hooks/useThemeStyles';
 import Navbar from './components/Navbar';
-import SnowEffect from './components/SnowEffect';
-import TypewriterText from './components/TypewriterText';
-import PageTransition from './components/PageTransition';
+import Hero from './components/Hero';
 import About from './components/About';
-import { motion } from 'framer-motion';
+import Experience from './components/Experience';
 import Projects from './components/Projects';
+import Contact from './components/Contact';
+import PageTransition from './components/PageTransition';
 import { Toaster } from 'react-hot-toast';
+import DynamicScroll from './components/DynamicScroll';
 
-// Animation variants for sections
-const sectionVariants = {
-  initial: {
-    opacity: 0,
-    y: 50,
-    scale: 0.95,
-  },
-  animate: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.8,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -50,
-    scale: 0.95,
-    transition: {
-      duration: 0.4,
-    },
-  },
-};
-
-export default function Home() {
+const MainContent = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isDownloading, setIsDownloading] = useState(false);
-  const [showInitialTransition, setShowInitialTransition] = useState(true);
-
+  const [isClient, setIsClient] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  const { getBackgroundColor, getTextColor, getBorderColor } = useThemeStyles();
+  
   useEffect(() => {
-    // Remove initial transition after it completes
-    const timer = setTimeout(() => {
-      setShowInitialTransition(false);
-    }, 2500); // Match this with the total duration of your transition
-
-    return () => clearTimeout(timer);
+    setIsClient(true);
+    
+    // Check if there's a hash in the URL and navigate to that section
+    const hash = window.location.hash.replace('#', '');
+    if (hash && ['home', 'about', 'experience', 'projects', 'contact'].includes(hash)) {
+      setActiveSection(hash);
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 500); // Delay to ensure components are rendered
+    } else {
+      // If no hash, ensure we're at the top of the page
+      window.scrollTo(0, 0);
+      // Force scroll to top on initial load
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
+    }
   }, []);
-
+  
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'about', 'projects', 'contact'];
-      const current = sections.find(section => {
+      const sections = ['home', 'about', 'experience', 'projects', 'contact'];
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
+      
+      for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
+          const { top, bottom } = element.getBoundingClientRect();
+          const offset = window.scrollY;
+          
+          if (top + offset <= scrollPosition && bottom + offset >= scrollPosition) {
+            setActiveSection(section);
+            break;
+          }
         }
-        return false;
-      });
-      if (current) {
-        setActiveSection(current);
       }
     };
-
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault();
-    const element = document.getElementById(sectionId);
-    if (element) {
-      // Disable smooth scrolling temporarily
-      document.documentElement.style.scrollBehavior = 'auto';
-      
-      const headerOffset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      // Scroll to the element
-      window.scrollTo(0, offsetPosition);
-
-      // Re-enable smooth scrolling after a short delay
-      setTimeout(() => {
-        document.documentElement.style.scrollBehavior = 'smooth';
-      }, 100);
-
-      // Update URL hash without triggering scroll
-      window.history.pushState({}, '', `#${sectionId}`);
+  
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+  
+  const handleNavigation = (section: string) => {
+    if (section === 'home') {
+      // Special handling for home section
+      scrollToTop();
+      setActiveSection('home');
+      window.history.pushState(null, '', '#home');
+    } else {
+      const element = document.getElementById(section);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setActiveSection(section);
+        window.history.pushState(null, '', `#${section}`);
+      }
     }
   };
-
-  const handleDownload = async () => {
-    if (isDownloading) return; // Prevent multiple clicks
-    
+  
+  const handleDownloadResume = async () => {
     setIsDownloading(true);
     try {
-      const response = await fetch('/Resume.docx');
-      if (!response.ok) throw new Error('Download failed');
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'Resume.docx';
-      document.body.appendChild(link);
-      link.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(link);
-      
-      // Keep the downloading state for a minimum duration
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Add your resume download logic here
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated download
+      window.open('/Resume.pdf', '_blank');
     } catch (error) {
-      console.error('Download failed:', error);
+      console.error('Error downloading resume:', error);
     } finally {
       setIsDownloading(false);
     }
   };
-
+  
+  if (!isClient) {
+    return null;
+  }
+  
   return (
-    <>
-      <style jsx>{`
-        .downloading .document-path {
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
+    <main
+      ref={mainRef}
+      className="min-h-screen"
+      style={{ background: getBackgroundColor('default') }}
+    >
+      <Navbar
+        onNavigate={handleNavigation}
+        activeSection={activeSection}
+        onDownloadResume={handleDownloadResume}
+        isDownloading={isDownloading}
+      />
+      
+      <div className="pt-16">
+        {/* Hero Section */}
+        <section id="home" className="min-h-screen relative z-10">
+          <Hero />
+        </section>
         
-        .downloading .arrow-path {
-          opacity: 1;
-          transition: opacity 0.3s ease;
-        }
-      `}</style>
-
-      <PageTransition isTransitioning={showInitialTransition}>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: '#1a1a1a',
-              color: '#fff',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            },
-            success: {
-              iconTheme: {
-                primary: '#10B981',
-                secondary: '#fff',
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: '#EF4444',
-                secondary: '#fff',
-              },
-            },
-          }}
-        />
-        <CustomCursor />
-        <AnimatedBackground />
-        <SnowEffect />
-        <Navbar onNavigate={handleNavigation} />
-        
-        <div className="min-h-screen">
-          {/* Hero Section */}
-          <motion.section 
-            id="home"
-            variants={sectionVariants}
-            initial="initial"
-            animate={activeSection === 'home' ? "animate" : "initial"}
-            exit="exit"
-            className="min-h-screen flex items-center justify-center relative px-4 overflow-hidden py-20"
-          >
-            {/* Background Decorative Elements */}
-            <motion.div 
-              className="absolute inset-0 w-full h-full"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.5 }}
-            >
-              <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-20 right-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl" />
-            </motion.div>
-
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-12 max-w-7xl mx-auto w-full relative z-10">
-              {/* Text Content */}
-              <motion.div 
-                className="text-center lg:text-left lg:flex-1 max-w-2xl"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <div className="relative mb-8">
-                  <motion.span
-                    className="absolute -top-10 left-0 lg:left-2 text-base lg:text-lg text-purple-400/80 font-mono"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                  >
-                    Hello, I'm
-                  </motion.span>
-                  <motion.h1 
-                    className="text-7xl lg:text-9xl font-bold gradient-text relative"
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ 
-                      duration: 0.8, 
-                      type: "spring",
-                      stiffness: 100
-                    }}
-                  >
-                    Rial Parmar
-                    <motion.span 
-                      className="absolute -bottom-3 left-0 w-full h-1.5 bg-gradient-to-r from-purple-500 to-blue-500"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ delay: 0.8, duration: 0.6 }}
-                    />
-                  </motion.h1>
-                </div>
-
-                <motion.div 
-                  className="text-2xl lg:text-3xl text-gray-300 mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 }}
-                >
-                  <TypewriterText />
-                </motion.div>
-
-                {/* Professional Summary */}
-                <motion.p
-                  className="text-lg text-gray-300/90 mb-8 leading-relaxed"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9 }}
-                >
-                  An Accomplished Full Stack Developer with expertise in both Front-End and Back-End Technologies.
-
-                  Proficient in diagnosing and resolving technical issues across web stacks (JavaScript, SQL, Docker) with strong skills in log analysis, database optimization, and incident documentation for enterprise systems.
-                </motion.p>
-
-                {/* CTA Buttons */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.1 }}
-                  className="flex flex-wrap gap-6 justify-center lg:justify-start"
-                >
-                  <motion.a 
-                    href="#projects"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation(e, 'projects');
-                    }}
-                    className="group relative px-8 py-4 text-lg rounded-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 transition-all duration-300 text-white font-semibold overflow-hidden"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    View Projects
-                    <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-                  </motion.a>
-                  <motion.a 
-                    href="#contact"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation(e, 'contact');
-                    }}
-                    className="group relative px-8 py-4 text-lg rounded-full border border-white/20 hover:border-white/40 transition-all duration-300 text-white font-semibold overflow-hidden"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Contact Me
-                    <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-                  </motion.a>
-                  
-                  {/* Download CV Dropdown */}
-                  <motion.div className="relative group">
-                    <motion.button 
-                      className="group relative px-8 py-4 text-lg rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 text-white font-semibold overflow-hidden flex items-center gap-2"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span className="relative z-10 flex items-center gap-2">
-                        Download CV
-                        <svg className="w-5 h-5 transform group-hover:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </span>
-                      <div className="absolute inset-0 bg-white/5 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-                    </motion.button>
-                    
-                    {/* Dropdown Menu */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50">
-                      <div className="bg-black/50 backdrop-blur-xl rounded-xl p-2 space-y-2 border border-white/10 shadow-xl">
-                        <motion.a 
-                          href="/resume.pdf"
-                          download="Resume.pdf"
-                          className="flex items-center gap-3 px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-colors duration-200 group/item"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <div className="p-2 bg-purple-500/20 rounded-lg group-hover/item:bg-purple-500/30 transition-colors duration-200">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="font-semibold">PDF Format</div>
-                            <div className="text-sm text-gray-400">Best for viewing</div>
-                          </div>
-                        </motion.a>
-                        <motion.a 
-                          href="/Resume.docx"
-                          download="Resume.docx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setIsDownloading(true);
-                            const link = document.createElement('a');
-                            link.href = '/Resume.docx';
-                            link.download = 'Resume.docx';
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            setTimeout(() => setIsDownloading(false), 2000);
-                          }}
-                          className={`flex items-center gap-3 px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-colors duration-200 group/item relative overflow-hidden ${isDownloading ? 'downloading' : ''}`}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <div className="p-2 bg-blue-500/20 rounded-lg group-hover/item:bg-blue-500/30 transition-colors duration-200 relative">
-                            <motion.svg 
-                              className="w-5 h-5" 
-                              fill="none" 
-                              stroke="currentColor" 
-                              viewBox="0 0 24 24"
-                              animate={isDownloading ? {
-                                rotate: 360,
-                                transition: {
-                                  duration: 1,
-                                  repeat: Infinity,
-                                  ease: "linear"
-                                }
-                              } : {}}
-                            >
-                              <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M12 15V3m0 12l-4-4m4 4l4-4M3 17v4h18v-4" 
-                                className={isDownloading ? "opacity-100" : "opacity-0"}
-                              />
-                              <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
-                                className={isDownloading ? "opacity-0" : "opacity-100"}
-                              />
-                            </motion.svg>
-                            {isDownloading && (
-                              <motion.div
-                                className="absolute inset-0 bg-blue-500/30 rounded-lg"
-                                initial={{ scaleY: 0 }}
-                                animate={{ scaleY: 1 }}
-                                transition={{
-                                  duration: 1.5,
-                                  repeat: Infinity,
-                                  ease: "linear"
-                                }}
-                                style={{ transformOrigin: 'bottom' }}
-                              />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-semibold flex items-center gap-2">
-                              Word Format
-                              {isDownloading && (
-                                <motion.div
-                                  className="w-1 h-1 rounded-full bg-blue-400"
-                                  animate={{
-                                    opacity: [0, 1, 0],
-                                    scale: [1, 1.5, 1]
-                                  }}
-                                  transition={{
-                                    duration: 1,
-                                    repeat: Infinity,
-                                    ease: "easeInOut"
-                                  }}
-                                />
-                              )}
-                            </div>
-                            <div className="text-sm text-gray-400">
-                              {isDownloading ? 'Downloading...' : 'Best for editing'}
-                            </div>
-                          </div>
-                          <motion.div
-                            className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500"
-                            initial={{ width: "0%" }}
-                            animate={isDownloading ? { width: "100%" } : { width: "0%" }}
-                            transition={{ duration: 1.5 }}
-                          />
-                        </motion.a>
-                      </div>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              </motion.div>
-
-              {/* Profile Picture */}
-              <motion.div 
-                className="relative lg:flex-1 w-full max-w-md flex justify-center items-center mt-16 lg:mt-24"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                <motion.div
-                  className="relative w-[320px] h-[320px] rounded-full"
-                  whileHover={{ scale: 1.02 }}
-                  animate={{
-                    y: [0, -10, 0],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <motion.div
-                    className="absolute -inset-4 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full blur-2xl"
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      rotate: [0, 180, 360],
-                    }}
-                    transition={{
-                      duration: 10,
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                  />
-                  
-                  <div className="relative w-full h-full rounded-full overflow-hidden">
-                    <div className="relative w-full h-full rounded-full overflow-hidden backdrop-blur-sm">
-                      <Image
-                        src="/images/ProfilePicture.jpeg"
-                        alt="Rial Parmar"
-                        width={400}
-                        height={400}
-                        className="w-full h-full object-cover scale-105 hover:scale-110 transition-transform duration-500"
-                        priority
-                      />
-                      
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            </div>
-          </motion.section>
-
-          {/* About Section */}
-          <motion.section
-            id="about"
-            variants={sectionVariants}
-            initial="initial"
-            animate={activeSection === 'about' ? "animate" : "initial"}
-            exit="exit"
-            className="relative"
-          >
+        {/* About Section */}
+        <section id="about" className="min-h-screen py-10 relative z-0">
+          <DynamicScroll direction="up" threshold={0.2} className="about">
             <About />
-          </motion.section>
-
-          {/* Projects Section */}
-          <section id="projects" className="min-h-screen relative pt-10">
-            <div className="container mx-auto">
-              <Projects />
-            </div>
-          </section>
-
-          {/* Contact Section */}
-          <motion.section 
-            id="contact"
-            variants={sectionVariants}
-            initial="initial"
-            animate={activeSection === 'contact' ? "animate" : "initial"}
-            exit="exit"
-            className="relative"
-          >
+          </DynamicScroll>
+        </section>
+        
+        {/* Experience Section */}
+        <section id="experience" className="min-h-screen py-10 relative z-0">
+          <DynamicScroll direction="down" threshold={0.2} className="experience">
+            <Experience />
+          </DynamicScroll>
+        </section>
+        
+        {/* Projects Section */}
+        <section id="projects" className="min-h-screen py-10 relative z-0">
+          <DynamicScroll direction="up" threshold={0.2} className="projects">
+            <Projects />
+          </DynamicScroll>
+        </section>
+        
+        {/* Contact Section */}
+        <section id="contact" className="min-h-screen py-10 relative z-0">
+          <DynamicScroll direction="down" threshold={0.2} className="contact">
             <Contact />
-          </motion.section>
-        </div>
+          </DynamicScroll>
+        </section>
+      </div>
+      
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: getBackgroundColor('paper'),
+            color: getTextColor('primary'),
+            border: `1px solid ${getBorderColor('light')}`,
+          },
+        }}
+      />
+    </main>
+  );
+};
+
+export default function Home() {
+  return (
+    <ThemeProvider>
+      <PageTransition>
+        <MainContent />
       </PageTransition>
-    </>
+    </ThemeProvider>
   );
 }

@@ -7,6 +7,8 @@ import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import emailjs from '@emailjs/browser';
 import { toast } from 'react-hot-toast';
+import { useThemeStyles } from '@/app/hooks/useThemeStyles';
+import GlassCard from './GlassCard';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -16,10 +18,10 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { getTextColor } = useThemeStyles();
   const containerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const isInView = useInView(containerRef, { once: false, margin: "-100px" });
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
   const controls = useAnimation();
 
   useEffect(() => {
@@ -30,17 +32,10 @@ const Contact = () => {
 
   // Initialize EmailJS
   useEffect(() => {
-    emailjs.init("1wGoxATqiQHzAPMB_");
+    if (process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY) {
+      emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY);
+    }
   }, []);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: (e.clientX - rect.left) / rect.width,
-      y: (e.clientY - rect.top) / rect.height,
-    });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,10 +45,10 @@ const Contact = () => {
     
     try {
       const result = await emailjs.sendForm(
-        'rialparmar1777',
-        'template_ra1w7ot',
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
         formRef.current,
-        '1wGoxATqiQHzAPMB_'
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
       );
 
       if (result.text === 'OK') {
@@ -106,115 +101,65 @@ const Contact = () => {
   ];
 
   return (
-    <div 
+    <section 
+      id="contact"
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      className="min-h-screen relative overflow-hidden py-12 sm:py-20 px-4 sm:px-6 lg:px-8"
-      style={{
-        background: `radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, rgba(124, 58, 237, 0.15) 0%, rgba(0, 0, 0, 0) 50%)`
-      }}
+      className="min-h-screen py-20 px-4"
     >
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-full h-full">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-2 h-2 bg-purple-500/20 rounded-full"
-              animate={{
-                x: [
-                  Math.random() * window.innerWidth,
-                  Math.random() * window.innerWidth,
-                ],
-                y: [
-                  Math.random() * window.innerHeight,
-                  Math.random() * window.innerHeight,
-                ],
-                scale: [1, 1.5, 1],
-                opacity: [0.2, 0.5, 0.2],
-              }}
-              transition={{
-                duration: Math.random() * 10 + 10,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header */}
-        <motion.div 
-          className="text-center mb-12 sm:mb-16"
-          initial={{ opacity: 0, y: 50 }}
-          animate={controls}
-          variants={{
-            visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
-          }}
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6">
-            <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text">
-              Let's Connect
-            </span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
+            Let's Connect
           </h2>
-          <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto px-4">
+          <p className="text-lg" style={{ color: getTextColor('secondary') }}>
             Have an exciting project in mind? Let's bring your ideas to life!
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-12 gap-8 sm:gap-12">
+        <div className="grid lg:grid-cols-12 gap-8">
           {/* Social Links */}
-          <motion.div 
-            className="lg:col-span-4 space-y-4 sm:space-y-6"
+          <motion.div
+            className="lg:col-span-4 space-y-4"
             initial={{ opacity: 0, x: -50 }}
-            animate={controls}
-            variants={{
-              visible: { opacity: 1, x: 0, transition: { duration: 0.8, delay: 0.2 } }
-            }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
             {socialLinks.map((link, index) => (
               <motion.div
                 key={link.name}
                 initial={{ opacity: 0, x: -20 }}
-                animate={controls}
-                variants={{
-                  visible: { 
-                    opacity: 1, 
-                    x: 0, 
-                    transition: { delay: 0.3 + index * 0.1 } 
-                  }
-                }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
               >
                 <Link
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block"
+                  className="block"
                 >
-                  <div className={`
-                    relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-lg
-                    p-4 sm:p-6 border border-white/10 transition-all duration-300
-                    hover:border-white/20 hover:bg-white/10
-                  `}>
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className={`
-                        p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br ${link.color}
-                        transform transition-transform duration-300
-                        group-hover:scale-110 group-hover:rotate-3
-                      `}>
+                  <GlassCard className="p-6">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-lg bg-gradient-to-br ${link.color}`}>
                         {link.icon}
                       </div>
                       <div>
-                        <h3 className="text-lg sm:text-xl font-semibold text-white">{link.name}</h3>
-                        <p className="text-gray-400 text-xs sm:text-sm">Connect with me</p>
+                        <h3 className="text-xl font-semibold" style={{ color: getTextColor('primary') }}>
+                          {link.name}
+                        </h3>
+                        <p className="text-sm" style={{ color: getTextColor('secondary') }}>
+                          Connect with me
+                        </p>
                       </div>
                     </div>
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer" />
-                    </div>
-                  </div>
+                  </GlassCard>
                 </Link>
               </motion.div>
             ))}
@@ -224,120 +169,85 @@ const Contact = () => {
           <motion.div
             className="lg:col-span-8"
             initial={{ opacity: 0, x: 50 }}
-            animate={controls}
-            variants={{
-              visible: { opacity: 1, x: 0, transition: { duration: 0.8, delay: 0.4 } }
-            }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-2xl sm:rounded-3xl blur-xl" />
-              <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/10">
-                <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-                    <div>
-                      <label htmlFor="from_name" className="block text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">Name</label>
-                      <input
-                        type="text"
-                        id="from_name"
-                        name="from_name"
-                        value={formData.from_name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 border border-white/10 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500 text-sm sm:text-base"
-                        placeholder="Your name"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="reply_to" className="block text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">Email</label>
-                      <input
-                        type="email"
-                        id="reply_to"
-                        name="reply_to"
-                        value={formData.reply_to}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 border border-white/10 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500 text-sm sm:text-base"
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                  </div>
+            <GlassCard className="p-8">
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">Subject</label>
+                    <label className="block text-sm font-medium mb-2" style={{ color: getTextColor('primary') }}>
+                      Name
+                    </label>
                     <input
                       type="text"
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
+                      name="from_name"
+                      value={formData.from_name}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 border border-white/10 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500 text-sm sm:text-base"
-                      placeholder="What's this about?"
+                      className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+                      style={{ color: getTextColor('primary') }}
                     />
                   </div>
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">Message</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
+                    <label className="block text-sm font-medium mb-2" style={{ color: getTextColor('primary') }}>
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="reply_to"
+                      value={formData.reply_to}
                       onChange={handleChange}
                       required
-                      rows={5}
-                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 border border-white/10 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-black placeholder-gray-500 text-sm sm:text-base"
-                      placeholder="Tell me about your project..."
+                      className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+                      style={{ color: getTextColor('primary') }}
                     />
                   </div>
-                  <motion.button
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: getTextColor('primary') }}>
+                    Subject
+                  </label>
+                  <input
+                    type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+                    style={{ color: getTextColor('primary') }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: getTextColor('primary') }}>
+                    Message
+                  </label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={6}
+                    className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors resize-none"
+                    style={{ color: getTextColor('primary') }}
+                  />
+                </div>
+                <div>
+                  <button
                     type="submit"
                     disabled={isSubmitting}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`
-                      w-full py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl text-white font-medium text-sm sm:text-base
-                      bg-gradient-to-r from-purple-500 to-pink-500
-                      hover:from-purple-600 hover:to-pink-600
-                      transition-all duration-300 relative overflow-hidden
-                      ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}
-                    `}
+                    className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <span className="relative z-10">
-                      {isSubmitting ? 'Sending...' : 'Send Message'}
-                    </span>
-                    <div className="absolute inset-0 -translate-x-full hover:translate-x-0 bg-gradient-to-r from-pink-500 to-purple-500 transition-transform duration-300" />
-                  </motion.button>
-                </form>
-              </div>
-            </div>
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                  </button>
+                </div>
+              </form>
+            </GlassCard>
           </motion.div>
         </div>
       </div>
-
-      {/* Add shimmer animation */}
-      <style jsx global>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-shimmer {
-          animation: shimmer 2s infinite;
-        }
-        @media (max-width: 768px) {
-          /* Improve tap targets */
-          button, a {
-            min-height: 44px;
-            min-width: 44px;
-          }
-          /* Adjust form spacing */
-          .space-y-4 > * + * {
-            margin-top: 1rem;
-          }
-          /* Optimize input fields */
-          input, textarea {
-            font-size: 16px; /* Prevent zoom on iOS */
-          }
-        }
-      `}</style>
-    </div>
+    </section>
   );
 };
 
