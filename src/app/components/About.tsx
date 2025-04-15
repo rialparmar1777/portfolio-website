@@ -534,12 +534,12 @@ const MusicianSection = () => {
       >
         {/* Musical Notes Animation */}
         <div className="absolute inset-0 overflow-hidden">
-          {Array.from({ length: 20 }).map((_, i) => (
+          {Array.from({ length: 30 }).map((_, i) => (
             <motion.div
               key={i}
               className="absolute text-4xl"
               style={{ 
-                color: i % 2 ? 'rgba(168, 85, 247, 0.3)' : 'rgba(59, 130, 246, 0.3)',
+                color: i % 3 === 0 ? 'rgba(168, 85, 247, 0.3)' : i % 3 === 1 ? 'rgba(59, 130, 246, 0.3)' : 'rgba(236, 72, 153, 0.3)',
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
               }}
@@ -556,14 +556,14 @@ const MusicianSection = () => {
                 delay: i * 0.5,
               }}
             >
-              {i % 3 === 0 ? '♪' : i % 3 === 1 ? '♫' : '♬'}
+              {i % 4 === 0 ? '♪' : i % 4 === 1 ? '♫' : i % 4 === 2 ? '♬' : '♩'}
             </motion.div>
           ))}
         </div>
         
         {/* Gradient Orbs */}
         <motion.div 
-          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] opacity-20"
+          className="absolute top-1/4 left-1/4 w-[600px] h-[600px] opacity-20"
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360],
@@ -574,11 +574,11 @@ const MusicianSection = () => {
             ease: "linear",
           }}
         >
-          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[60px]" />
+          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,pink,purple)] rounded-full blur-[80px]" />
         </motion.div>
         
         <motion.div 
-          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] opacity-20"
+          className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] opacity-20"
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [360, 180, 0],
@@ -589,160 +589,163 @@ const MusicianSection = () => {
             ease: "linear",
           }}
         >
-          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[60px]" />
+          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,pink,purple,blue)] rounded-full blur-[80px]" />
         </motion.div>
       </motion.div>
       
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-4xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text">
-            Beyond Code
-          </h2>
-          <p className="text-lg" style={{ color: getTextColor('secondary') }}>
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={isInView ? { scale: 1 } : { scale: 0.8 }}
+            transition={{ 
+              duration: 0.8,
+              type: "spring",
+              stiffness: 100
+            }}
+            className="inline-block mb-6"
+          >
+            <h2 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 text-transparent bg-clip-text">
+              Beyond Code
+            </h2>
+          </motion.div>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-xl md:text-2xl font-medium" 
+            style={{ color: getTextColor('secondary') }}
+          >
             The intersection of technology and creativity
+          </motion.p>
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-center mb-16"
+        >
+          <h3 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text">
+            The Harmony of Code & Creativity
+          </h3>
+          <p className="text-lg max-w-3xl mx-auto" style={{ color: getTextColor('secondary') }}>
+            My journey as both a developer and musician has shaped my approach to problem-solving, 
+            bringing a unique blend of technical precision and creative innovation to every project.
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            whileHover={{ scale: 1.03, transition: { duration: 0.3 } }}
+            className="flex flex-col items-center p-8 rounded-2xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-sm border border-purple-500/20 shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
           >
-            <div className="relative w-full h-[400px] rounded-2xl overflow-hidden">
-              <Image
-                src="/images/church-website.jpg"
-                alt="Music Studio"
-                fill
-                className="object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="absolute bottom-0 left-0 right-0 p-6"
-              >
-                <h3 className="text-2xl font-bold mb-2" style={{ color: getTextColor('primary') }}>
-                  Choir Tenor & Musician
-                </h3>
-                <p className="text-lg" style={{ color: getTextColor('secondary') }}>
-                  Applying creative discipline to development
-                </p>
-              </motion.div>
-            </div>
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.5, delay: 0.7 }}
-              className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full overflow-hidden border-4 border-purple-500/30 shadow-lg"
+            <motion.div 
+              className="p-5 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 text-purple-500 mb-6 shadow-lg"
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.8 }}
             >
-              <Image
-                src="/images/ProfilePicture.jpeg"
-                alt="Rial Parmar"
-                fill
-                className="object-cover"
-              />
+              <FaMusic className="w-10 h-10" />
             </motion.div>
+            <h4 className="text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text">
+              Musical Background
+            </h4>
+            <p className="text-base text-center leading-relaxed" style={{ color: getTextColor('secondary') }}>
+              As a choir tenor, I've developed a keen ear for harmony and rhythm, which translates to creating balanced and well-structured code.
+            </p>
           </motion.div>
           
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            whileHover={{ scale: 1.03, transition: { duration: 0.3 } }}
+            className="flex flex-col items-center p-8 rounded-2xl bg-gradient-to-br from-blue-500/10 to-pink-500/10 backdrop-blur-sm border border-blue-500/20 shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
           >
-            <h3 className="text-3xl font-bold mb-6" style={{ color: getTextColor('primary') }}>
-              The Harmony of Code & Creativity
-            </h3>
-            
-            <div className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="flex items-start space-x-4"
-              >
-                <div className="p-3 rounded-lg bg-purple-500/20 text-purple-500">
-                  <FaMusic className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
-                    Musical Background
-                  </h4>
-                  <p className="text-base" style={{ color: getTextColor('secondary') }}>
-                    As a choir tenor, I've developed a keen ear for harmony and rhythm, which translates to creating balanced and well-structured code.
-                  </p>
-                </div>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="flex items-start space-x-4"
-              >
-                <div className="p-3 rounded-lg bg-blue-500/20 text-blue-500">
-                  <FaBrain className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
-                    Creative Problem Solving
-                  </h4>
-                  <p className="text-base" style={{ color: getTextColor('secondary') }}>
-                    My musical training has enhanced my ability to think creatively and approach problems from multiple angles, leading to innovative solutions.
-                  </p>
-                </div>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-                className="flex items-start space-x-4"
-              >
-                <div className="p-3 rounded-lg bg-indigo-500/20 text-indigo-500">
-                  <FaLightbulb className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
-                    Attention to Detail
-                  </h4>
-                  <p className="text-base" style={{ color: getTextColor('secondary') }}>
-                    Just as a musician must pay attention to every note and timing, I bring this precision to my code, ensuring every detail is considered.
-                  </p>
-                </div>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.9 }}
-                className="flex items-start space-x-4"
-              >
-                <div className="p-3 rounded-lg bg-pink-500/20 text-pink-500">
-                  <FaUsers className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
-                    Collaborative Mindset
-                  </h4>
-                  <p className="text-base" style={{ color: getTextColor('secondary') }}>
-                    Choir experience has taught me the importance of collaboration and listening, skills that are essential in agile development teams.
-                  </p>
-                </div>
-              </motion.div>
-            </div>
+            <motion.div 
+              className="p-5 rounded-full bg-gradient-to-br from-blue-500/30 to-pink-500/30 text-blue-500 mb-6 shadow-lg"
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.8 }}
+            >
+              <FaBrain className="w-10 h-10" />
+            </motion.div>
+            <h4 className="text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-blue-500 to-pink-500 text-transparent bg-clip-text">
+              Creative Problem Solving
+            </h4>
+            <p className="text-base text-center leading-relaxed" style={{ color: getTextColor('secondary') }}>
+              My musical training has enhanced my ability to think creatively and approach problems from multiple angles, leading to innovative solutions.
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            whileHover={{ scale: 1.03, transition: { duration: 0.3 } }}
+            className="flex flex-col items-center p-8 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-sm border border-indigo-500/20 shadow-lg hover:shadow-indigo-500/20 transition-all duration-300"
+          >
+            <motion.div 
+              className="p-5 rounded-full bg-gradient-to-br from-indigo-500/30 to-purple-500/30 text-indigo-500 mb-6 shadow-lg"
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.8 }}
+            >
+              <FaLightbulb className="w-10 h-10" />
+            </motion.div>
+            <h4 className="text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-indigo-500 to-purple-500 text-transparent bg-clip-text">
+              Attention to Detail
+            </h4>
+            <p className="text-base text-center leading-relaxed" style={{ color: getTextColor('secondary') }}>
+              Just as a musician must pay attention to every note and timing, I bring this precision to my code, ensuring every detail is considered.
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.9 }}
+            whileHover={{ scale: 1.03, transition: { duration: 0.3 } }}
+            className="flex flex-col items-center p-8 rounded-2xl bg-gradient-to-br from-pink-500/10 to-purple-500/10 backdrop-blur-sm border border-pink-500/20 shadow-lg hover:shadow-pink-500/20 transition-all duration-300"
+          >
+            <motion.div 
+              className="p-5 rounded-full bg-gradient-to-br from-pink-500/30 to-purple-500/30 text-pink-500 mb-6 shadow-lg"
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.8 }}
+            >
+              <FaUsers className="w-10 h-10" />
+            </motion.div>
+            <h4 className="text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-pink-500 to-purple-500 text-transparent bg-clip-text">
+              Collaborative Mindset
+            </h4>
+            <p className="text-base text-center leading-relaxed" style={{ color: getTextColor('secondary') }}>
+              Choir experience has taught me the importance of collaboration and listening, skills that are essential in agile development teams.
+            </p>
           </motion.div>
         </div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 1.0 }}
+          className="mt-16 text-center"
+        >
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="inline-block px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium shadow-lg hover:shadow-purple-500/30 transition-all duration-300"
+          >
+            <span className="flex items-center">
+              <FaRocket className="mr-2" />
+              <span>Bringing Harmony to Technology</span>
+            </span>
+          </motion.div>
+        </motion.div>
       </div>
     </motion.section>
   );
@@ -801,7 +804,7 @@ const IntroductionSection = () => {
       initial={{ opacity: 0 }}
       animate={isInView ? { opacity: 1 } : { opacity: 0 }}
       transition={{ duration: 0.8 }}
-      className="min-h-screen py-20 px-4 relative overflow-hidden flex items-center"
+      className="min-h-screen py-20 px-4 relative overflow-hidden flex items-center justify-center"
       style={{ background: getBackgroundColor('default') }}
     >
       {/* Background Elements */}
@@ -843,116 +846,84 @@ const IntroductionSection = () => {
         </motion.div>
       </motion.div>
       
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{ color: getTextColor('primary') }}>
-              <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
-                Innovative
-              </span>{" "}
-              Full-Stack Developer
-            </h1>
-            
-            <div className="flex items-center mb-6">
-              <div className="w-12 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mr-4"></div>
-              <h2 className="text-2xl font-semibold" style={{ color: getTextColor('secondary') }}>
-                Cloud & Performance Optimizer
-              </h2>
-            </div>
-            
-            <p className="text-lg mb-8" style={{ color: getTextColor('secondary') }}>
-              I combine technical expertise with creative problem-solving to build exceptional digital experiences. My background in both technology and music gives me a unique perspective on creating harmonious, efficient, and user-friendly applications.
-            </p>
-            
-            <div className="flex flex-wrap gap-4">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="flex items-center space-x-2"
-              >
-                <div className="p-2 rounded-lg bg-blue-500/20 text-blue-500">
-                  <FaCode className="w-5 h-5" />
-                </div>
-                <span style={{ color: getTextColor('secondary') }}>Full-Stack Development</span>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="flex items-center space-x-2"
-              >
-                <div className="p-2 rounded-lg bg-purple-500/20 text-purple-500">
-                  <FaRocket className="w-5 h-5" />
-                </div>
-                <span style={{ color: getTextColor('secondary') }}>Performance Optimization</span>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-                className="flex items-center space-x-2"
-              >
-                <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-500">
-                  <FaMusic className="w-5 h-5" />
-                </div>
-                <span style={{ color: getTextColor('secondary') }}>Musician & Creative Thinker</span>
-              </motion.div>
-            </div>
-          </motion.div>
+      <div className="max-w-4xl mx-auto relative z-10 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -50 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mb-12"
+        >
+          <h1 className="text-5xl md:text-7xl font-bold mb-8" style={{ color: getTextColor('primary') }}>
+            <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
+              Innovative
+            </span>{" "}
+            Full-Stack Developer
+          </h1>
           
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="relative"
-          >
-            <div className="relative w-full h-[500px] rounded-2xl overflow-hidden">
-              <Image
-                src="/images/ProfilePicture.jpeg"
-                alt="Rial Parmar"
-                fill
-                className="object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="absolute bottom-0 left-0 right-0 p-6"
-              >
-                <h3 className="text-2xl font-bold mb-2" style={{ color: getTextColor('primary') }}>
-                  Problem Solver
-                </h3>
-                <p className="text-lg" style={{ color: getTextColor('secondary') }}>
-                  Turning complex challenges into elegant solutions
-                </p>
-              </motion.div>
-            </div>
+          <div className="flex items-center justify-center mb-8">
+            <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mr-4"></div>
+            <h2 className="text-2xl md:text-3xl font-semibold" style={{ color: getTextColor('secondary') }}>
+              Cloud & Performance Optimizer
+            </h2>
+          </div>
+          
+          <p className="text-lg md:text-xl mb-12 max-w-3xl mx-auto leading-relaxed" style={{ color: getTextColor('secondary') }}>
+            I combine technical expertise with creative problem-solving to build exceptional digital experiences. My background in both technology and music gives me a unique perspective on creating harmonious, efficient, and user-friendly applications.
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="flex flex-col items-center p-6 rounded-xl bg-gradient-to-b from-blue-500/10 to-purple-500/10 backdrop-blur-sm"
+            >
+              <div className="p-4 rounded-full bg-blue-500/20 text-blue-500 mb-4">
+                <FaCode className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
+                Full-Stack Development
+              </h3>
+              <p className="text-sm text-center" style={{ color: getTextColor('secondary') }}>
+                Building scalable and efficient applications
+              </p>
+            </motion.div>
             
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.7 }}
-              className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full overflow-hidden border-4 border-purple-500/30 shadow-lg"
+              className="flex flex-col items-center p-6 rounded-xl bg-gradient-to-b from-purple-500/10 to-blue-500/10 backdrop-blur-sm"
             >
-              <Image
-                src="/images/ProfilePicture.jpeg"
-                alt="Rial Parmar"
-                fill
-                className="object-cover"
-              />
+              <div className="p-4 rounded-full bg-purple-500/20 text-purple-500 mb-4">
+                <FaRocket className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
+                Performance Optimization
+              </h3>
+              <p className="text-sm text-center" style={{ color: getTextColor('secondary') }}>
+                Optimizing for speed and efficiency
+              </p>
             </motion.div>
-          </motion.div>
-        </div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              className="flex flex-col items-center p-6 rounded-xl bg-gradient-to-b from-indigo-500/10 to-purple-500/10 backdrop-blur-sm"
+            >
+              <div className="p-4 rounded-full bg-indigo-500/20 text-indigo-500 mb-4">
+                <FaMusic className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
+                Creative Thinker
+              </h3>
+              <p className="text-sm text-center" style={{ color: getTextColor('secondary') }}>
+                Bringing harmony to code and design
+              </p>
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     </motion.section>
   );

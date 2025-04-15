@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import CustomCursor from "./components/CustomCursor";
 import { ThemeProvider } from "./context/ThemeContext";
 import ErrorBoundaryWrapper from "./components/ErrorBoundaryWrapper";
+import { useThemeStyles } from "./hooks/useThemeStyles";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -70,7 +70,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} scroll-smooth`}>
+    <html lang="en" className={`${inter.variable} scroll-smooth overflow-x-hidden`}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -83,7 +83,6 @@ export default function RootLayout({
       <body className="bg-black text-white antialiased">
         <ErrorBoundaryWrapper>
           <ThemeProvider>
-            <CustomCursor />
             <Toaster
               position="top-right"
               toastOptions={{

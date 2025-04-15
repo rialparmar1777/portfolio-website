@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useThemeStyles } from '../hooks/useThemeStyles';
 
@@ -19,6 +19,7 @@ interface GlassCardProps {
   transition?: any;
   onHoverStart?: () => void;
   onHoverEnd?: () => void;
+  style?: React.CSSProperties;
 }
 
 const GlassCard: React.FC<GlassCardProps> = ({
@@ -36,6 +37,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
   transition,
   onHoverStart,
   onHoverEnd,
+  style,
 }) => {
   const { getGlassStyles, getTextColor } = useThemeStyles();
   const styles = getGlassStyles(isActive, isHovered);
@@ -45,8 +47,9 @@ const GlassCard: React.FC<GlassCardProps> = ({
       className={`relative overflow-hidden rounded-lg backdrop-blur-sm ${className}`}
       style={{
         ...styles,
+        ...style,
         opacity: disabled ? 0.5 : 1,
-        cursor: disabled ? 'not-allowed' : 'pointer',
+        cursor: disabled ? 'not-allowed' : 'auto',
         border: isActive 
           ? `1px solid ${getTextColor('primary')}40` 
           : isHovered 
@@ -57,6 +60,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
           : isHovered 
             ? `0 0 10px ${getTextColor('primary')}10` 
             : 'none',
+        backdropFilter: 'blur(8px)',
       }}
       onClick={disabled ? undefined : onClick}
       whileHover={whileHover}
@@ -99,9 +103,27 @@ const GlassCard: React.FC<GlassCardProps> = ({
           padding: '1px',
         }}
         animate={{ 
-          opacity: isActive ? 1 : isHovered ? 0.5 : 0 
+          opacity: isActive || isHovered ? 1 : 0 
         }}
         transition={{ duration: 0.3 }}
+      />
+      
+      {/* Shine effect */}
+      <motion.div
+        className="absolute inset-0 opacity-0"
+        style={{
+          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+          transform: 'translateX(-100%)',
+        }}
+        animate={{ 
+          opacity: isHovered ? [0, 0.5, 0] : 0,
+          x: isHovered ? ['-100%', '100%', '100%'] : '-100%',
+        }}
+        transition={{ 
+          duration: 1.5,
+          ease: 'easeInOut',
+          times: [0, 0.5, 1],
+        }}
       />
     </motion.div>
   );

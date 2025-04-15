@@ -24,16 +24,44 @@ const Hero = () => {
   
   // Mouse move effect for the profile picture
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - left) / width;
-    const y = (e.clientY - top) / height;
-    setMousePosition({ x, y });
+    // Only apply mouse move effect on non-touch devices
+    if (window.matchMedia('(pointer: fine)').matches) {
+      const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+      const x = (e.clientX - left) / width;
+      const y = (e.clientY - top) / height;
+      setMousePosition({ x, y });
+    }
   };
   
   // Reset mouse position when not hovering
   const handleMouseLeave = () => {
-    setMousePosition({ x: 0.5, y: 0.5 });
+    // Only reset on non-touch devices
+    if (window.matchMedia('(pointer: fine)').matches) {
+      setMousePosition({ x: 0.5, y: 0.5 });
+    }
   };
+  
+  // Check if device is touch-enabled
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  
+  useEffect(() => {
+    // Check if device is touch-enabled
+    const checkTouchDevice = () => {
+      const isTouch = window.matchMedia('(pointer: coarse)').matches;
+      setIsTouchDevice(isTouch);
+      
+      // Remove the touch-device class since we're not using custom cursors anymore
+      document.body.classList.remove('touch-device');
+    };
+    
+    checkTouchDevice();
+    window.addEventListener('resize', checkTouchDevice);
+    
+    return () => {
+      window.removeEventListener('resize', checkTouchDevice);
+      document.body.classList.remove('touch-device');
+    };
+  }, []);
   
   useEffect(() => {
     // Start animation after a short delay to ensure it works with PageTransition
@@ -179,7 +207,7 @@ const Hero = () => {
               <motion.a
                 href="#contact"
                 className="px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl"
-                whileHover={{ scale: 1.05 }}
+                whileHover={!isTouchDevice ? { scale: 1.05 } : {}}
                 whileTap={{ scale: 0.95 }}
               >
                 Let's Collaborate
@@ -188,7 +216,7 @@ const Hero = () => {
                 href="#projects"
                 className="px-6 py-3 rounded-lg font-medium border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300"
                 style={{ color: getTextColor('primary') }}
-                whileHover={{ scale: 1.05 }}
+                whileHover={!isTouchDevice ? { scale: 1.05 } : {}}
                 whileTap={{ scale: 0.95 }}
               >
                 Explore My Work
@@ -219,8 +247,8 @@ const Hero = () => {
               <motion.div
                 className="absolute -inset-8 bg-gradient-to-r from-purple-500/30 to-blue-500/30 rounded-full blur-3xl"
                 animate={{
-                  scale: isHovered ? [1, 1.2, 1] : 1,
-                  opacity: isHovered ? [0.3, 0.5, 0.3] : 0.3,
+                  scale: isHovered && !isTouchDevice ? [1, 1.2, 1] : 1,
+                  opacity: isHovered && !isTouchDevice ? [0.3, 0.5, 0.3] : 0.3,
                 }}
                 transition={{
                   duration: 3,
@@ -290,16 +318,16 @@ const Hero = () => {
       
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
+        className="fixed bottom-0 left-0 right-0 hidden md:flex flex-col items-center justify-center py-4 bg-gradient-to-t from-black/20 to-transparent"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.5 }}
       >
-        <span className="text-sm mb-2" style={{ color: getTextColor('secondary') }}>
+        <span className="text-sm mb-2 font-medium" style={{ color: getTextColor('secondary') }}>
           Discover More
         </span>
         <motion.div
-          className="w-6 h-10 border-2 rounded-full flex justify-center p-1"
+          className="w-6 h-10 border-2 rounded-full flex items-center justify-center p-1"
           style={{ borderColor: getBorderColor('light') }}
           animate={{
             y: [0, 10, 0],

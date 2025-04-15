@@ -28,7 +28,7 @@ const NavLinks: React.FC<NavLinksProps> = ({
   layout = 'horizontal',
   onLinkClick,
 }) => {
-  const { getTextColor, getBorderColor } = useThemeStyles();
+  const { getTextColor, getBorderColor, colors } = useThemeStyles();
   const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
   
   const containerClasses = {
@@ -68,16 +68,28 @@ const NavLinks: React.FC<NavLinksProps> = ({
             <GlassCard
               isActive={isActive}
               isHovered={isHovered}
-              className={`px-4 py-2 cursor-pointer ${layout === 'vertical' ? 'w-full' : ''}`}
+              className={`px-4 py-2 cursor-pointer overflow-hidden ${layout === 'vertical' ? 'w-full' : ''}`}
               onClick={() => handleClick(item.href)}
             >
-              <div className="flex items-center">
+              {/* Background fill effect */}
+              <motion.div
+                className="absolute inset-0"
+                initial={{ scale: 0 }}
+                animate={{ 
+                  scale: isHovered || isActive ? 1 : 0,
+                  background: `linear-gradient(135deg, ${colors.primary}20, ${colors.secondary}20)`,
+                }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              />
+              
+              {/* Content */}
+              <div className="relative z-10 flex items-center">
                 {item.icon && (
                   <motion.div 
                     className="mr-2"
                     animate={{ 
                       scale: isHovered || isActive ? 1.1 : 1,
-                      color: isActive ? 'var(--color-primary)' : undefined
+                      color: isActive ? String(colors.primary) : undefined
                     }}
                     transition={{ duration: 0.2 }}
                   >
@@ -94,6 +106,7 @@ const NavLinks: React.FC<NavLinksProps> = ({
                   {item.label}
                 </span>
                 
+                {/* Active indicator */}
                 {isActive && (
                   <motion.div
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-blue-500"
@@ -102,6 +115,21 @@ const NavLinks: React.FC<NavLinksProps> = ({
                   />
                 )}
               </div>
+              
+              {/* Hover border effect */}
+              <motion.div
+                className="absolute inset-0 rounded-lg"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.primary}40, ${colors.secondary}40)`,
+                  maskImage: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                  maskComposite: 'exclude',
+                  padding: '1px',
+                }}
+                animate={{ 
+                  opacity: isHovered || isActive ? 1 : 0
+                }}
+                transition={{ duration: 0.3 }}
+              />
             </GlassCard>
           </motion.div>
         );

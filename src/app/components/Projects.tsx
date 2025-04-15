@@ -95,18 +95,17 @@ const projects: Project[] = [
 const categories = Array.from(new Set(projects.map(project => project.category)));
 
 const Projects = () => {
+  const { isDark } = useThemeStyles();
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>(projects);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
-  const { isDark, getGlassStyles, getTextColor, getBackgroundColor, getBorderColor, getGradient } = useThemeStyles();
   
   // Parallax scroll effect
   const { scrollYProgress } = useScroll({
@@ -131,8 +130,8 @@ const Projects = () => {
   useEffect(() => {
     let filtered = [...projects];
     
-    if (activeCategory) {
-      filtered = filtered.filter(project => project.category === activeCategory);
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(project => project.category === selectedCategory);
     }
     
     if (searchQuery) {
@@ -146,26 +145,12 @@ const Projects = () => {
     
     setFilteredProjects(filtered);
     setActiveIndex(0); // Reset active index when filters change
-  }, [activeCategory, searchQuery]);
+  }, [selectedCategory, searchQuery]);
 
   // Handle project selection
   const handleProjectClick = (project: Project) => {
     setSelectedProject(project);
     setIsModalOpen(true);
-  };
-
-  // Filter by category
-  const filterByCategory = (category: string | null) => {
-    setActiveCategory(category);
-  };
-  
-  // Navigation functions
-  const goToNext = () => {
-    setActiveIndex((prev) => (prev + 1) % filteredProjects.length);
-  };
-
-  const goToPrev = () => {
-    setActiveIndex((prev) => (prev - 1 + filteredProjects.length) % filteredProjects.length);
   };
 
   // Theme-specific styles
@@ -182,321 +167,161 @@ const Projects = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen flex flex-col justify-start pt-10 pb-20 px-4 sm:px-6 lg:px-8 relative" 
-      ref={containerRef}
-    >
-      {/* Background with parallax effect */}
-      <motion.div 
-        className="absolute inset-0 z-0"
-        style={{ y }}
-      >
-        <div className="absolute inset-0" style={{ 
-          backgroundImage: isDark 
-            ? 'radial-gradient(circle at center, rgba(139, 92, 246, 0.15) 0%, transparent 70%)'
-            : 'radial-gradient(circle at center, rgba(124, 58, 237, 0.1) 0%, transparent 70%)',
-          backgroundSize: '100% 100%',
-          backgroundPosition: 'center'
-        }} />
-        
-        {/* Animated grid */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: isDark 
-              ? 'linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)'
-              : 'linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }} />
+    <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className={`text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}
+          >
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
+              Featured Projects
+            </span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto`}
+          >
+            Explore my latest work and personal projects
+          </motion.p>
         </div>
-      </motion.div>
 
-      {/* Header Section */}
-      <div className="text-center mb-16 relative z-10">
-        <motion.h2 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold mb-6 relative inline-block"
-        >
-          <span className="gradient-text">Featured Projects</span>
-        </motion.h2>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className={getThemeTextColor("text-gray-400 text-lg max-w-2xl mx-auto")}
-        >
-          A collection of my recent work showcasing my skills in web development and design.
-        </motion.p>
-      </div>
-
-      {/* Search and Filter Section */}
-      <div className="mb-12 relative z-10">
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
-          {/* Search Bar */}
-          <div className="relative w-full max-w-md">
-            <div 
-              className={`relative flex items-center rounded-full overflow-hidden transition-all duration-300 ${
-                isSearchFocused ? 'ring-2 ring-purple-500' : ''
-              }`}
-              style={{
-                ...getGlassStyles(isSearchFocused, false),
-              }}
+        <div className="mb-12">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="relative w-full sm:w-96"
             >
-              <div className={`absolute left-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                <FaSearch />
-              </div>
               <input
                 type="text"
                 placeholder="Search projects..."
-                className={`w-full py-3 pl-12 pr-4 bg-transparent ${isDark ? 'text-white placeholder-gray-400' : 'text-gray-800 placeholder-gray-500'} focus:outline-none`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => setIsSearchFocused(false)}
+                className={`w-full px-4 py-3 rounded-lg ${
+                  isDark 
+                    ? 'bg-gray-800/50 text-white placeholder-gray-400 border border-gray-700' 
+                    : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-200'
+                } focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300`}
               />
-            </div>
-          </div>
-          
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2 justify-center">
-            <button
-              onClick={() => filterByCategory(null)}
-              className={`px-4 py-2 rounded-full transition-all duration-300 ${
-                activeCategory === null 
-                  ? 'bg-purple-500 text-white' 
-                  : `${isDark ? 'bg-transparent border border-purple-500/30 text-purple-300' : 'bg-transparent border border-purple-500/40 text-purple-600'} hover:bg-purple-500/20`
-              }`}
+              <FaSearch className={`absolute right-4 top-1/2 transform -translate-y-1/2 ${
+                isDark ? 'text-gray-400' : 'text-gray-500'
+              }`} />
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-wrap gap-2"
             >
-              All
-            </button>
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => filterByCategory(category || null)}
-                className={`px-4 py-2 rounded-full transition-all duration-300 ${
-                  activeCategory === category 
-                    ? 'bg-purple-500 text-white' 
-                    : `${isDark ? 'bg-transparent border border-purple-500/30 text-purple-300' : 'bg-transparent border border-purple-500/40 text-purple-600'} hover:bg-purple-500/20`
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category || 'all')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    selectedCategory === category
+                      ? isDark
+                        ? 'bg-purple-500 text-white'
+                        : 'bg-purple-500 text-white'
+                      : isDark
+                        ? 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </motion.div>
           </div>
         </div>
-      </div>
 
-      {/* Projects Showcase */}
-      {filteredProjects.length > 0 ? (
-        <div className="relative z-10">
-          {/* Featured Project */}
-          <div className="mb-16">
+        <motion.div 
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          {filteredProjects.map((project, index) => (
             <motion.div
-              key={activeIndex}
+              key={project.title}
+              layout
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              className="relative rounded-2xl overflow-hidden shadow-xl"
-              style={{
-                ...getGlassStyles(false, false),
-                height: '500px',
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className={`group relative overflow-hidden rounded-2xl ${
+                isDark ? 'bg-gray-800/50' : 'bg-white'
+              } shadow-lg hover:shadow-xl transition-all duration-300`}
+              onClick={() => {
+                setSelectedProject(project);
+                setIsModalOpen(true);
               }}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
             >
-              {/* Project Image */}
-              <div className="absolute inset-0">
+              <div className="relative h-48 overflow-hidden">
                 <Image
-                  src={filteredProjects[activeIndex].image}
-                  alt={filteredProjects[activeIndex].title}
-                  width={1280}
-                  height={720}
-                  className="w-full h-full object-cover"
-                  priority
+                  src={project.image}
+                  alt={project.title}
+                  width={400}
+                  height={300}
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
                 />
-                <div className={`absolute inset-0 ${getThemeBgColor("bg-gradient-to-t from-black/90 via-black/50 to-transparent")}`} />
+                <div className={`absolute inset-0 bg-gradient-to-t ${
+                  isDark ? 'from-gray-900/80' : 'from-gray-900/60'
+                } to-transparent`} />
               </div>
               
-              {/* Project Content */}
-              <div className="absolute inset-0 flex flex-col justify-end p-8">
+              <div className="p-6">
                 <div className="mb-2">
-                  <span className={`px-3 py-1 text-xs ${isDark ? 'bg-purple-500/30 text-purple-200' : 'bg-purple-500/40 text-purple-700'} rounded-full`}>
-                    {filteredProjects[activeIndex].category}
+                  <span className={`px-3 py-1 text-xs rounded-full ${
+                    isDark 
+                      ? 'bg-purple-500/20 text-purple-300' 
+                      : 'bg-purple-500/10 text-purple-600'
+                  }`}>
+                    {project.category}
                   </span>
                 </div>
-                <h3 className="text-3xl font-bold text-white mb-4">{filteredProjects[activeIndex].title}</h3>
-                <p className={`${isDark ? 'text-gray-300' : 'text-gray-100'} mb-6 max-w-2xl`}>{filteredProjects[activeIndex].description}</p>
+                <h3 className={`text-xl font-bold mb-2 ${
+                  isDark ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {project.title}
+                </h3>
+                <p className={`text-sm ${
+                  isDark ? 'text-gray-300' : 'text-gray-600'
+                } line-clamp-2`}>
+                  {project.description}
+                </p>
                 
-                {/* Tech Stack Preview */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {filteredProjects[activeIndex].technologies.slice(0, 4).map((tech, i) => (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {project.technologies.slice(0, 3).map((tech, i) => (
                     <span
                       key={i}
-                      className={`px-3 py-1 text-sm ${isDark ? 'bg-purple-500/20 text-purple-300' : 'bg-purple-500/30 text-purple-700'} rounded-full border ${isDark ? 'border-purple-500/20' : 'border-purple-500/30'}`}
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        isDark
+                          ? 'bg-gray-700/50 text-gray-300'
+                          : 'bg-gray-100 text-gray-600'
+                      }`}
                     >
                       {tech}
                     </span>
                   ))}
-                  {filteredProjects[activeIndex].technologies.length > 4 && (
-                    <span className={`px-3 py-1 text-sm ${isDark ? 'bg-purple-500/20 text-purple-300' : 'bg-purple-500/30 text-purple-700'} rounded-full border ${isDark ? 'border-purple-500/20' : 'border-purple-500/30'}`}>
-                      +{filteredProjects[activeIndex].technologies.length - 4} more
+                  {project.technologies.length > 3 && (
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      isDark
+                        ? 'bg-gray-700/50 text-gray-300'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      +{project.technologies.length - 3} more
                     </span>
                   )}
                 </div>
-                
-                {/* Project Links */}
-                <div className="flex gap-4">
-                  <a
-                    href={filteredProjects[activeIndex].liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-white bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-full transition-all duration-300"
-                  >
-                    View Live Demo
-                    <FaExternalLinkAlt />
-                  </a>
-                  <a
-                    href={filteredProjects[activeIndex].githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-full transition-all duration-300"
-                  >
-                    View Code
-                    <FaGithub />
-                  </a>
-                </div>
-              </div>
-              
-              {/* Navigation Controls */}
-              <div className="absolute bottom-4 right-4 flex gap-2">
-                <button
-                  onClick={goToPrev}
-                  className={`p-2 rounded-full ${isDark ? 'bg-black/50 hover:bg-black/70' : 'bg-black/40 hover:bg-black/60'} text-white transition-all duration-300`}
-                  aria-label="Previous project"
-                >
-                  <FaArrowLeft />
-                </button>
-                <button
-                  onClick={goToNext}
-                  className={`p-2 rounded-full ${isDark ? 'bg-black/50 hover:bg-black/70' : 'bg-black/40 hover:bg-black/60'} text-white transition-all duration-300`}
-                  aria-label="Next project"
-                >
-                  <FaArrowRight />
-                </button>
               </div>
             </motion.div>
-          </div>
-          
-          {/* Project Thumbnails */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>All Projects</h3>
-              <button 
-                onClick={() => setIsExpanded(!isExpanded)}
-                className={`flex items-center gap-1 ${isDark ? 'text-purple-400 hover:text-purple-300' : 'text-purple-600 hover:text-purple-700'} transition-colors`}
-              >
-                {isExpanded ? 'Show Less' : 'Show All'}
-                <FaChevronRight className={`transform transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
-              </button>
-            </div>
-            
-            <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 transition-all duration-500 ${isExpanded ? 'max-h-[2000px]' : 'max-h-[300px] overflow-hidden'}`}>
-              {filteredProjects.map((project, index) => (
-                <motion.div
-                  key={project.title}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05, type: "spring", stiffness: 400, damping: 10 }}
-                  className={`relative h-40 rounded-xl overflow-hidden cursor-pointer shadow-md ${
-                    index === activeIndex ? 'ring-2 ring-purple-500' : ''
-                  }`}
-                  onClick={() => setActiveIndex(index)}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    width={320}
-                    height={180}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className={`absolute inset-0 ${getThemeBgColor("bg-gradient-to-t from-black/80 to-transparent")} opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3`}>
-                    <span className="text-white text-sm font-medium truncate">{project.title}</span>
-                    <span className={`${isDark ? 'text-purple-300' : 'text-purple-200'} text-xs`}>{project.category}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-            
-            {!isExpanded && filteredProjects.length > 8 && (
-              <div className={`absolute bottom-0 left-0 right-0 h-20 ${getThemeBgColor("bg-gradient-to-t from-black/80 to-transparent")} pointer-events-none`} />
-            )}
-          </div>
-          
-          {/* Project Details */}
-          <div className="mt-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Project Description */}
-              <div className="rounded-xl overflow-hidden shadow-lg" style={{...getGlassStyles(false, false)}}>
-                <div className="p-6">
-                  <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'} mb-4`}>About This Project</h3>
-                  <p className={getThemeTextColor("text-gray-300 mb-6")}>{filteredProjects[activeIndex].description}</p>
-                  
-                  <div className="flex flex-wrap gap-3">
-                    <a
-                      href={filteredProjects[activeIndex].liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-white bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-full transition-all duration-300"
-                    >
-                      View Live Demo
-                      <FaExternalLinkAlt />
-                    </a>
-                    <a
-                      href={filteredProjects[activeIndex].githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-full transition-all duration-300"
-                    >
-                      View Code
-                      <FaGithub />
-                    </a>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Technologies Used */}
-              <div className="rounded-xl overflow-hidden shadow-lg" style={{...getGlassStyles(false, false)}}>
-                <div className="p-6">
-                  <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'} mb-4`}>Technologies Used</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {filteredProjects[activeIndex].technologies.map((tech, i) => (
-                      <span
-                        key={i}
-                        className={`px-4 py-2 text-sm ${isDark ? 'bg-purple-500/10 text-purple-300' : 'bg-purple-500/20 text-purple-700'} rounded-full border ${isDark ? 'border-purple-500/20' : 'border-purple-500/30'}`}
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="text-center py-20 relative z-10">
-          <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'} mb-4`}>No projects found</h3>
-          <p className={getThemeTextColor("text-gray-400")}>Try adjusting your search or filter criteria</p>
-        </div>
-      )}
+          ))}
+        </motion.div>
 
-      {/* Project Modal */}
-      <AnimatePresence>
         {isModalOpen && selectedProject && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -511,15 +336,18 @@ const Projects = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl"
-              style={{
-                ...getGlassStyles(false, false),
-              }}
+              className={`relative w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-2xl ${
+                isDark ? 'bg-gray-900' : 'bg-white'
+              } shadow-2xl`}
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={() => setIsModalOpen(false)}
-                className={`absolute top-4 right-4 z-50 p-2 rounded-full ${isDark ? 'bg-purple-500/20 hover:bg-purple-500/40' : 'bg-purple-500/30 hover:bg-purple-500/50'} text-white transition-all duration-300`}
+                className={`absolute top-4 right-4 z-50 p-2 rounded-full ${
+                  isDark 
+                    ? 'bg-purple-500/20 hover:bg-purple-500/40' 
+                    : 'bg-purple-500/30 hover:bg-purple-500/50'
+                } text-white transition-all duration-300`}
               >
                 <FaTimes />
               </button>
@@ -534,25 +362,49 @@ const Projects = () => {
                     className="w-full h-full object-cover"
                     priority
                   />
-                  <div className={`absolute inset-0 ${getThemeBgColor("bg-gradient-to-t from-black/80 via-black/50 to-transparent")} lg:hidden`} />
+                  <div className={`absolute inset-0 ${
+                    isDark 
+                      ? 'bg-gradient-to-t from-gray-900/80 via-gray-900/50 to-transparent' 
+                      : 'bg-gradient-to-t from-gray-900/60 via-gray-900/30 to-transparent'
+                  } lg:hidden`} />
                 </div>
                 
                 <div className="p-8 lg:p-12 flex flex-col justify-between">
                   <div>
                     <div className="mb-2">
-                      <span className={`px-3 py-1 text-xs ${isDark ? 'bg-purple-500/30 text-purple-200' : 'bg-purple-500/40 text-purple-700'} rounded-full`}>
+                      <span className={`px-3 py-1 text-xs rounded-full ${
+                        isDark 
+                          ? 'bg-purple-500/30 text-purple-200' 
+                          : 'bg-purple-500/40 text-purple-700'
+                      }`}>
                         {selectedProject.category}
                       </span>
                     </div>
-                    <h2 className={`text-3xl lg:text-4xl font-bold ${isDark ? 'text-white' : 'text-gray-800'} mb-4`}>{selectedProject.title}</h2>
-                    <p className={getThemeTextColor("text-gray-300 text-lg mb-8")}>{selectedProject.description}</p>
+                    <h2 className={`text-3xl lg:text-4xl font-bold mb-4 ${
+                      isDark ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {selectedProject.title}
+                    </h2>
+                    <p className={`text-lg mb-8 ${
+                      isDark ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      {selectedProject.description}
+                    </p>
                     
-                    <h3 className={`text-xl font-semibold ${isDark ? 'text-purple-400' : 'text-purple-600'} mb-4`}>Technologies Used</h3>
+                    <h3 className={`text-xl font-semibold mb-4 ${
+                      isDark ? 'text-purple-400' : 'text-purple-600'
+                    }`}>
+                      Technologies Used
+                    </h3>
                     <div className="flex flex-wrap gap-3 mb-8">
                       {selectedProject.technologies.map((tech, i) => (
                         <span
                           key={i}
-                          className={`px-4 py-2 text-sm ${isDark ? 'bg-purple-500/10 text-purple-300' : 'bg-purple-500/20 text-purple-700'} rounded-full border ${isDark ? 'border-purple-500/20' : 'border-purple-500/30'}`}
+                          className={`px-4 py-2 text-sm rounded-full ${
+                            isDark
+                              ? 'bg-purple-500/10 text-purple-300 border border-purple-500/20'
+                              : 'bg-purple-500/20 text-purple-700 border border-purple-500/30'
+                          }`}
                         >
                           {tech}
                         </span>
@@ -585,7 +437,7 @@ const Projects = () => {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 };

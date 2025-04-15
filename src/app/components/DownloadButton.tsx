@@ -2,51 +2,73 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { RiDownloadLine } from 'react-icons/ri';
+import { FaDownload } from 'react-icons/fa';
+import { useThemeStyles } from '../hooks/useThemeStyles';
 import GlassCard from './GlassCard';
 
 interface DownloadButtonProps {
-  onDownload: () => void;
-  isDownloading?: boolean;
+  variant?: 'primary' | 'secondary';
+  size?: 'small' | 'medium' | 'large';
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
-  label?: string;
+  onClick?: () => void;
+  disabled?: boolean;
 }
 
 const DownloadButton: React.FC<DownloadButtonProps> = ({
-  onDownload,
-  isDownloading = false,
+  variant = 'primary',
+  size = 'medium',
   className = '',
-  size = 'md',
-  label = 'Resume',
+  onClick,
+  disabled = false,
 }) => {
+  const { getTextColor, colors, shadows } = useThemeStyles();
+
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg',
+    small: 'px-3 py-1.5 text-sm',
+    medium: 'px-4 py-2 text-base',
+    large: 'px-6 py-3 text-lg',
   };
-  
-  const iconSizes = {
-    sm: 'w-4 h-4',
-    md: 'w-5 h-5',
-    lg: 'w-6 h-6',
+
+  const variantStyles = {
+    primary: {
+      background: `linear-gradient(135deg, ${colors.primary}20, ${colors.primary}10)`,
+      borderColor: `${colors.primary}40`,
+      hoverBorderColor: `${colors.primary}60`,
+      textColor: getTextColor('primary'),
+    },
+    secondary: {
+      background: `linear-gradient(135deg, ${colors.secondary}20, ${colors.secondary}10)`,
+      borderColor: `${colors.secondary}40`,
+      hoverBorderColor: `${colors.secondary}60`,
+      textColor: getTextColor('secondary'),
+    },
   };
-  
+
+  const style = variantStyles[variant];
+
   return (
     <GlassCard
-      className={`flex items-center space-x-2 ${sizeClasses[size]} ${className}`}
-      onClick={onDownload}
-      disabled={isDownloading}
+      className={`flex items-center justify-center gap-2 ${sizeClasses[size]} ${className}`}
+      onClick={onClick}
+      disabled={disabled}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
+      style={{
+        background: style.background,
+        borderColor: style.borderColor,
+        color: style.textColor,
+        boxShadow: shadows.sm,
+        transition: 'all 0.3s ease',
+      }}
     >
       <motion.div
-        animate={isDownloading ? { rotate: 360 } : { rotate: 0 }}
-        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        className="flex items-center gap-2"
+        whileHover={{ x: 2 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 10 }}
       >
-        <RiDownloadLine className={iconSizes[size]} />
+        <FaDownload className="text-lg" />
+        <span className="font-medium">Download CV</span>
       </motion.div>
-      <span>{isDownloading ? 'Downloading...' : label}</span>
     </GlassCard>
   );
 };
