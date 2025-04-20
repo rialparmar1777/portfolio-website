@@ -144,39 +144,39 @@ export const theme: Theme = {
   colors: {
     dark: {
       primary: {
-        main: '#8B5CF6', // Purple
-        light: '#A78BFA',
-        dark: '#7C3AED',
+        main: '#A78BFA', // Lighter purple for better visibility
+        light: '#C4B5FD',
+        dark: '#8B5CF6',
         contrast: '#FFFFFF',
       },
       secondary: {
-        main: '#EC4899', // Pink
-        light: '#F472B6',
-        dark: '#DB2777',
+        main: '#F472B6', // Lighter pink for better visibility
+        light: '#F9A8D4',
+        dark: '#EC4899',
         contrast: '#FFFFFF',
       },
       background: {
-        default: '#000000',
-        paper: 'rgba(0, 0, 0, 0.8)',
-        elevated: 'rgba(0, 0, 0, 0.9)',
-        glass: 'rgba(0, 0, 0, 0.7)',
+        default: '#0A0A0A',
+        paper: 'rgba(15, 15, 15, 0.9)', // Increased opacity
+        elevated: 'rgba(20, 20, 20, 0.95)', // Increased opacity
+        glass: 'rgba(10, 10, 10, 0.8)', // Increased opacity
       },
       text: {
         primary: '#FFFFFF',
-        secondary: 'rgba(255, 255, 255, 0.7)',
-        disabled: 'rgba(255, 255, 255, 0.5)',
+        secondary: 'rgba(255, 255, 255, 0.9)', // Increased opacity
+        disabled: 'rgba(255, 255, 255, 0.7)', // Increased opacity
       },
       border: {
-        light: 'rgba(255, 255, 255, 0.1)',
-        medium: 'rgba(255, 255, 255, 0.2)',
-        strong: 'rgba(255, 255, 255, 0.3)',
+        light: 'rgba(255, 255, 255, 0.2)', // Increased opacity
+        medium: 'rgba(255, 255, 255, 0.3)', // Increased opacity
+        strong: 'rgba(255, 255, 255, 0.4)', // Increased opacity
       },
       gradient: {
-        primary: 'linear-gradient(to right, #8B5CF6, #EC4899)',
-        secondary: 'linear-gradient(to right, #EC4899, #8B5CF6)',
-        glass: 'linear-gradient(to right, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1))',
-        glassHover: 'linear-gradient(to right, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2))',
-        glassActive: 'linear-gradient(to right, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3))',
+        primary: 'linear-gradient(to right, #A78BFA, #F472B6)', // Lighter colors
+        secondary: 'linear-gradient(to right, #F472B6, #A78BFA)', // Lighter colors
+        glass: 'linear-gradient(to right, rgba(167, 139, 250, 0.2), rgba(244, 114, 182, 0.2))', // Increased opacity
+        glassHover: 'linear-gradient(to right, rgba(167, 139, 250, 0.3), rgba(244, 114, 182, 0.3))', // Increased opacity
+        glassActive: 'linear-gradient(to right, rgba(167, 139, 250, 0.4), rgba(244, 114, 182, 0.4))', // Increased opacity
       },
     },
     light: {
@@ -219,13 +219,13 @@ export const theme: Theme = {
   },
   shadows: {
     dark: {
-      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-      md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-      lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-      glass: '0 4px 6px -1px rgba(139, 92, 246, 0.1), 0 2px 4px -1px rgba(236, 72, 153, 0.06)',
-      glassHover: '0 4px 12px -1px rgba(139, 92, 246, 0.2), 0 2px 6px -1px rgba(236, 72, 153, 0.1)',
-      glassActive: '0 4px 12px -1px rgba(139, 92, 246, 0.3), 0 2px 6px -1px rgba(236, 72, 153, 0.2)',
+      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.1)',
+      md: '0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
+      lg: '0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1)',
+      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1)',
+      glass: '0 4px 6px -1px rgba(167, 139, 250, 0.15), 0 2px 4px -1px rgba(244, 114, 182, 0.1)',
+      glassHover: '0 4px 12px -1px rgba(167, 139, 250, 0.25), 0 2px 6px -1px rgba(244, 114, 182, 0.15)',
+      glassActive: '0 4px 12px -1px rgba(167, 139, 250, 0.35), 0 2px 6px -1px rgba(244, 114, 182, 0.25)',
     },
     light: {
       sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',

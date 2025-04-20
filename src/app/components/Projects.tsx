@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { FaGithub, FaExternalLinkAlt, FaTimes, FaSearch, FaFilter, FaArrowLeft, FaArrowRight, FaChevronRight } from 'react-icons/fa';
+import { FaGithub, FaExternalLinkAlt, FaTimes, FaSearch, FaFilter, FaArrowLeft, FaArrowRight, FaChevronRight, FaArrowUp } from 'react-icons/fa';
 import Image from 'next/image';
 import { useThemeStyles } from '../hooks/useThemeStyles';
 
@@ -96,6 +96,7 @@ const categories = Array.from(new Set(projects.map(project => project.category))
 
 const Projects = () => {
   const { isDark } = useThemeStyles();
+  const { getTextColor, getBackgroundColor, getBorderColor } = useThemeStyles();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -104,6 +105,7 @@ const Projects = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -114,6 +116,19 @@ const Projects = () => {
   });
   
   const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  
+  // Handle scroll position for scroll-to-top button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const position = window.scrollY;
+        setShowScrollTop(position > 300);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   // Auto-rotate featured project
   useEffect(() => {
@@ -147,48 +162,31 @@ const Projects = () => {
     setActiveIndex(0); // Reset active index when filters change
   }, [selectedCategory, searchQuery]);
 
-  // Handle project selection
-  const handleProjectClick = (project: Project) => {
-    setSelectedProject(project);
-    setIsModalOpen(true);
-  };
-
-  // Theme-specific styles
-  const getThemeTextColor = (baseColor: string) => {
-    return isDark ? baseColor : baseColor.replace('text-gray-300', 'text-gray-700').replace('text-gray-400', 'text-gray-600');
-  };
-
-  const getThemeBgColor = (baseColor: string) => {
-    return isDark ? baseColor : baseColor.replace('bg-black/90', 'bg-black/80').replace('bg-black/50', 'bg-black/40');
-  };
-
-  const getThemeBorderColor = (baseColor: string) => {
-    return isDark ? baseColor : baseColor.replace('border-purple-500/30', 'border-purple-500/40');
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   return (
-    <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8" ref={containerRef}>
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className={`text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}
-          >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-5xl font-bold mb-4">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500">
               Featured Projects
             </span>
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto`}
-          >
+          </h1>
+          <p className="text-xl max-w-2xl mx-auto text-gray-600 dark:text-gray-300">
             Explore my latest work and personal projects
-          </motion.p>
-        </div>
+          </p>
+        </motion.div>
 
         <div className="mb-12">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
@@ -221,21 +219,21 @@ const Projects = () => {
               className="flex flex-wrap gap-2"
             >
               {categories.map((category) => (
-                <button
+                <motion.button
                   key={category}
                   onClick={() => setSelectedCategory(category || 'all')}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                     selectedCategory === category
-                      ? isDark
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-purple-500 text-white'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
                       : isDark
                         ? 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {category}
-                </button>
+                </motion.button>
               ))}
             </motion.div>
           </div>
@@ -255,6 +253,8 @@ const Projects = () => {
               className={`group relative overflow-hidden rounded-2xl ${
                 isDark ? 'bg-gray-800/50' : 'bg-white'
               } shadow-lg hover:shadow-xl transition-all duration-300`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => {
                 setSelectedProject(project);
                 setIsModalOpen(true);
@@ -321,6 +321,24 @@ const Projects = () => {
             </motion.div>
           ))}
         </motion.div>
+
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            onClick={scrollToTop}
+            className={`fixed bottom-8 right-8 p-3 rounded-full ${
+              isDark 
+                ? 'bg-purple-500/20 hover:bg-purple-500/40' 
+                : 'bg-purple-500/30 hover:bg-purple-500/50'
+            } text-white transition-all duration-300 shadow-lg`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FaArrowUp />
+          </motion.button>
+        )}
 
         {isModalOpen && selectedProject && (
           <motion.div
@@ -417,7 +435,7 @@ const Projects = () => {
                       href={selectedProject.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-white bg-purple-500 hover:bg-purple-600 px-6 py-3 rounded-full transition-all duration-300"
+                      className="inline-flex items-center gap-2 text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-full transition-all duration-300"
                     >
                       View Live Demo
                       <FaExternalLinkAlt />
@@ -426,7 +444,7 @@ const Projects = () => {
                       href={selectedProject.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-full transition-all duration-300"
+                      className="inline-flex items-center gap-2 text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-6 py-3 rounded-full transition-all duration-300"
                     >
                       View Code
                       <FaGithub />

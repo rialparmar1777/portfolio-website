@@ -4,7 +4,6 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "./context/ThemeContext";
 import ErrorBoundaryWrapper from "./components/ErrorBoundaryWrapper";
-import { useThemeStyles } from "./hooks/useThemeStyles";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -70,17 +69,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} scroll-smooth overflow-x-hidden`}>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#111827" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="bg-black text-white antialiased">
+      <body className={`${inter.variable} antialiased scroll-smooth overflow-x-hidden`}>
         <ErrorBoundaryWrapper>
           <ThemeProvider>
             <Toaster
@@ -88,9 +87,9 @@ export default function RootLayout({
               toastOptions={{
                 duration: 3000,
                 style: {
-                  background: "rgba(0, 0, 0, 0.9)",
-                  color: "#fff",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  background: "var(--toast-bg)",
+                  color: "var(--toast-text)",
+                  border: "1px solid var(--toast-border)",
                   backdropFilter: "blur(10px)",
                 },
                 success: {

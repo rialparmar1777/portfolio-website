@@ -27,11 +27,14 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       if (savedTheme) {
         setTheme(savedTheme);
         setIsDarkMode(savedTheme === 'dark');
+        document.documentElement.classList.add(savedTheme);
       } else {
         // Check system preference
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setTheme(prefersDark ? 'dark' : 'light');
+        const initialTheme = prefersDark ? 'dark' : 'light';
+        setTheme(initialTheme);
         setIsDarkMode(prefersDark);
+        document.documentElement.classList.add(initialTheme);
       }
       setIsInitialized(true);
     } catch (error) {
@@ -39,6 +42,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       // Fallback to dark theme
       setTheme('dark');
       setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
       setIsInitialized(true);
     }
   }, []);
@@ -48,6 +52,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     if (!isInitialized) return;
 
     try {
+      // Add transition class before changing theme
+      document.documentElement.classList.add('transitioning');
+      
       // Update document class when theme changes
       document.documentElement.classList.remove('light', 'dark');
       document.documentElement.classList.add(theme);
@@ -61,13 +68,18 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       // Update meta theme-color
       const metaThemeColor = document.querySelector('meta[name="theme-color"]');
       if (metaThemeColor) {
-        metaThemeColor.setAttribute('content', theme === 'dark' ? '#000000' : '#ffffff');
+        metaThemeColor.setAttribute('content', theme === 'dark' ? '#111827' : '#F9FAFB');
       } else {
         const meta = document.createElement('meta');
         meta.name = 'theme-color';
-        meta.content = theme === 'dark' ? '#000000' : '#ffffff';
+        meta.content = theme === 'dark' ? '#111827' : '#F9FAFB';
         document.head.appendChild(meta);
       }
+
+      // Remove transition class after animation completes
+      setTimeout(() => {
+        document.documentElement.classList.remove('transitioning');
+      }, 500);
     } catch (error) {
       console.error('Error updating theme:', error);
     }
@@ -75,7 +87,10 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   const toggleTheme = () => {
     try {
-      setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
+      setTheme(prevTheme => {
+        const newTheme = prevTheme === 'dark' ? 'light' : 'dark';
+        return newTheme;
+      });
     } catch (error) {
       console.error('Error toggling theme:', error);
     }
@@ -87,7 +102,10 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     
     const handleChange = (e: MediaQueryListEvent) => {
       if (!localStorage.getItem(THEME_STORAGE_KEY)) {
-        setTheme(e.matches ? 'dark' : 'light');
+        const newTheme = e.matches ? 'dark' : 'light';
+        setTheme(newTheme);
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(newTheme);
       }
     };
 
