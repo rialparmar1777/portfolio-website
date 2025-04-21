@@ -16,6 +16,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   const [countdown, setCountdown] = useState(3);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
+  const [countdownComplete, setCountdownComplete] = useState(false);
   const { getBackgroundColor, getTextColor, isDark } = useThemeStyles();
 
   useEffect(() => {
@@ -31,13 +32,15 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
         setCountdown(prev => {
           if (prev <= 1) {
             clearInterval(interval);
+            // Mark countdown as complete but don't launch yet
+            setCountdownComplete(true);
             // Add a small delay before launching the rocket
             setTimeout(() => {
               setRocketLaunched(true);
               // Add a delay before the blast effect
               setTimeout(() => {
                 setRocketBlasted(true);
-              }, 1200);
+              }, 1000);
             }, 800);
             return 0;
           }
@@ -115,18 +118,18 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                   className="relative z-10"
                   initial={{ y: 0 }}
                   animate={rocketLaunched ? {
-                    y: [-20, -350],
+                    y: [-20, -300],
                     opacity: [1, 1],
-                    scale: [1, 1.2],
-                    rotate: [0, 0]
+                    scale: [1, 1.5],
+                    rotate: [0, 5]
                   } : {}}
                   transition={{ 
-                    duration: 1.8,
+                    duration: 2.2,
                     ease: [0.16, 1, 0.3, 1] // Custom easing for more dramatic launch
                   }}
                 >
                   <FaRocket 
-                    className="w-20 h-20 text-purple-500" 
+                    className="w-24 h-24 text-purple-500" 
                     style={{ 
                       filter: "drop-shadow(0 0 15px rgba(147, 51, 234, 0.7))",
                       transform: "rotate(-90deg)"
@@ -137,7 +140,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                   <motion.div
                     className="absolute -bottom-2 left-1/2 transform -translate-x-1/2"
                     animate={rocketLaunched ? {
-                      scale: [1, 1.5, 1],
+                      scale: [1, 1.8, 1],
                       opacity: [1, 0.9, 0.7]
                     } : {}}
                     transition={{ 
@@ -146,24 +149,24 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                       repeatType: "reverse"
                     }}
                   >
-                    <FaFire className="w-10 h-10 text-orange-500" />
+                    <FaFire className="w-16 h-16 text-orange-500" />
                   </motion.div>
                 </motion.div>
                 
                 {/* Rocket Trail */}
                 <motion.div
-                  className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-24"
+                  className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-32"
                   style={{ 
                     background: "linear-gradient(to bottom, #9333EA, transparent)",
                     borderRadius: "0 0 4px 4px"
                   }}
                   animate={rocketLaunched ? {
-                    height: [24, 48, 24],
+                    height: [32, 150, 32],
                     opacity: [1, 0.8, 0],
-                    y: [0, 30, 60]
+                    y: [0, 50, 100]
                   } : {}}
                   transition={{ 
-                    duration: 1.8,
+                    duration: 2.2,
                     ease: "easeOut"
                   }}
                 />
@@ -222,20 +225,20 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                     {/* Rocket Blast Animation */}
                     <motion.div
                       className="absolute top-0 left-1/2 transform -translate-x-1/2 z-20"
-                      initial={{ y: -350, scale: 1.2, opacity: 1 }}
+                      initial={{ y: -300, scale: 1.5, opacity: 1 }}
                       animate={{ 
-                        y: [-350, -600],
-                        scale: [1.2, 2],
+                        y: [-300, -600],
+                        scale: [1.5, 3],
                         opacity: [1, 0],
-                        rotate: [0, 15]
+                        rotate: [5, 15]
                       }}
                       transition={{ 
-                        duration: 1.8,
+                        duration: 2.5,
                         ease: "easeOut"
                       }}
                     >
                       <FaRocket 
-                        className="w-20 h-20 text-purple-500" 
+                        className="w-24 h-24 text-purple-500" 
                         style={{ 
                           filter: "drop-shadow(0 0 20px rgba(147, 51, 234, 0.9))",
                           transform: "rotate(-90deg)"
@@ -246,7 +249,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                       <motion.div
                         className="absolute -bottom-2 left-1/2 transform -translate-x-1/2"
                         animate={{
-                          scale: [1, 2.5, 1],
+                          scale: [1, 3, 1],
                           opacity: [1, 0.9, 0.7]
                         }}
                         transition={{ 
@@ -255,7 +258,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                           repeatType: "reverse"
                         }}
                       >
-                        <FaFire className="w-20 h-20 text-orange-500" />
+                        <FaFire className="w-28 h-28 text-orange-500" />
                       </motion.div>
                     </motion.div>
                     
