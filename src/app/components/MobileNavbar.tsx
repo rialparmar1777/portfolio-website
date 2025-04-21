@@ -11,8 +11,6 @@ import {
   EnvelopeIcon 
 } from '@heroicons/react/24/outline';
 import { useTheme } from '@/app/context/ThemeContext';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 interface MobileNavbarProps {
   activeSection: string;
@@ -21,7 +19,6 @@ interface MobileNavbarProps {
 
 const MobileNavbar: React.FC<MobileNavbarProps> = ({ activeSection, onNavigate }) => {
   const { getBackgroundColor, getTextColor, getBorderColor } = useThemeStyles();
-  const pathname = usePathname();
   const { theme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -54,57 +51,58 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ activeSection, onNavigate }
       <div className="mx-auto max-w-md px-4">
         <div className={`relative rounded-2xl p-2 ${
           theme === 'dark' 
-            ? 'bg-gray-900/95 backdrop-blur-xl border-2 border-gray-700 shadow-2xl shadow-black/30' 
-            : 'bg-white/95 backdrop-blur-xl border-2 border-gray-200 shadow-2xl shadow-gray-200/30'
+            ? 'bg-gray-900/95 backdrop-blur-lg border border-gray-700 shadow-xl shadow-black/30 ring-1 ring-gray-800/50' 
+            : 'bg-white/95 backdrop-blur-lg border border-gray-200 shadow-xl shadow-gray-300/50 ring-1 ring-gray-100/50'
         }`}>
           <div className="flex justify-around items-center">
-            {navItems.map(({ id, icon: Icon, label }) => {
-              const isActive = pathname === `/${id}`;
+            {navItems.map(({ id, icon: Icon }) => {
+              const isActive = activeSection === id;
               return (
-                <Link
+                <button
                   key={id}
-                  href={`/${id}`}
+                  onClick={() => onNavigate(id)}
                   className={`group relative flex flex-col items-center justify-center w-16 h-14 transition-all duration-300 ${
                     isActive 
-                      ? theme === 'dark' 
-                        ? 'text-blue-400 scale-110' 
-                        : 'text-blue-600 scale-110'
+                      ? 'text-blue-500 scale-110' 
                       : theme === 'dark' 
-                        ? 'text-gray-300 hover:text-gray-100' 
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'text-gray-300 hover:text-white' 
+                        : 'text-gray-700 hover:text-gray-900'
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeIndicator"
                       className={`absolute -top-1 w-12 h-1 rounded-full ${
-                        theme === 'dark' ? 'bg-blue-400' : 'bg-blue-600'
+                        theme === 'dark' ? 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]' : 'bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.5)]'
                       }`}
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                  <Icon
-                    className={`w-6 h-6 transition-transform duration-300 ${
-                      isActive ? 'scale-110' : 'group-hover:scale-110'
-                    }`}
-                  />
-                  <span className={`text-xs mt-1 font-semibold transition-all duration-300 ${
-                    isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100'
-                  }`}>
-                    {label}
-                  </span>
+                  <div className="relative z-10 flex flex-col items-center">
+                    <Icon
+                      className={`w-6 h-6 transition-transform duration-300 ${
+                        isActive ? 'scale-110' : 'group-hover:scale-110'
+                      }`}
+                      style={{ color: isActive ? getTextColor('primary') : getTextColor('secondary') }}
+                    />
+                    <span className={`text-xs mt-1 font-medium transition-all duration-300 ${
+                      isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100'
+                    }`}>
+                      {id}
+                    </span>
+                  </div>
                   {isActive && (
                     <motion.div
                       layoutId="activeBackground"
                       className={`absolute inset-0 rounded-xl ${
                         theme === 'dark' 
-                          ? 'bg-blue-400/10' 
-                          : 'bg-blue-100'
+                          ? 'bg-blue-500/10 shadow-[0_0_10px_rgba(59,130,246,0.2)]' 
+                          : 'bg-blue-100 shadow-[0_0_10px_rgba(37,99,235,0.2)]'
                       }`}
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                </Link>
+                </button>
               );
             })}
           </div>
