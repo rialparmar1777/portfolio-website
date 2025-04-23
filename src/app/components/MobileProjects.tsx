@@ -207,29 +207,29 @@ const MobileProjects = () => {
             <FaSearch size={16} />
           </motion.button>
         </div>
-
-        {isSearchExpanded && (
-          <motion.div
+        
+          {isSearchExpanded && (
+            <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mb-3"
-          >
-            <input
-              type="text"
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              className="mb-3"
+            >
+                <input
+                  type="text"
+                  placeholder="Search projects..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2 rounded-lg"
-              style={{ 
-                background: getBackgroundColor('default'),
-                color: getTextColor('primary'),
-                border: `1px solid ${getBorderColor('light')}`,
-              }}
-            />
-          </motion.div>
-        )}
-
+                  style={{ 
+                    background: getBackgroundColor('default'),
+                    color: getTextColor('primary'),
+                    border: `1px solid ${getBorderColor('light')}`,
+                  }}
+                />
+            </motion.div>
+          )}
+        
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
           <motion.button
             onClick={() => setActiveTab('featured')}
@@ -311,7 +311,7 @@ const MobileProjects = () => {
               
               <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
                 {filteredProjects.slice(0, 3).map((_, index) => (
-                  <motion.button
+                <motion.button
                     key={index}
                     onClick={() => setActiveFeaturedIndex(index)}
                     className={`w-2 h-2 rounded-full ${
@@ -320,7 +320,7 @@ const MobileProjects = () => {
                         : 'bg-white/50'
                     }`}
                     whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
+                  whileTap={{ scale: 0.9 }}
                   />
                 ))}
               </div>
@@ -353,7 +353,7 @@ const MobileProjects = () => {
             </motion.button>
           ))}
         </div>
-
+        
         {/* Project cards */}
         <div className="space-y-4">
           {filteredProjects.map((project, index) => (
@@ -409,126 +409,126 @@ const MobileProjects = () => {
             </motion.div>
           ))}
         </div>
-      </div>
-
-      {/* Scroll to top button */}
-      {showScrollTop && (
-        <motion.button
+        </div>
+        
+        {/* Scroll to top button */}
+          {showScrollTop && (
+            <motion.button
           initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
-          onClick={scrollToTop}
+              onClick={scrollToTop}
           className="fixed bottom-8 right-8 p-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
           <FaArrowUp />
-        </motion.button>
-      )}
-
+            </motion.button>
+          )}
+      
       {/* Project modal */}
-      {isModalOpen && selectedProject && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-          onClick={() => setIsModalOpen(false)}
-        >
+        {isModalOpen && selectedProject && (
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl"
-            style={{ 
-              background: getBackgroundColor('paper'),
+              style={{ 
+                background: getBackgroundColor('paper'),
               border: `1px solid ${getBorderColor('light')}`,
               boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white"
+              }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <FaTimes />
-            </button>
-            
-            <div className="relative h-48">
-              <Image
-                src={selectedProject.image}
-                alt={selectedProject.title}
+              <button
+                onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white"
+              >
+                <FaTimes />
+              </button>
+              
+              <div className="relative h-48">
+                <Image
+                  src={selectedProject.image}
+                  alt={selectedProject.title}
                 width={400}
                 height={300}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/50 to-transparent" />
-            </div>
-            
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="px-3 py-1 text-xs rounded-full flex items-center gap-1"
-                  style={{ 
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    color: 'rgb(59, 130, 246)'
-                  }}
-                >
-                  {categoryIcons[selectedProject.category || '']}
-                  {selectedProject.category}
-                </span>
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/50 to-transparent" />
               </div>
-              <h2 className="text-2xl font-bold mb-3" style={{ color: getTextColor('primary') }}>
-                {selectedProject.title}
-              </h2>
-              <p className="text-base mb-6" style={{ color: getTextColor('secondary') }}>
-                {selectedProject.description}
-              </p>
               
-              <h3 className="text-lg font-semibold mb-3" style={{ color: getTextColor('primary') }}>
-                Technologies Used
-              </h3>
-              <div className="flex flex-wrap gap-2 mb-6">
-                {selectedProject.technologies.map((tech, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1 text-sm rounded-full"
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="px-3 py-1 text-xs rounded-full flex items-center gap-1"
                     style={{ 
-                      background: getBackgroundColor('default'),
-                      color: getTextColor('secondary'),
-                      border: `1px solid ${getBorderColor('light')}`
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      color: 'rgb(59, 130, 246)'
                     }}
                   >
-                    {tech}
+                    {categoryIcons[selectedProject.category || '']}
+                    {selectedProject.category}
                   </span>
-                ))}
-              </div>
-              
+                </div>
+                <h2 className="text-2xl font-bold mb-3" style={{ color: getTextColor('primary') }}>
+                  {selectedProject.title}
+                </h2>
+                <p className="text-base mb-6" style={{ color: getTextColor('secondary') }}>
+                  {selectedProject.description}
+                </p>
+                
+                <h3 className="text-lg font-semibold mb-3" style={{ color: getTextColor('primary') }}>
+                  Technologies Used
+                </h3>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {selectedProject.technologies.map((tech, i) => (
+                    <span
+                      key={i}
+                      className="px-3 py-1 text-sm rounded-full"
+                      style={{ 
+                        background: getBackgroundColor('default'),
+                        color: getTextColor('secondary'),
+                        border: `1px solid ${getBorderColor('light')}`
+                      }}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+                
               <div className="flex flex-wrap gap-3">
-                <a
-                  href={selectedProject.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  <a
+                    href={selectedProject.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   className="flex-1 inline-flex items-center justify-center gap-2 text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-full transition-all duration-300"
-                >
-                  View Live Demo
-                  <FaExternalLinkAlt />
-                </a>
-                <a
-                  href={selectedProject.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  >
+                    View Live Demo
+                    <FaExternalLinkAlt />
+                  </a>
+                  <a
+                    href={selectedProject.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   className="flex-1 inline-flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-6 py-3 rounded-full transition-all duration-300"
-                >
-                  View Code
-                  <FaGithub />
-                </a>
+                  >
+                    View Code
+                    <FaGithub />
+                  </a>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        )}
     </div>
   );
 };

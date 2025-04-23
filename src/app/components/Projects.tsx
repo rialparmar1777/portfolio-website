@@ -173,11 +173,11 @@ const Projects = () => {
     <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8" ref={containerRef}>
       <div className="max-w-7xl mx-auto">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           className="text-center mb-16"
-        >
+          >
           <h1 className="text-5xl font-bold mb-4">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500">
               Featured Projects

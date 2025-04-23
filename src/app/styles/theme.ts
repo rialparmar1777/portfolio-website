@@ -1,3 +1,5 @@
+import { Theme as ThemeMode } from '../context/ThemeContext';
+
 // Theme Types
 type ColorShade = {
   main: string;
@@ -11,6 +13,8 @@ type BackgroundColors = {
   paper: string;
   elevated: string;
   glass: string;
+  glassHover: string;
+  glassActive: string;
 };
 
 type TextColors = {
@@ -42,7 +46,7 @@ type ThemeColors = {
   gradient: GradientColors;
 };
 
-type ThemeMode = {
+type ThemeColorMode = {
   dark: ThemeColors;
   light: ThemeColors;
 };
@@ -129,8 +133,8 @@ type ZIndex = {
   tooltip: number;
 };
 
-type Theme = {
-  colors: ThemeMode;
+type ThemeConfig = {
+  colors: ThemeColorMode;
   shadows: ThemeShadows;
   transitions: Transitions;
   borderRadius: BorderRadius;
@@ -140,7 +144,7 @@ type Theme = {
 };
 
 // Theme Configuration
-export const theme: Theme = {
+export const theme: ThemeConfig = {
   colors: {
     dark: {
       primary: {
@@ -156,27 +160,29 @@ export const theme: Theme = {
         contrast: '#FFFFFF',
       },
       background: {
-        default: '#0A0A0A',
-        paper: 'rgba(15, 15, 15, 0.9)', // Increased opacity
-        elevated: 'rgba(20, 20, 20, 0.95)', // Increased opacity
-        glass: 'rgba(10, 10, 10, 0.8)', // Increased opacity
+        default: 'rgba(17, 24, 39, 0.9)',
+        paper: 'rgba(17, 24, 39, 0.95)',
+        elevated: 'rgba(17, 24, 39, 0.98)',
+        glass: 'rgba(17, 24, 39, 0.7)',
+        glassHover: 'rgba(17, 24, 39, 0.8)',
+        glassActive: 'rgba(17, 24, 39, 0.9)',
       },
       text: {
-        primary: '#FFFFFF',
-        secondary: 'rgba(255, 255, 255, 0.9)', // Increased opacity
-        disabled: 'rgba(255, 255, 255, 0.7)', // Increased opacity
+        primary: 'rgba(255, 255, 255, 0.87)',
+        secondary: 'rgba(255, 255, 255, 0.6)',
+        disabled: 'rgba(255, 255, 255, 0.38)',
       },
       border: {
-        light: 'rgba(255, 255, 255, 0.2)', // Increased opacity
-        medium: 'rgba(255, 255, 255, 0.3)', // Increased opacity
-        strong: 'rgba(255, 255, 255, 0.4)', // Increased opacity
+        light: 'rgba(255, 255, 255, 0.12)',
+        medium: 'rgba(255, 255, 255, 0.24)',
+        strong: 'rgba(255, 255, 255, 0.36)',
       },
       gradient: {
-        primary: 'linear-gradient(to right, #A78BFA, #F472B6)', // Lighter colors
-        secondary: 'linear-gradient(to right, #F472B6, #A78BFA)', // Lighter colors
-        glass: 'linear-gradient(to right, rgba(167, 139, 250, 0.2), rgba(244, 114, 182, 0.2))', // Increased opacity
-        glassHover: 'linear-gradient(to right, rgba(167, 139, 250, 0.3), rgba(244, 114, 182, 0.3))', // Increased opacity
-        glassActive: 'linear-gradient(to right, rgba(167, 139, 250, 0.4), rgba(244, 114, 182, 0.4))', // Increased opacity
+        primary: 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(59, 130, 246, 0.2))',
+        secondary: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2))',
+        glass: 'linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0))',
+        glassHover: 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+        glassActive: 'linear-gradient(45deg, rgba(255,255,255,0.15), rgba(255,255,255,0.1))',
       },
     },
     light: {
@@ -193,27 +199,29 @@ export const theme: Theme = {
         contrast: '#FFFFFF',
       },
       background: {
-        default: '#F9FAFB',
-        paper: 'rgba(255, 255, 255, 0.8)',
-        elevated: 'rgba(255, 255, 255, 0.9)',
+        default: 'rgba(255, 255, 255, 0.9)',
+        paper: 'rgba(255, 255, 255, 0.95)',
+        elevated: 'rgba(255, 255, 255, 0.98)',
         glass: 'rgba(255, 255, 255, 0.7)',
+        glassHover: 'rgba(255, 255, 255, 0.8)',
+        glassActive: 'rgba(255, 255, 255, 0.9)',
       },
       text: {
-        primary: '#111827',
-        secondary: 'rgba(17, 24, 39, 0.7)',
-        disabled: 'rgba(17, 24, 39, 0.5)',
+        primary: 'rgba(0, 0, 0, 0.87)',
+        secondary: 'rgba(0, 0, 0, 0.6)',
+        disabled: 'rgba(0, 0, 0, 0.38)',
       },
       border: {
-        light: 'rgba(17, 24, 39, 0.1)',
-        medium: 'rgba(17, 24, 39, 0.2)',
-        strong: 'rgba(17, 24, 39, 0.3)',
+        light: 'rgba(0, 0, 0, 0.12)',
+        medium: 'rgba(0, 0, 0, 0.24)',
+        strong: 'rgba(0, 0, 0, 0.36)',
       },
       gradient: {
-        primary: 'linear-gradient(to right, #7C3AED, #DB2777)',
-        secondary: 'linear-gradient(to right, #DB2777, #7C3AED)',
-        glass: 'linear-gradient(to right, rgba(124, 58, 237, 0.1), rgba(219, 39, 119, 0.1))',
-        glassHover: 'linear-gradient(to right, rgba(124, 58, 237, 0.2), rgba(219, 39, 119, 0.2))',
-        glassActive: 'linear-gradient(to right, rgba(124, 58, 237, 0.3), rgba(219, 39, 119, 0.3))',
+        primary: 'linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(59, 130, 246, 0.1))',
+        secondary: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1))',
+        glass: 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0))',
+        glassHover: 'linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
+        glassActive: 'linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2))',
       },
     },
   },
@@ -223,18 +231,18 @@ export const theme: Theme = {
       md: '0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
       lg: '0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1)',
       xl: '0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1)',
-      glass: '0 4px 6px -1px rgba(167, 139, 250, 0.15), 0 2px 4px -1px rgba(244, 114, 182, 0.1)',
-      glassHover: '0 4px 12px -1px rgba(167, 139, 250, 0.25), 0 2px 6px -1px rgba(244, 114, 182, 0.15)',
-      glassActive: '0 4px 12px -1px rgba(167, 139, 250, 0.35), 0 2px 6px -1px rgba(244, 114, 182, 0.25)',
+      glass: '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)',
+      glassHover: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25)',
+      glassActive: '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
     },
     light: {
       sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
       md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
       lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-      glass: '0 4px 6px -1px rgba(124, 58, 237, 0.1), 0 2px 4px -1px rgba(219, 39, 119, 0.06)',
-      glassHover: '0 4px 12px -1px rgba(124, 58, 237, 0.2), 0 2px 6px -1px rgba(219, 39, 119, 0.1)',
-      glassActive: '0 4px 12px -1px rgba(124, 58, 237, 0.3), 0 2px 6px -1px rgba(219, 39, 119, 0.2)',
+      glass: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      glassHover: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      glassActive: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     },
   },
   transitions: {
@@ -299,4 +307,29 @@ export const theme: Theme = {
     popover: 1050,
     tooltip: 1060,
   },
+};
+
+export const getBackgroundColor = (type: keyof BackgroundColors, currentTheme: ThemeMode) => {
+  const colors = currentTheme === 'dark' ? theme.colors.dark : theme.colors.light;
+  return colors.background[type] || colors.background.default;
+};
+
+export const getTextColor = (type: keyof TextColors, currentTheme: ThemeMode) => {
+  const colors = currentTheme === 'dark' ? theme.colors.dark : theme.colors.light;
+  return colors.text[type] || colors.text.primary;
+};
+
+export const getBorderColor = (type: keyof BorderColors, currentTheme: ThemeMode) => {
+  const colors = currentTheme === 'dark' ? theme.colors.dark : theme.colors.light;
+  return colors.border[type] || colors.border.light;
+};
+
+export const getGradient = (type: keyof GradientColors, currentTheme: ThemeMode) => {
+  const colors = currentTheme === 'dark' ? theme.colors.dark : theme.colors.light;
+  return colors.gradient[type] || colors.gradient.primary;
+};
+
+export const getShadow = (type: keyof Shadows, currentTheme: ThemeMode) => {
+  const shadows = currentTheme === 'dark' ? theme.shadows.dark : theme.shadows.light;
+  return shadows[type] || shadows.glass;
 }; 

@@ -77,10 +77,10 @@ const MainContent = () => {
   
   const scrollToTop = () => {
     if (typeof window !== 'undefined') {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
     }
   };
   
@@ -92,7 +92,7 @@ const MainContent = () => {
       scrollToTop();
       setActiveSection('home');
       if (typeof window !== 'undefined') {
-        window.history.pushState(null, '', '#home');
+      window.history.pushState(null, '', '#home');
       }
     } else {
       const element = document.getElementById(section);
@@ -100,24 +100,18 @@ const MainContent = () => {
         element.scrollIntoView({ behavior: 'smooth' });
         setActiveSection(section);
         if (typeof window !== 'undefined') {
-          window.history.pushState(null, '', `#${section}`);
+        window.history.pushState(null, '', `#${section}`);
         }
       }
     }
   };
   
   const handleDownloadResume = async () => {
-    setIsDownloading(true);
     try {
       // Add your resume download logic here
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated download
-      if (typeof window !== 'undefined') {
-        window.open('/Resume.pdf', '_blank');
-      }
+      window.open('/NewResumeRial.pdf', '_blank');
     } catch (error) {
       console.error('Error downloading resume:', error);
-    } finally {
-      setIsDownloading(false);
     }
   };
   
@@ -126,71 +120,71 @@ const MainContent = () => {
   }
 
   return (
-    <PageTransition>
-      {isMobile ? (
-        <MobileHome />
-      ) : (
-        <main
-          ref={mainRef}
-          className="min-h-screen"
-          style={{ background: getBackgroundColor('default') }}
-        >
-          <Navbar
-            onNavigate={handleNavigation}
-            activeSection={activeSection}
-            onDownloadResume={handleDownloadResume}
-            isDownloading={isDownloading}
-          />
-          
-          <div className="pt-16">
-            {/* Hero Section */}
-            <section id="home" className="min-h-screen relative z-10">
-              <Hero />
-            </section>
+      <PageTransition>
+        {isMobile ? (
+          <MobileHome />
+        ) : (
+          <main
+            ref={mainRef}
+            className="min-h-screen"
+            style={{ background: getBackgroundColor('default') }}
+          >
+            <Navbar
+              onNavigate={handleNavigation}
+              activeSection={activeSection}
+              onDownloadResume={handleDownloadResume}
+              isDownloading={isDownloading}
+            />
             
-            {/* About Section */}
-            <section id="about" className="min-h-screen py-10 relative z-0">
-              <DynamicScroll direction="up" threshold={0.2} className="about">
-                <About />
-              </DynamicScroll>
-            </section>
+            <div className="pt-16">
+              {/* Hero Section */}
+              <section id="home" className="min-h-screen relative z-10">
+                <Hero />
+              </section>
+              
+              {/* About Section */}
+              <section id="about" className="min-h-screen py-10 relative z-0">
+                <DynamicScroll direction="up" threshold={0.2} className="about">
+                  <About />
+                </DynamicScroll>
+              </section>
+              
+              {/* Experience Section */}
+              <section id="experience" className="min-h-screen py-10 relative z-0">
+                <DynamicScroll direction="down" threshold={0.2} className="experience">
+                  <Experience />
+                </DynamicScroll>
+              </section>
+              
+              {/* Projects Section */}
+              <section id="projects" className="min-h-screen py-10 relative z-0">
+                <DynamicScroll direction="up" threshold={0.2} className="projects">
+                  <Projects />
+                </DynamicScroll>
+              </section>
+              
+              {/* Contact Section */}
+              <section id="contact" className="min-h-screen py-10 relative z-0">
+                <DynamicScroll direction="down" threshold={0.2} className="contact">
+                  <Contact />
+                </DynamicScroll>
+              </section>
+            </div>
             
-            {/* Experience Section */}
-            <section id="experience" className="min-h-screen py-10 relative z-0">
-              <DynamicScroll direction="down" threshold={0.2} className="experience">
-                <Experience />
-              </DynamicScroll>
-            </section>
-            
-            {/* Projects Section */}
-            <section id="projects" className="min-h-screen py-10 relative z-0">
-              <DynamicScroll direction="up" threshold={0.2} className="projects">
-                <Projects />
-              </DynamicScroll>
-            </section>
-            
-            {/* Contact Section */}
-            <section id="contact" className="min-h-screen py-10 relative z-0">
-              <DynamicScroll direction="down" threshold={0.2} className="contact">
-                <Contact />
-              </DynamicScroll>
-            </section>
-          </div>
-          
-          <Toaster
-            position="bottom-right"
-            toastOptions={{
-              duration: 3000,
-              style: {
-                background: getBackgroundColor('paper'),
-                color: getTextColor('primary'),
-                border: `1px solid ${getBorderColor('light')}`,
-              },
-            }}
-          />
-        </main>
-      )}
-    </PageTransition>
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  background: getBackgroundColor('paper'),
+                  color: getTextColor('primary'),
+                  border: `1px solid ${getBorderColor('light')}`,
+                },
+              }}
+            />
+          </main>
+        )}
+      </PageTransition>
   );
 };
 

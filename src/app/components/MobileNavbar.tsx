@@ -59,8 +59,8 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ activeSection, onNavigate }
               const isActive = activeSection === id;
               return (
                 <button
-                  key={id}
-                  onClick={() => onNavigate(id)}
+              key={id}
+              onClick={() => onNavigate(id)}
                   className={`group relative flex flex-col items-center justify-center w-16 h-14 transition-all duration-300 ${
                     isActive 
                       ? 'text-blue-500 scale-110' 
@@ -79,12 +79,12 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ activeSection, onNavigate }
                     />
                   )}
                   <div className="relative z-10 flex flex-col items-center">
-                    <Icon
+              <Icon
                       className={`w-6 h-6 transition-transform duration-300 ${
                         isActive ? 'scale-110' : 'group-hover:scale-110'
-                      }`}
+                }`}
                       style={{ color: isActive ? getTextColor('primary') : getTextColor('secondary') }}
-                    />
+              />
                     <span className={`text-xs mt-1 font-medium transition-all duration-300 ${
                       isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100'
                     }`}>

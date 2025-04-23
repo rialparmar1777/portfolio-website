@@ -27,9 +27,8 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
-  const { getBackgroundColor, getTextColor, getBorderColor, getGlassStyles } = useThemeStyles();
+  const { isDark } = useThemeStyles();
   const menuRef = useRef<HTMLDivElement>(null);
   const navbarRef = useRef<HTMLElement>(null);
   
@@ -77,13 +76,11 @@ const Navbar: React.FC<NavbarProps> = ({
     { href: '#contact', label: 'Contact', icon: <FaEnvelope className="w-4 h-4" /> },
   ];
   
-  const glassStyles = getGlassStyles(false, isScrolled);
-  
   return (
     <>
       {/* Scroll Progress Indicator */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-blue-500 origin-left z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 origin-left z-50"
         style={{ scaleX }}
       />
       
@@ -94,16 +91,25 @@ const Navbar: React.FC<NavbarProps> = ({
         animate={{ y: 0 }}
         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
         style={{
-          background: isScrolled ? glassStyles.background : 'transparent',
-          borderBottom: isScrolled ? `1px solid ${getBorderColor('light')}` : 'none',
-          boxShadow: isScrolled ? '0 4px 30px rgba(0, 0, 0, 0.1)' : 'none',
+          background: isScrolled
+            ? isDark
+              ? 'linear-gradient(to right, rgba(13, 40, 44, 0.95), rgba(22, 78, 99, 0.95))'
+              : 'rgba(255, 255, 255, 0.7)'
+            : 'transparent',
+          borderBottom: isScrolled
+            ? `1px solid ${isDark ? 'rgba(45, 212, 191, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`
+            : 'none',
+          boxShadow: isScrolled
+            ? isDark
+              ? '0 4px 30px rgba(13, 40, 44, 0.3)'
+              : '0 4px 30px rgba(0, 0, 0, 0.1)'
+            : 'none',
           backdropFilter: isScrolled ? 'blur(10px)' : 'none',
-          maxWidth: '100vw',
-          overflow: 'hidden'
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="flex items-center justify-between h-20 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
             <motion.div
               className="flex-shrink-0"
               whileHover={{ scale: 1.05 }}
@@ -114,31 +120,33 @@ const Navbar: React.FC<NavbarProps> = ({
               <a 
                 href="#home" 
                 className="text-2xl font-bold relative group flex items-center"
-                style={{ 
-                  color: getTextColor('primary'),
-                  textShadow: isLogoHovered ? '0 0 8px rgba(147, 51, 234, 0.5)' : 'none',
-                }}
                 onClick={(e) => {
                   e.preventDefault();
                   onNavigate('home');
-                  window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                  });
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
               >
                 <motion.div
-                  className="mr-2 p-2 rounded-full"
+                  className="mr-3 p-2.5 rounded-xl"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(59, 130, 246, 0.2))',
-                    border: `1px solid ${getBorderColor('light')}`,
+                    background: isDark
+                      ? 'linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(56, 189, 248, 0.15))'
+                      : 'linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1))',
+                    border: `1px solid ${isDark ? 'rgba(45, 212, 191, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
+                    boxShadow: isDark ? '0 0 20px rgba(13, 40, 44, 0.2)' : 'none',
                   }}
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-blue-500 font-extrabold">R</span>
+                  <span className={`text-2xl font-extrabold ${
+                    isDark
+                      ? 'bg-gradient-to-r from-teal-300 via-cyan-300 to-teal-300'
+                      : 'bg-gradient-to-r from-purple-600 to-blue-600'
+                  } text-transparent bg-clip-text`}>
+                    R
+                  </span>
                 </motion.div>
-                <span className="relative">
+                <span className={`relative ${isDark ? 'text-white' : 'text-gray-900'}`}>
                   Portfolio
                   <motion.span 
                     className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-purple-500 to-blue-500"
@@ -157,7 +165,11 @@ const Navbar: React.FC<NavbarProps> = ({
                 activeSection={activeSection}
                 onNavigate={onNavigate}
               />
-              <div className="flex items-center space-x-4 ml-4 pl-4 border-l" style={{ borderColor: getBorderColor('light') }}>
+              <div className="flex items-center space-x-4 ml-6 pl-6 border-l border-opacity-20" 
+                style={{ 
+                  borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'
+                }}
+              >
                 <ThemeToggle />
                 <DownloadButton 
                   onClick={onDownloadResume} 
@@ -169,11 +181,14 @@ const Navbar: React.FC<NavbarProps> = ({
             {/* Mobile Menu Button */}
             <div className="md:hidden">
               <motion.button
-                className="p-2 rounded-md focus:outline-none relative z-50"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                className={`p-2.5 rounded-xl backdrop-blur-sm transition-colors ${
+                  isDark
+                    ? 'bg-white/5 hover:bg-white/10 text-white'
+                    : 'bg-black/5 hover:bg-black/10 text-gray-900'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                style={{ color: getTextColor('primary') }}
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isMenuOpen}
               >
@@ -210,21 +225,23 @@ const Navbar: React.FC<NavbarProps> = ({
           {isMenuOpen && (
             <motion.div
               ref={menuRef}
-              className="md:hidden fixed top-20 left-0 right-0 z-40 w-full"
+              className="md:hidden fixed inset-x-0 top-20 z-40"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.3 }}
               style={{
-                background: glassStyles.background,
-                borderBottom: `1px solid ${getBorderColor('light')}`,
-                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                background: isDark
+                  ? 'linear-gradient(to right, rgba(13, 40, 44, 0.98), rgba(22, 78, 99, 0.98))'
+                  : 'rgba(255, 255, 255, 0.9)',
+                borderBottom: `1px solid ${isDark ? 'rgba(45, 212, 191, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
+                boxShadow: isDark
+                  ? '0 4px 30px rgba(13, 40, 44, 0.3)'
+                  : '0 4px 30px rgba(0, 0, 0, 0.1)',
                 backdropFilter: 'blur(10px)',
-                maxWidth: '100vw',
-                overflow: 'hidden'
               }}
             >
-              <div className="px-4 py-6 space-y-6 w-full">
+              <div className="px-4 py-6 space-y-6">
                 <NavLinks
                   items={navItems}
                   activeSection={activeSection}
@@ -235,7 +252,11 @@ const Navbar: React.FC<NavbarProps> = ({
                   layout="vertical"
                   onLinkClick={() => setIsMenuOpen(false)}
                 />
-                <div className="flex items-center justify-between pt-6 border-t" style={{ borderColor: getBorderColor('light') }}>
+                <div className="flex items-center justify-between pt-6 border-t border-opacity-20"
+                  style={{ 
+                    borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'
+                  }}
+                >
                   <ThemeToggle />
                   <DownloadButton 
                     onClick={onDownloadResume} 

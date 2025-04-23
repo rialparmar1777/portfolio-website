@@ -2,123 +2,39 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Theme = 'dark' | 'light';
+export type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
-  isDarkMode: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = 'portfolio-theme';
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [theme, setTheme] = useState<Theme>('light');
 
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setTheme] = useState<Theme>('dark');
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // Initialize theme
   useEffect(() => {
-    try {
-      // Check if user has a theme preference in localStorage
-      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
+    const savedTheme = localStorage.getItem('theme') as Theme;
       if (savedTheme) {
         setTheme(savedTheme);
-        setIsDarkMode(savedTheme === 'dark');
-        document.documentElement.classList.add(savedTheme);
-      } else {
-        // Check system preference
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialTheme = prefersDark ? 'dark' : 'light';
-        setTheme(initialTheme);
-        setIsDarkMode(prefersDark);
-        document.documentElement.classList.add(initialTheme);
-      }
-      setIsInitialized(true);
-    } catch (error) {
-      console.error('Error initializing theme:', error);
-      // Fallback to dark theme
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setTheme('dark');
-      setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-      setIsInitialized(true);
     }
   }, []);
 
-  // Update theme
   useEffect(() => {
-    if (!isInitialized) return;
-
-    try {
-      // Add transition class before changing theme
-      document.documentElement.classList.add('transitioning');
-      
-      // Update document class when theme changes
       document.documentElement.classList.remove('light', 'dark');
       document.documentElement.classList.add(theme);
-      
-      // Save theme preference
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-      
-      // Update isDarkMode state
-      setIsDarkMode(theme === 'dark');
-
-      // Update meta theme-color
-      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-      if (metaThemeColor) {
-        metaThemeColor.setAttribute('content', theme === 'dark' ? '#111827' : '#F9FAFB');
-      } else {
-        const meta = document.createElement('meta');
-        meta.name = 'theme-color';
-        meta.content = theme === 'dark' ? '#111827' : '#F9FAFB';
-        document.head.appendChild(meta);
-      }
-
-      // Remove transition class after animation completes
-      setTimeout(() => {
-        document.documentElement.classList.remove('transitioning');
-      }, 500);
-    } catch (error) {
-      console.error('Error updating theme:', error);
-    }
-  }, [theme, isInitialized]);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   const toggleTheme = () => {
-    try {
-      setTheme(prevTheme => {
-        const newTheme = prevTheme === 'dark' ? 'light' : 'dark';
-        return newTheme;
-      });
-    } catch (error) {
-      console.error('Error toggling theme:', error);
-    }
-  };
-
-  // Listen for system theme changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem(THEME_STORAGE_KEY)) {
-        const newTheme = e.matches ? 'dark' : 'light';
-        setTheme(newTheme);
-        document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(newTheme);
-      }
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  if (!isInitialized) {
-    return null; // or a loading spinner
-  }
-
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isDarkMode }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

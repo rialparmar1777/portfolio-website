@@ -101,29 +101,7 @@ const TimelineItem = ({
   onClick: () => void;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { isDark, getTextColor, getGlassStyles, colors, shadows } = useThemeStyles();
-  
-  // Create custom glass styles without the border property
-  const getCustomGlassStyles = (isActive = false, isHovered = false) => {
-    if (isActive) {
-      return {
-        background: colors.gradient.glassActive,
-        boxShadow: shadows.glassActive,
-      };
-    }
-    
-    if (isHovered) {
-      return {
-        background: colors.gradient.glassHover,
-        boxShadow: shadows.glassHover,
-      };
-    }
-    
-    return {
-      background: colors.gradient.glass,
-      boxShadow: shadows.glass,
-    };
-  };
+  const { isDark, getTextColor, colors } = useThemeStyles();
   
   return (
     <motion.div
@@ -133,36 +111,48 @@ const TimelineItem = ({
       className="relative"
     >
       <div
-        className={`p-4 cursor-pointer transition-all duration-300 rounded-xl overflow-hidden ${
-          isActive ? 'scale-105' : ''
+        className={`p-6 cursor-pointer transition-all duration-300 rounded-2xl overflow-hidden backdrop-blur-sm ${
+          isActive ? 'scale-102' : ''
         }`}
         style={{
-          ...getCustomGlassStyles(isHovered || isActive, false),
-          borderLeft: isActive ? `4px solid ${isDark ? 'rgba(59, 130, 246, 0.8)' : 'rgba(59, 130, 246, 0.9)'}` : 'none',
-          borderTop: 'none',
-          borderRight: 'none',
-          borderBottom: 'none'
+          background: isActive 
+            ? isDark 
+              ? 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(79, 70, 229, 0.2))'
+              : 'linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1))'
+            : isDark
+              ? 'rgba(255, 255, 255, 0.03)'
+              : 'rgba(255, 255, 255, 0.5)',
+          border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.7)'}`,
+          boxShadow: isDark 
+            ? '0 4px 20px rgba(0, 0, 0, 0.2)' 
+            : '0 4px 20px rgba(0, 0, 0, 0.1)',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={onClick}
       >
         <div className="flex items-start space-x-4">
-          <div className={`p-2 rounded-lg ${
+          <div 
+            className={`p-3 rounded-xl transition-colors duration-300 ${
             isActive 
-              ? isDark ? 'bg-blue-500/30' : 'bg-blue-500/40' 
-              : isDark ? 'bg-gray-800/50' : 'bg-gray-700/50'
-          }`}>
+                ? isDark 
+                  ? 'bg-purple-500/20 text-purple-300' 
+                  : 'bg-purple-500/20 text-purple-700'
+                : isDark
+                  ? 'bg-gray-800/50 text-gray-300'
+                  : 'bg-white/50 text-gray-700'
+            }`}
+          >
             {experience.icon}
           </div>
           <div>
-            <h3 className={`text-xl font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+            <h3 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>
               {experience.title}
             </h3>
-            <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
               {experience.company}
             </p>
-            <div className="flex items-center text-sm mt-2" style={{ color: getTextColor('secondary') }}>
+            <div className="flex items-center text-sm mt-3" style={{ color: getTextColor('secondary') }}>
               <FaCalendarAlt className="mr-2" />
               {experience.duration}
             </div>
@@ -174,7 +164,7 @@ const TimelineItem = ({
 };
 
 const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
-  const { isDark, getTextColor, getGlassStyles } = useThemeStyles();
+  const { isDark, getTextColor } = useThemeStyles();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -190,24 +180,31 @@ const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
       className="relative"
     >
       <div 
-        className="p-8 rounded-xl overflow-hidden"
+        className="p-8 rounded-2xl overflow-hidden backdrop-blur-sm"
         style={{
-          ...getGlassStyles(false, false),
+          background: isDark 
+            ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))'
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7))',
+          border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.7)'}`,
           boxShadow: isDark 
-            ? '0 10px 30px -10px rgba(0, 0, 0, 0.5)' 
+            ? '0 10px 30px -10px rgba(0, 0, 0, 0.3)' 
             : '0 10px 30px -10px rgba(0, 0, 0, 0.2)'
         }}
       >
-        <div className="flex items-center mb-6">
-          <div className={`p-3 ${isDark ? 'bg-blue-500/30' : 'bg-blue-500/40'} rounded-lg mr-4`}>
+        <div className="flex items-center mb-8">
+          <div className={`p-4 rounded-xl ${
+            isDark 
+              ? 'bg-purple-500/20 text-purple-300' 
+              : 'bg-purple-500/20 text-purple-700'
+          }`}>
             {experience.icon}
           </div>
-          <div>
-            <h3 className={`text-2xl font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+          <div className="ml-6">
+            <h3 className={`text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>
               {experience.title}
             </h3>
             <div className="flex items-center">
-              <p className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+              <p className={`text-lg font-medium ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                 {experience.company}
               </p>
               {experience.companyUrl && (
@@ -215,7 +212,7 @@ const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
                   href={experience.companyUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="ml-2 text-blue-400 hover:text-blue-300 transition-colors"
+                  className={`ml-2 ${isDark ? 'text-purple-400 hover:text-purple-300' : 'text-purple-600 hover:text-purple-500'} transition-colors`}
                 >
                   <FaExternalLinkAlt size={14} />
                 </a>
@@ -224,13 +221,13 @@ const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
           </div>
         </div>
         
-        <div className={`flex items-center mb-6 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+        <div className={`flex items-center mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
           <FaMapMarkerAlt className="mr-2" />
           {experience.location}
         </div>
         
         <div className="mb-8">
-          <h4 className={`text-lg font-semibold mb-3 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+          <h4 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
             Key Responsibilities
           </h4>
           <div className="space-y-3">
@@ -243,7 +240,7 @@ const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
                 className="flex items-start"
                 style={{ color: getTextColor('secondary') }}
               >
-                <span className={`mr-2 ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>•</span>
+                <span className={`mr-3 ${isDark ? 'text-purple-400' : 'text-purple-600'}`}>•</span>
                 {item}
               </motion.p>
             ))}
@@ -252,7 +249,7 @@ const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
         
         {experience.achievements && experience.achievements.length > 0 && (
           <div className="mb-8">
-            <h4 className={`text-lg font-semibold mb-3 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+            <h4 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
               Key Achievements
             </h4>
             <div className="space-y-3">
@@ -265,7 +262,7 @@ const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
                   className="flex items-start"
                   style={{ color: getTextColor('secondary') }}
                 >
-                  <span className={`mr-2 ${isDark ? 'text-green-400' : 'text-green-600'}`}>✓</span>
+                  <span className={`mr-3 ${isDark ? 'text-green-400' : 'text-green-600'}`}>✓</span>
                   {item}
                 </motion.p>
               ))}
@@ -274,20 +271,20 @@ const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
         )}
         
         <div>
-          <h4 className={`text-lg font-semibold mb-3 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+          <h4 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
             Skills & Technologies
           </h4>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             {experience.skills.map((skill, index) => (
               <motion.span
                 key={index}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className={`px-3 py-1 rounded-full text-sm ${
+                className={`px-4 py-2 rounded-xl text-sm font-medium ${
                   isDark 
-                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' 
-                    : 'bg-blue-500/30 text-blue-700 border border-blue-500/40'
+                    ? 'bg-purple-500/10 text-purple-300 border border-purple-500/30' 
+                    : 'bg-purple-500/10 text-purple-700 border border-purple-500/30'
                 }`}
               >
                 {skill}
@@ -303,7 +300,7 @@ const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
 const Experience = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const { isDark, getTextColor } = useThemeStyles();
+  const { isDark } = useThemeStyles();
   const containerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -326,26 +323,14 @@ const Experience = () => {
   };
   
   return (
-    <section id="experience" className="min-h-screen py-20 px-4 relative overflow-hidden" ref={containerRef}>
+    <section id="experience" className="min-h-screen py-24 px-4 relative overflow-hidden" ref={containerRef}>
       {/* Background Elements */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0" style={{ 
-          backgroundImage: isDark 
-            ? 'radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%)'
-            : 'radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, transparent 70%)',
-          backgroundSize: '100% 100%',
-          backgroundPosition: 'center'
+          background: isDark 
+            ? 'radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.15), rgba(79, 70, 229, 0.15), transparent 70%)'
+            : 'radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1), transparent 70%)',
         }} />
-        
-        {/* Animated grid */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: isDark 
-              ? 'linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)'
-              : 'linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }} />
-        </div>
       </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
@@ -354,19 +339,23 @@ const Experience = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
+          <h2 className={`text-5xl font-bold mb-6 ${
+            isDark 
+              ? 'bg-gradient-to-r from-purple-400 to-blue-400'
+              : 'bg-gradient-to-r from-purple-600 to-blue-600'
+          } text-transparent bg-clip-text`}>
             Professional Experience
           </h2>
-          <p className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
             A journey through my professional career
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Timeline */}
-          <div className="lg:col-span-4 space-y-4">
+          <div className="lg:col-span-4 space-y-6">
             {experiences.map((exp, index) => (
               <TimelineItem
                 key={index}
@@ -393,28 +382,28 @@ const Experience = () => {
             </AnimatePresence>
             
             {/* Navigation Controls */}
-            <div className="flex justify-between mt-6">
+            <div className="flex justify-between mt-8">
               <button
                 onClick={goToPrev}
-                className={`p-2 rounded-full ${
+                className={`p-3 rounded-xl backdrop-blur-sm transition-all duration-300 ${
                   isDark 
-                    ? 'bg-gray-800/50 hover:bg-gray-800/70 text-white' 
-                    : 'bg-gray-200/50 hover:bg-gray-200/70 text-gray-800'
-                } transition-all duration-300`}
+                    ? 'bg-white/5 hover:bg-white/10 text-white' 
+                    : 'bg-white/50 hover:bg-white/70 text-gray-800'
+                }`}
                 aria-label="Previous experience"
               >
                 <FaChevronLeft />
               </button>
-              <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              <div className={`flex items-center text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 {activeIndex + 1} / {experiences.length}
               </div>
               <button
                 onClick={goToNext}
-                className={`p-2 rounded-full ${
+                className={`p-3 rounded-xl backdrop-blur-sm transition-all duration-300 ${
                   isDark 
-                    ? 'bg-gray-800/50 hover:bg-gray-800/70 text-white' 
-                    : 'bg-gray-200/50 hover:bg-gray-200/70 text-gray-800'
-                } transition-all duration-300`}
+                    ? 'bg-white/5 hover:bg-white/10 text-white' 
+                    : 'bg-white/50 hover:bg-white/70 text-gray-800'
+                }`}
                 aria-label="Next experience"
               >
                 <FaChevronRight />

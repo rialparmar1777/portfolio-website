@@ -39,7 +39,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
   onHoverEnd,
   style,
 }) => {
-  const { getGlassStyles, getTextColor } = useThemeStyles();
+  const { getGlassStyles, getTextColor, getGradient } = useThemeStyles();
   const styles = getGlassStyles(isActive, isHovered);
   
   return (
@@ -50,16 +50,6 @@ const GlassCard: React.FC<GlassCardProps> = ({
         ...style,
         opacity: disabled ? 0.5 : 1,
         cursor: disabled ? 'not-allowed' : 'auto',
-        border: isActive 
-          ? `1px solid ${getTextColor('primary')}40` 
-          : isHovered 
-            ? `1px solid ${getTextColor('primary')}20` 
-            : '1px solid transparent',
-        boxShadow: isActive 
-          ? `0 0 15px ${getTextColor('primary')}20` 
-          : isHovered 
-            ? `0 0 10px ${getTextColor('primary')}10` 
-            : 'none',
         backdropFilter: 'blur(8px)',
       }}
       onClick={disabled ? undefined : onClick}
@@ -77,8 +67,10 @@ const GlassCard: React.FC<GlassCardProps> = ({
         className="absolute inset-0 opacity-0 transition-opacity duration-300"
         style={{
           background: isActive 
-            ? 'linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(59, 130, 246, 0.1))' 
-            : 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0))',
+            ? getGradient('glassActive')
+            : isHovered
+              ? getGradient('glassHover')
+              : getGradient('glass'),
         }}
         animate={{ 
           opacity: isActive || isHovered ? 1 : 0 
@@ -96,8 +88,10 @@ const GlassCard: React.FC<GlassCardProps> = ({
         className="absolute inset-0 rounded-lg"
         style={{
           background: isActive 
-            ? 'linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(59, 130, 246, 0.3))' 
-            : 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0))',
+            ? getGradient('glassActive')
+            : isHovered
+              ? getGradient('glassHover')
+              : getGradient('glass'),
           maskImage: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
           maskComposite: 'exclude',
           padding: '1px',
@@ -112,7 +106,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
       <motion.div
         className="absolute inset-0 opacity-0"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+          background: `linear-gradient(90deg, transparent, ${getTextColor('primary')}20, transparent)`,
           transform: 'translateX(-100%)',
         }}
         animate={{ 
