@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaTimes, FaSearch, FaFilter, FaArrowLeft, FaArrowRight, FaChevronRight, FaCode, FaLaptop, FaMobile, FaGamepad, FaGlobe, FaStar, FaHeart, FaAward, FaArrowUp } from 'react-icons/fa';
 import Image from 'next/image';
 import { useThemeStyles } from '../hooks/useThemeStyles';
@@ -114,8 +114,50 @@ const MobileProjects = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activeFeaturedIndex, setActiveFeaturedIndex] = useState(0);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
   const projectsRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const springConfig = { stiffness: 100, damping: 30, mass: 0.8 };
+  const springProgress = useSpring(scrollYProgress, springConfig);
+
+  // Transform scroll progress to opacity and y position
+  const opacity = useTransform(springProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const y = useTransform(springProgress, [0, 0.2, 0.8, 1], [50, 0, 0, -50]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: e.clientX / window.innerWidth - 0.5,
+        y: e.clientY / window.innerHeight - 0.5
+      });
+    };
+
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+        const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
+        setScrollProgress(progress);
+        setScrollDirection(progress > scrollProgress ? 'down' : 'up');
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    containerRef.current?.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      containerRef.current?.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrollProgress]);
+
   // Filter projects based on category and search query
   useEffect(() => {
     let filtered = [...projects];
@@ -177,21 +219,28 @@ const MobileProjects = () => {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header with tabs */}
+      {/* Header with scroll-based reveal */}
       <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-10 px-4 py-3"
+        className="sticky top-0 z-10 px-4 py-3 perspective-1000"
         style={{ 
           background: getBackgroundColor('paper'),
           borderBottom: `1px solid ${getBorderColor('light')}`,
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)'
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+          transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
+          transition: 'transform 0.1s ease-out',
+          opacity,
+          y
         }}
       >
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-bold" style={{ color: getTextColor('primary') }}>
+          <motion.h2 
+            className="text-xl font-bold"
+            style={{ color: getTextColor('primary') }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
             Projects
-          </h2>
+          </motion.h2>
           <motion.button
             onClick={() => setIsSearchExpanded(!isSearchExpanded)}
             className="p-2 rounded-full"
@@ -201,34 +250,59 @@ const MobileProjects = () => {
               border: `1px solid ${getBorderColor('light')}`,
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)'
             }}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ 
+              scale: 1.1,
+              backgroundColor: getTextColor('primary'),
+              color: getBackgroundColor('default')
+            }}
             whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
             <FaSearch size={16} />
           </motion.button>
         </div>
+
+        {/* Scroll progress indicator */}
+        <motion.div 
+          className="h-1 rounded-full overflow-hidden mb-3"
+          style={{ background: getBackgroundColor('default') }}
+        >
+          <motion.div 
+            className="h-full rounded-full"
+            style={{ 
+              background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+              width: `${scrollProgress}%`
+            }}
+            transition={{ duration: 0.3 }}
+          />
+        </motion.div>
         
-          {isSearchExpanded && (
-            <motion.div
+        {isSearchExpanded && (
+          <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-              className="mb-3"
-            >
-                <input
-                  type="text"
-                  placeholder="Search projects..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+            className="mb-3"
+          >
+            <motion.input
+              type="text"
+              placeholder="Search projects..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2 rounded-lg"
-                  style={{ 
-                    background: getBackgroundColor('default'),
-                    color: getTextColor('primary'),
-                    border: `1px solid ${getBorderColor('light')}`,
-                  }}
-                />
-            </motion.div>
-          )}
+              style={{ 
+                background: getBackgroundColor('default'),
+                color: getTextColor('primary'),
+                border: `1px solid ${getBorderColor('light')}`,
+              }}
+              whileFocus={{ 
+                scale: 1.02,
+                boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.2)'
+              }}
+              transition={{ type: "spring", stiffness: 300 }}
+            />
+          </motion.div>
+        )}
         
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
           <motion.button
@@ -240,8 +314,19 @@ const MobileProjects = () => {
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
-            <FaStar size={14} />
+            <motion.div
+              animate={{
+                rotate: activeTab === 'featured' ? [0, 360] : 0,
+              }}
+              transition={{
+                duration: 1,
+                ease: "easeInOut",
+              }}
+            >
+              <FaStar size={14} />
+            </motion.div>
             Featured
           </motion.button>
           <motion.button
@@ -253,6 +338,7 @@ const MobileProjects = () => {
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
             <FaCode size={14} />
             All Projects
@@ -260,198 +346,177 @@ const MobileProjects = () => {
         </div>
       </motion.div>
       
-      {/* Scrollable content area */}
+      {/* Projects grid with scroll-based reveal */}
       <div 
-        ref={projectsRef}
+        ref={containerRef}
         className="flex-1 overflow-y-auto px-4 py-4"
-        style={{ background: getBackgroundColor('default') }}
       >
-        {/* Featured projects carousel */}
-        {activeTab === 'featured' && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-6"
-          >
-            <div className="relative h-48 rounded-2xl overflow-hidden"
-              style={{ 
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)'
-              }}
-            >
-              <AnimatePresence mode="wait">
-                {filteredProjects.slice(0, 3).map((project, index) => (
-                  <motion.div
-                    key={project.title}
-                    initial={{ opacity: 0, x: 100 }}
-                    animate={{ 
-                      opacity: index === activeFeaturedIndex ? 1 : 0,
-                      x: index === activeFeaturedIndex ? 0 : 100,
-                      display: index === activeFeaturedIndex ? 'block' : 'none'
-                    }}
-                    exit={{ opacity: 0, x: -100 }}
-                    transition={{ duration: 0.5 }}
-                    className="absolute inset-0"
-                  >
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      width={400}
-                      height={300}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <h3 className="text-white text-lg font-bold mb-1">{project.title}</h3>
-                      <p className="text-gray-200 text-sm line-clamp-2">{project.description}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              
-              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
-                {filteredProjects.slice(0, 3).map((_, index) => (
-                <motion.button
-                    key={index}
-                    onClick={() => setActiveFeaturedIndex(index)}
-                    className={`w-2 h-2 rounded-full ${
-                      index === activeFeaturedIndex
-                        ? 'bg-white'
-                        : 'bg-white/50'
-                    }`}
-                    whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
-                  />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
+        <motion.div 
+          className="grid grid-cols-1 gap-4"
+          style={{ 
+            transform: `rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)`,
+            transition: 'transform 0.1s ease-out'
+          }}
+        >
+          {filteredProjects.map((project, index) => {
+            // Calculate individual item's scroll progress
+            const itemScrollProgress = useScroll({
+              target: containerRef,
+              offset: ["start end", "end start"]
+            });
 
-        {/* Category filters */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-hide">
-          {categories.map((category) => (
-            <motion.button
-              key={category}
-              onClick={() => setSelectedCategory(category || 'all')}
-              className="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap flex items-center gap-1"
-              style={{ 
-                background: selectedCategory === category 
-                  ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2))' 
-                  : getBackgroundColor('default'),
-                color: selectedCategory === category ? 'rgb(59, 130, 246)' : getTextColor('primary'),
-                border: `1px solid ${getBorderColor('light')}`,
-                boxShadow: selectedCategory === category 
-                  ? '0 4px 12px rgba(59, 130, 246, 0.2)' 
-                  : '0 2px 8px rgba(0, 0, 0, 0.05)'
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {categoryIcons[category || '']}
-              {category}
-            </motion.button>
-          ))}
-        </div>
-        
-        {/* Project cards */}
-        <div className="space-y-4">
-          {filteredProjects.map((project, index) => (
-            <motion.div
-              key={project.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="rounded-xl overflow-hidden"
-              style={{ 
-                background: getBackgroundColor('paper'),
-                border: `1px solid ${getBorderColor('light')}`,
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
-              }}
-              whileHover={{ scale: 1.02, boxShadow: '0 12px 28px rgba(0, 0, 0, 0.15)' }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                setSelectedProject(project);
-                setIsModalOpen(true);
-              }}
-            >
-              <div className="flex">
-                <div className="w-1/3 relative">
+            const itemSpringProgress = useSpring(itemScrollProgress.scrollYProgress, springConfig);
+            const itemOpacity = useTransform(itemSpringProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+            const itemY = useTransform(itemSpringProgress, [0, 0.2, 0.8, 1], [50, 0, 0, -50]);
+
+            return (
+              <motion.div
+                key={index}
+                className="relative overflow-hidden rounded-2xl perspective-1000"
+                style={{ 
+                  background: getBackgroundColor('paper'),
+                  border: `1px solid ${getBorderColor('light')}`,
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                  transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
+                  transition: 'transform 0.1s ease-out',
+                  opacity: itemOpacity,
+                  y: itemY
+                }}
+                whileHover={{ 
+                  scale: 1.02,
+                  boxShadow: '0 12px 28px rgba(0, 0, 0, 0.15)',
+                  transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg) scale(1.02)`
+                }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  setSelectedProject(project);
+                  setIsModalOpen(true);
+                }}
+              >
+                {/* Project image with enhanced hover effect */}
+                <motion.div 
+                  className="relative h-48 overflow-hidden"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <Image
                     src={project.image}
                     alt={project.title}
-                    width={200}
-                    height={200}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-gray-900/50 to-transparent" />
-                </div>
-                <div className="w-2/3 p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="px-2 py-1 text-xs rounded-full flex items-center gap-1"
-                      style={{ 
-                        background: 'rgba(59, 130, 246, 0.1)',
-                        color: 'rgb(59, 130, 246)'
-                      }}
-                    >
-                      {categoryIcons[project.category || '']}
-                      {project.category}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-bold mb-1" style={{ color: getTextColor('primary') }}>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+
+                {/* Project content with enhanced animations */}
+                <motion.div className="p-4">
+                  <motion.h3 
+                    className="text-lg font-semibold mb-2"
+                    style={{ color: getTextColor('primary') }}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     {project.title}
-                  </h3>
-                  <p className="text-sm line-clamp-2" style={{ color: getTextColor('secondary') }}>
+                  </motion.h3>
+                  <motion.p 
+                    className="text-sm mb-3"
+                    style={{ color: getTextColor('secondary') }}
+                  >
                     {project.description}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-        </div>
-        
-        {/* Scroll to top button */}
-          {showScrollTop && (
-            <motion.button
-          initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.5 }}
-              onClick={scrollToTop}
-          className="fixed bottom-8 right-8 p-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-          <FaArrowUp />
-            </motion.button>
-          )}
+                  </motion.p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.technologies.slice(0, 3).map((tech, techIndex) => (
+                      <motion.span
+                        key={techIndex}
+                        className="px-2 py-1 text-xs rounded-full"
+                        style={{ 
+                          background: getBackgroundColor('default'),
+                          color: getTextColor('primary'),
+                          border: `1px solid ${getBorderColor('light')}`
+                        }}
+                        whileHover={{ 
+                          scale: 1.1,
+                          backgroundColor: getTextColor('primary'),
+                          color: getBackgroundColor('default')
+                        }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        {tech}
+                      </motion.span>
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
       
-      {/* Project modal */}
+      {/* Scroll to top button with scroll-based reveal */}
+      <motion.div
+        style={{ 
+          opacity: useTransform(scrollYProgress, [0.1, 0.2], [0, 1]),
+          y: useTransform(scrollYProgress, [0.1, 0.2], [20, 0])
+        }}
+      >
+        {showScrollTop && (
+          <motion.button
+            onClick={scrollToTop}
+            className="fixed bottom-4 right-4 p-3 rounded-full"
+            style={{ 
+              background: getBackgroundColor('default'),
+              color: getTextColor('primary'),
+              border: `1px solid ${getBorderColor('light')}`,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}
+            whileHover={{ 
+              scale: 1.1,
+              backgroundColor: getTextColor('primary'),
+              color: getBackgroundColor('default')
+            }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <FaArrowUp size={20} />
+          </motion.button>
+        )}
+      </motion.div>
+      
+      {/* Project modal with scroll-based reveal */}
+      <AnimatePresence>
         {isModalOpen && selectedProject && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-            onClick={() => setIsModalOpen(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(0, 0, 0, 0.5)' }}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl"
+              className="w-full max-w-md rounded-2xl overflow-hidden"
               style={{ 
                 background: getBackgroundColor('paper'),
-              border: `1px solid ${getBorderColor('light')}`,
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)'
+                border: `1px solid ${getBorderColor('light')}`,
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
+                transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg)`,
+                transition: 'transform 0.1s ease-out',
+                opacity: useTransform(scrollYProgress, [0, 0.1], [0, 1]),
+                y: useTransform(scrollYProgress, [0, 0.1], [50, 0])
               }}
-              onClick={(e) => e.stopPropagation()}
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
+                transform: `rotateX(${mousePosition.y * 7}deg) rotateY(${mousePosition.x * 7}deg) scale(1.02)`
+              }}
             >
               <button
                 onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white"
+                className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white"
               >
                 <FaTimes />
               </button>
@@ -460,8 +525,8 @@ const MobileProjects = () => {
                 <Image
                   src={selectedProject.image}
                   alt={selectedProject.title}
-                width={400}
-                height={300}
+                  width={400}
+                  height={300}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/50 to-transparent" />
@@ -505,12 +570,12 @@ const MobileProjects = () => {
                   ))}
                 </div>
                 
-              <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3">
                   <a
                     href={selectedProject.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-full transition-all duration-300"
+                    className="flex-1 inline-flex items-center justify-center gap-2 text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-full transition-all duration-300"
                   >
                     View Live Demo
                     <FaExternalLinkAlt />
@@ -519,7 +584,7 @@ const MobileProjects = () => {
                     href={selectedProject.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-6 py-3 rounded-full transition-all duration-300"
+                    className="flex-1 inline-flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-6 py-3 rounded-full transition-all duration-300"
                   >
                     View Code
                     <FaGithub />
@@ -529,6 +594,7 @@ const MobileProjects = () => {
             </motion.div>
           </motion.div>
         )}
+      </AnimatePresence>
     </div>
   );
 };

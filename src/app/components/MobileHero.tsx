@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useThemeStyles } from '../hooks/useThemeStyles';
 import TypewriterText from './TypewriterText';
 import SocialLinks from './SocialLinks';
@@ -11,6 +11,19 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline';
 const MobileHero = () => {
   const { getTextColor, getBackgroundColor } = useThemeStyles();
   const [showMore, setShowMore] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: e.clientX / window.innerWidth - 0.5,
+        y: e.clientY / window.innerHeight - 0.5
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -42,17 +55,38 @@ const MobileHero = () => {
 
   return (
     <motion.div
-      className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center px-4 py-8"
+      className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center px-4 py-8 relative overflow-hidden"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Profile Picture */}
+      {/* Background Particles */}
       <motion.div
-        className="relative w-40 h-40 mb-6"
+        className="absolute inset-0 pointer-events-none"
+        animate={{
+          background: [
+            'radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.1) 0%, transparent 50%)',
+            'radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)',
+            'radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.1) 0%, transparent 50%)',
+          ],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+      />
+
+      {/* Profile Picture with 3D Effect */}
+      <motion.div
+        className="relative w-40 h-40 mb-6 perspective-1000"
         variants={itemVariants}
+        style={{
+          transform: `rotateX(${mousePosition.y * 10}deg) rotateY(${mousePosition.x * 10}deg)`,
+          transition: 'transform 0.1s ease-out'
+        }}
       >
-        <div className="relative w-full h-full rounded-full overflow-hidden border-4"
+        <div className="relative w-full h-full rounded-full overflow-hidden border-4 transform-style-3d"
           style={{ borderColor: getTextColor('primary') }}>
           <Image
             src="/images/ProfilePicture.jpeg"
@@ -62,24 +96,39 @@ const MobileHero = () => {
             priority
           />
         </div>
-        {/* Glow effect */}
+        {/* Enhanced Glow effect */}
         <motion.div
           className="absolute -inset-4 bg-gradient-to-r from-purple-500/30 to-blue-500/30 rounded-full blur-2xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
+            rotate: [0, 180, 360],
           }}
           transition={{
-            duration: 4,
+            duration: 8,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: "linear",
+          }}
+        />
+        {/* Additional Glow Layers */}
+        <motion.div
+          className="absolute -inset-6 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.2, 0.4, 0.2],
+            rotate: [180, 360, 180],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "linear",
           }}
         />
       </motion.div>
 
       {/* Text Content */}
       <motion.div
-        className="text-center max-w-sm mx-auto"
+        className="text-center max-w-sm mx-auto relative z-10"
         variants={containerVariants}
       >
         <motion.h1
@@ -122,33 +171,41 @@ const MobileHero = () => {
           I craft exceptional digital experiences that combine technical expertise with creative innovation.
         </motion.p>
 
-        {/* Skills Section */}
+        {/* Enhanced Skills Section with 3D Cards */}
         <motion.div 
-          className="mb-6 bg-opacity-20 rounded-lg p-4"
+          className="mb-6 bg-opacity-20 rounded-lg p-4 backdrop-blur-sm"
           style={{ backgroundColor: getBackgroundColor('paper') }}
           variants={itemVariants}
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 300 }}
         >
           <h3 className="text-lg font-semibold mb-2" style={{ color: getTextColor('primary') }}>
             Tech Stack
           </h3>
           <div className="flex flex-wrap justify-center gap-2">
             {['React', 'Next.js', 'TypeScript', 'Node.js', 'AWS', 'MongoDB'].map((skill, index) => (
-              <span 
+              <motion.span 
                 key={index}
-                className="px-3 py-1 text-xs rounded-full"
+                className="px-3 py-1 text-xs rounded-full cursor-pointer"
                 style={{ 
                   backgroundColor: getBackgroundColor('default'),
                   color: getTextColor('primary'),
                   border: `1px solid ${getTextColor('secondary')}`
                 }}
+                whileHover={{ 
+                  scale: 1.1,
+                  backgroundColor: getTextColor('primary'),
+                  color: getBackgroundColor('default')
+                }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
                 {skill}
-              </span>
+              </motion.span>
             ))}
           </div>
         </motion.div>
 
-        {/* Expandable Content */}
+        {/* Enhanced Expandable Content */}
         <motion.div 
           className="mb-6 overflow-hidden"
           variants={itemVariants}
@@ -157,6 +214,7 @@ const MobileHero = () => {
             onClick={toggleShowMore}
             className="flex items-center justify-center w-full gap-1 text-sm"
             style={{ color: getTextColor('secondary') }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             {showMore ? 'Show Less' : 'Learn More About Me'}
@@ -193,21 +251,35 @@ const MobileHero = () => {
         >
           <motion.a
             href="#contact"
-            className="w-full px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 text-center"
+            className="w-full px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 text-center relative overflow-hidden group"
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Let's Collaborate
+            <span className="relative z-10">Let's Collaborate</span>
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              initial={{ x: '-100%' }}
+              whileHover={{ x: '100%' }}
+              transition={{ duration: 0.5 }}
+            />
           </motion.a>
           <motion.a
             href="#projects"
-            className="w-full px-6 py-3 rounded-lg font-medium border text-center"
+            className="w-full px-6 py-3 rounded-lg font-medium border text-center relative overflow-hidden group"
             style={{ 
               color: getTextColor('primary'),
               borderColor: getTextColor('primary')
             }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Explore My Work
+            <span className="relative z-10">Explore My Work</span>
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              initial={{ x: '-100%' }}
+              whileHover={{ x: '100%' }}
+              transition={{ duration: 0.5 }}
+            />
           </motion.a>
         </motion.div>
 
