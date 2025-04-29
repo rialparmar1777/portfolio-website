@@ -20,8 +20,8 @@ const projects: Project[] = [
   {
     title: "Stocks Dashboard",
     description: "A real-time stock market dashboard with interactive charts, portfolio tracking, and market analysis tools.",
-    technologies: ["React with Vite", "TailwindCSS", "Chart.js", "Firebase Authentication", "Axios", "WebSocket", "Node.js & Express", "WebSocket Server", "Finnhub API", "Node-Cache", "Rate limiting", "CORS"],
-    githubUrl: "https://github.com/yourusername/stocks-dashboard",
+    technologies: ["React", "TailwindCSS", "Chart.js", "Firebase", "Node.js"],
+    githubUrl: "https://github.com/rialparmar/stocks-dashboard",
     liveUrl: "https://stocks-dashboard01.vercel.app/dashboard",
     image: "/images/stocks-dashboard.jpg",
     category: "Web Application"
@@ -29,8 +29,8 @@ const projects: Project[] = [
   {
     title: "Modern Marketing Website",
     description: "A responsive marketing website with modern design and smooth animations.",
-    technologies: ["React 19.0.0", "Framer Motion", "React Router DOM", "React Icons", "React Intersection Observer", "React Scroll", "HeroIcons", "Lucide React", "Node.js", "Express", "MongoDB", "JWT Authentication"],
-    githubUrl: "https://github.com/yourusername/marketing-website",
+    technologies: ["React", "Framer Motion", "Node.js", "MongoDB"],
+    githubUrl: "https://github.com/rialparmar/marketing-website",
     liveUrl: "https://marketing-website-tech.vercel.app/",
     image: "/images/marketing-website.jpg",
     category: "Website"
@@ -38,8 +38,8 @@ const projects: Project[] = [
   {
     title: "Disney+ Clone",
     description: "A web application that replicates the Disney+ streaming platform interface.",
-    technologies: ["React 18", "Vite", "React Router DOM", "Axios", "React Icons", "ESLint", "Firebase", "Firestore", "Firebase Auth"],
-    githubUrl: "https://github.com/yourusername/disney-clone",
+    technologies: ["React", "Firebase", "Firestore", "Firebase Auth"],
+    githubUrl: "https://github.com/rialparmar/disney-clone",
     liveUrl: "https://disney-clone-rial1777.vercel.app/",
     image: "/images/disney-clone.jpg",
     category: "Web Application"
@@ -47,8 +47,8 @@ const projects: Project[] = [
   {
     title: "Food Ordering System",
     description: "A full-stack food ordering system with payment integration and real-time order tracking.",
-    technologies: ["Next.js", "React", "Tailwind CSS", "Framer Motion", "TSParticles", "Lucide React", "PostgreSQL", "Prisma", "Stripe Payments", "Node.js", "Express"],
-    githubUrl: "https://github.com/yourusername/food-ordering",
+    technologies: ["Next.js", "React", "Tailwind CSS", "PostgreSQL", "Stripe"],
+    githubUrl: "https://github.com/rialparmar/food-ordering",
     liveUrl: "https://food-ordering-system.vercel.app/",
     image: "/images/food-ordering.jpg",
     category: "Web Application"
@@ -56,8 +56,8 @@ const projects: Project[] = [
   {
     title: "Church Organization Website",
     description: "A church website with event management, donation system, and community features.",
-    technologies: ["Next.js", "React", "Tailwind CSS", "Framer Motion", "React Icons", "React Query", "Node.js", "Express", "MongoDB", "Stripe Payments"],
-    githubUrl: "https://github.com/yourusername/church-website",
+    technologies: ["Next.js", "React", "Tailwind CSS", "MongoDB", "Stripe"],
+    githubUrl: "https://github.com/rialparmar/church-website",
     liveUrl: "https://church-website.vercel.app/",
     image: "/images/church-website.jpg",
     category: "Website"
@@ -65,27 +65,27 @@ const projects: Project[] = [
   {
     title: "Real-time Chat Application",
     description: "A real-time messaging system built with Java and Firebase, featuring secure authentication and push notifications.",
-    technologies: ["Java", "Android Studio", "XML Layouts", "Material Design", "Push Notifications", "Real-time Updates", "Firebase Realtime Database", "Firebase Authentication", "Firebase Cloud Messaging", "Firebase Analytics", "Cloud Functions"],
-    githubUrl: "https://github.com/yourusername/chat-app",
-    liveUrl: "https://github.com/yourusername/chat-app",
+    technologies: ["Java", "Android", "Firebase", "XML"],
+    githubUrl: "https://github.com/rialparmar/chat-app",
+    liveUrl: "https://github.com/rialparmar/chat-app",
     image: "/images/chat-app.png",
     category: "Mobile App"
   },
   {
     title: "Q-Game Mind Puzzle",
     description: "An engaging mind games puzzle built with C#, challenging players with strategic thinking and problem-solving scenarios.",
-    technologies: ["C#", "Windows Forms", ".NET Framework", "Custom Controls", "Game Logic"],
-    githubUrl: "https://github.com/yourusername/q-game",
-    liveUrl: "https://github.com/yourusername/q-game",
+    technologies: ["C#", "Windows Forms", ".NET"],
+    githubUrl: "https://github.com/rialparmar/q-game",
+    liveUrl: "https://github.com/rialparmar/q-game",
     image: "/images/q-game.png",
     category: "Game"
   },
   {
     title: "Block Puzzle Game",
     description: "A challenging and addictive Block 3 Puzzle game that tests your strategic skills.",
-    technologies: ["C#", "Windows Forms", ".NET Framework", "Custom Graphics", "Animation System", "Game State Management"],
-    githubUrl: "https://github.com/yourusername/block-puzzle",
-    liveUrl: "https://github.com/yourusername/block-puzzle",
+    technologies: ["C#", "Windows Forms", ".NET"],
+    githubUrl: "https://github.com/rialparmar/block-puzzle",
+    liveUrl: "https://github.com/rialparmar/block-puzzle",
     image: "/images/block-puzzle.webp",
     category: "Game"
   }
@@ -100,6 +100,33 @@ const categoryIcons: Record<string, React.ReactNode> = {
   "Website": <FaGlobe className="w-4 h-4" />,
   "Mobile App": <FaMobile className="w-4 h-4" />,
   "Game": <FaGamepad className="w-4 h-4" />
+};
+
+// Add a fallback image component
+const FallbackImage = ({ category }: { category: string }) => {
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "Web Application":
+        return "bg-blue-500";
+      case "Website":
+        return "bg-green-500";
+      case "Mobile App":
+        return "bg-purple-500";
+      case "Game":
+        return "bg-red-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
+  return (
+    <div className={`w-full h-full flex items-center justify-center ${getCategoryColor(category)}`}>
+      <div className="text-center">
+        <FaCode className="w-12 h-12 text-white mb-2" />
+        <span className="text-white text-sm font-medium">{category}</span>
+      </div>
+    </div>
+  );
 };
 
 const MobileProjects = () => {
@@ -132,6 +159,23 @@ const MobileProjects = () => {
   const opacity = useTransform(springProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   const y = useTransform(springProgress, [0, 0.2, 0.8, 1], [50, 0, 0, -50]);
 
+  // Enhanced image error handling
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [imageLoading, setImageLoading] = useState<Record<string, boolean>>({});
+
+  const handleImageError = (projectId: string) => {
+    setImageErrors(prev => ({ ...prev, [projectId]: true }));
+    setImageLoading(prev => ({ ...prev, [projectId]: false }));
+  };
+
+  const handleImageLoad = (projectId: string) => {
+    setImageLoading(prev => ({ ...prev, [projectId]: false }));
+  };
+
+  const handleImageLoadStart = (projectId: string) => {
+    setImageLoading(prev => ({ ...prev, [projectId]: true }));
+  };
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({
@@ -158,7 +202,7 @@ const MobileProjects = () => {
     };
   }, [scrollProgress]);
 
-  // Filter projects based on category and search query
+  // Enhanced project filtering
   useEffect(() => {
     let filtered = [...projects];
     
@@ -175,6 +219,12 @@ const MobileProjects = () => {
       );
     }
     
+    // Sort projects by category for better organization
+    filtered.sort((a, b) => {
+      if (a.category === b.category) return 0;
+      return a.category! > b.category! ? 1 : -1;
+    });
+    
     setFilteredProjects(filtered);
   }, [selectedCategory, searchQuery]);
   
@@ -188,13 +238,19 @@ const MobileProjects = () => {
     }
   }, [activeTab, filteredProjects.length]);
   
-  // Handle scroll position for scroll-to-top button
+  // Enhanced scroll handling
   useEffect(() => {
     const handleScroll = () => {
       if (projectsRef.current) {
         const position = projectsRef.current.scrollTop;
         setScrollPosition(position);
         setShowScrollTop(position > 300);
+        
+        // Update scroll progress
+        const { scrollHeight, clientHeight } = projectsRef.current;
+        const progress = (position / (scrollHeight - clientHeight)) * 100;
+        setScrollProgress(progress);
+        setScrollDirection(progress > scrollProgress ? 'down' : 'up');
       }
     };
     
@@ -215,6 +271,21 @@ const MobileProjects = () => {
         behavior: 'smooth'
       });
     }
+  };
+
+  // Enhanced modal handling
+  const openProjectModal = (project: Project) => {
+    setSelectedProject(project);
+    setIsModalOpen(true);
+    // Prevent background scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeProjectModal = () => {
+    setIsModalOpen(false);
+    setSelectedProject(null);
+    // Restore background scrolling
+    document.body.style.overflow = 'auto';
   };
 
   return (
@@ -388,104 +459,51 @@ const MobileProjects = () => {
                   transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg) scale(1.02)`
                 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => {
-                  setSelectedProject(project);
-                  setIsModalOpen(true);
-                }}
+                onClick={() => openProjectModal(project)}
               >
-                {/* Project image with enhanced hover effect */}
-                <motion.div 
-                  className="relative h-48 overflow-hidden"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </motion.div>
-
-                {/* Project content with enhanced animations */}
-                <motion.div className="p-4">
-                  <motion.h3 
-                    className="text-lg font-semibold mb-2"
-                    style={{ color: getTextColor('primary') }}
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    {project.title}
-                  </motion.h3>
-                  <motion.p 
-                    className="text-sm mb-3"
-                    style={{ color: getTextColor('secondary') }}
-                  >
-                    {project.description}
-                  </motion.p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.slice(0, 3).map((tech, techIndex) => (
-                      <motion.span
-                        key={techIndex}
-                        className="px-2 py-1 text-xs rounded-full"
-                        style={{ 
-                          background: getBackgroundColor('default'),
-                          color: getTextColor('primary'),
-                          border: `1px solid ${getBorderColor('light')}`
-                        }}
-                        whileHover={{ 
-                          scale: 1.1,
-                          backgroundColor: getTextColor('primary'),
-                          color: getBackgroundColor('default')
-                        }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        {tech}
-                      </motion.span>
-                    ))}
+                <div className="relative h-48">
+                  {imageErrors[project.title] ? (
+                    <FallbackImage category={project.category || "Web Application"} />
+                  ) : (
+                    <>
+                      {imageLoading[project.title] && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                          <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin border-t-transparent"></div>
+                        </div>
+                      )}
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        priority={index < 3}
+                        onError={() => handleImageError(project.title)}
+                        onLoad={() => handleImageLoad(project.title)}
+                        onLoadStart={() => handleImageLoadStart(project.title)}
+                      />
+                    </>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <motion.h3 
+                      className="text-lg font-semibold text-white"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      {project.title}
+                    </motion.h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      {categoryIcons[project.category!]}
+                      <span className="text-sm text-white/80">{project.category}</span>
+                    </div>
                   </div>
-                </motion.div>
+                </div>
               </motion.div>
             );
           })}
         </motion.div>
       </div>
-      
-      {/* Scroll to top button with scroll-based reveal */}
-      <motion.div
-        style={{ 
-          opacity: useTransform(scrollYProgress, [0.1, 0.2], [0, 1]),
-          y: useTransform(scrollYProgress, [0.1, 0.2], [20, 0])
-        }}
-      >
-        {showScrollTop && (
-          <motion.button
-            onClick={scrollToTop}
-            className="fixed bottom-4 right-4 p-3 rounded-full"
-            style={{ 
-              background: getBackgroundColor('default'),
-              color: getTextColor('primary'),
-              border: `1px solid ${getBorderColor('light')}`,
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-            }}
-            whileHover={{ 
-              scale: 1.1,
-              backgroundColor: getTextColor('primary'),
-              color: getBackgroundColor('default')
-            }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <FaArrowUp size={20} />
-          </motion.button>
-        )}
-      </motion.div>
       
       {/* Project modal with scroll-based reveal */}
       <AnimatePresence>
@@ -496,103 +514,129 @@ const MobileProjects = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             style={{ background: 'rgba(0, 0, 0, 0.5)' }}
+            onClick={closeProjectModal}
           >
             <motion.div
-              className="w-full max-w-md rounded-2xl overflow-hidden"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-2xl rounded-2xl overflow-hidden"
               style={{ 
                 background: getBackgroundColor('paper'),
                 border: `1px solid ${getBorderColor('light')}`,
-                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
-                transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg)`,
-                transition: 'transform 0.1s ease-out',
-                opacity: useTransform(scrollYProgress, [0, 0.1], [0, 1]),
-                y: useTransform(scrollYProgress, [0, 0.1], [50, 0])
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
               }}
-              whileHover={{ 
-                scale: 1.02,
-                boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
-                transform: `rotateX(${mousePosition.y * 7}deg) rotateY(${mousePosition.x * 7}deg) scale(1.02)`
-              }}
+              onClick={e => e.stopPropagation()}
             >
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white"
-              >
-                <FaTimes />
-              </button>
-              
-              <div className="relative h-48">
-                <Image
-                  src={selectedProject.image}
-                  alt={selectedProject.title}
-                  width={400}
-                  height={300}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/50 to-transparent" />
+              <div className="relative h-64">
+                {imageErrors[selectedProject.title] ? (
+                  <FallbackImage category={selectedProject.category || "Web Application"} />
+                ) : (
+                  <>
+                    {imageLoading[selectedProject.title] && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                        <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin border-t-transparent"></div>
+                      </div>
+                    )}
+                    <Image
+                      src={selectedProject.image}
+                      alt={selectedProject.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      priority
+                      onError={() => handleImageError(selectedProject.title)}
+                      onLoad={() => handleImageLoad(selectedProject.title)}
+                      onLoadStart={() => handleImageLoadStart(selectedProject.title)}
+                    />
+                  </>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <button
+                  onClick={closeProjectModal}
+                  className="absolute top-4 right-4 p-2 rounded-full"
+                  style={{ 
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    color: 'white'
+                  }}
+                >
+                  <FaTimes className="w-4 h-4" />
+                </button>
               </div>
-              
               <div className="p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="px-3 py-1 text-xs rounded-full flex items-center gap-1"
-                    style={{ 
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      color: 'rgb(59, 130, 246)'
-                    }}
-                  >
-                    {categoryIcons[selectedProject.category || '']}
-                    {selectedProject.category}
-                  </span>
-                </div>
-                <h2 className="text-2xl font-bold mb-3" style={{ color: getTextColor('primary') }}>
+                <h3 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
                   {selectedProject.title}
-                </h2>
-                <p className="text-base mb-6" style={{ color: getTextColor('secondary') }}>
+                </h3>
+                <p className="text-sm mb-4" style={{ color: getTextColor('secondary') }}>
                   {selectedProject.description}
                 </p>
-                
-                <h3 className="text-lg font-semibold mb-3" style={{ color: getTextColor('primary') }}>
-                  Technologies Used
-                </h3>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {selectedProject.technologies.map((tech, i) => (
+                  {selectedProject.technologies.map((tech, index) => (
                     <span
-                      key={i}
+                      key={index}
                       className="px-3 py-1 text-sm rounded-full"
                       style={{ 
-                        background: getBackgroundColor('default'),
-                        color: getTextColor('secondary'),
-                        border: `1px solid ${getBorderColor('light')}`
+                        background: 'rgba(0, 0, 0, 0.1)',
+                        color: getTextColor('secondary')
                       }}
                     >
                       {tech}
                     </span>
                   ))}
                 </div>
-                
-                <div className="flex flex-wrap gap-3">
-                  <a
-                    href={selectedProject.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-full transition-all duration-300"
-                  >
-                    View Live Demo
-                    <FaExternalLinkAlt />
-                  </a>
+                <div className="flex gap-4">
                   <a
                     href={selectedProject.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-6 py-3 rounded-full transition-all duration-300"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full"
+                    style={{ 
+                      background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                      color: 'white'
+                    }}
                   >
-                    View Code
-                    <FaGithub />
+                    <FaGithub className="w-4 h-4" />
+                    <span>GitHub</span>
                   </a>
+                  {selectedProject.liveUrl && (
+                    <a
+                      href={selectedProject.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 rounded-full"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+                        color: 'white'
+                      }}
+                    >
+                      <FaExternalLinkAlt className="w-4 h-4" />
+                      <span>Live Demo</span>
+                    </a>
+                  )}
                 </div>
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Scroll to Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={scrollToTop}
+            className="fixed bottom-4 right-4 p-3 rounded-full"
+            style={{ 
+              background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+              color: 'white',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+            }}
+          >
+            <FaArrowUp className="w-5 h-5" />
+          </motion.button>
         )}
       </AnimatePresence>
     </div>
