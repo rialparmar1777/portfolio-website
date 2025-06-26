@@ -3,12 +3,16 @@ import * as THREE from 'three';
 import { useFrame, Canvas } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 
-function ParticleField() {
+interface ParticleFieldProps {
+  speed?: number;
+}
+
+function ParticleField({ speed = 1 }: ParticleFieldProps) {
   const points = useRef<THREE.Points>(null!);
   
   useFrame((state) => {
-    points.current.rotation.x = state.clock.getElapsedTime() * 0.1;
-    points.current.rotation.y = state.clock.getElapsedTime() * 0.15;
+    points.current.rotation.x = state.clock.getElapsedTime() * 0.1 * speed;
+    points.current.rotation.y = state.clock.getElapsedTime() * 0.15 * speed;
   });
 
   const particleCount = 5000;
@@ -42,12 +46,16 @@ function ParticleField() {
   );
 }
 
-const AnimatedBackground = () => {
+interface AnimatedBackgroundProps {
+  speed?: number;
+}
+
+const AnimatedBackground = ({ speed = 1 }: AnimatedBackgroundProps) => {
   return (
     <div className="fixed top-0 left-0 w-full h-full -z-10">
       <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
         <ambientLight intensity={0.5} />
-        <ParticleField />
+        <ParticleField speed={speed} />
       </Canvas>
     </div>
   );
