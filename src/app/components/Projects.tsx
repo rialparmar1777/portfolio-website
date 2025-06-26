@@ -21,7 +21,7 @@ const projects: Project[] = [
     title: "Stocks Dashboard",
     description: "A real-time stock market dashboard with interactive charts, portfolio tracking, and market analysis tools.",
     technologies: ["React with Vite", "TailwindCSS", "Chart.js", "Firebase Authentication", "Axios", "WebSocket", "Node.js & Express", "WebSocket Server", "Finnhub API", "Node-Cache", "Rate limiting", "CORS"],
-    githubUrl: "https://github.com/yourusername/stocks-dashboard",
+    githubUrl: "https://github.com/rialparmar1777/metrics-dashboard",
     liveUrl: "https://stocks-dashboard01.vercel.app/dashboard",
     image: "/images/stocks-dashboard.jpg",
     category: "Web Application"
@@ -30,7 +30,7 @@ const projects: Project[] = [
     title: "Modern Marketing Website",
     description: "A responsive marketing website with modern design and smooth animations.",
     technologies: ["React 19.0.0", "Framer Motion", "React Router DOM", "React Icons", "React Intersection Observer", "React Scroll", "HeroIcons", "Lucide React", "Node.js", "Express", "MongoDB", "JWT Authentication"],
-    githubUrl: "https://github.com/yourusername/marketing-website",
+    githubUrl: "https://github.com/rialparmar1777/marketing-website",
     liveUrl: "https://marketing-website-tech.vercel.app/",
     image: "/images/marketing-website.jpg",
     category: "Website"
@@ -39,7 +39,7 @@ const projects: Project[] = [
     title: "Disney+ Clone",
     description: "A web application that replicates the Disney+ streaming platform interface.",
     technologies: ["React 18", "Vite", "React Router DOM", "Axios", "React Icons", "ESLint", "Firebase", "Firestore", "Firebase Auth"],
-    githubUrl: "https://github.com/yourusername/disney-clone",
+    githubUrl: "https://github.com/rialparmar1777/disney-clone",
     liveUrl: "https://disney-clone-rial1777.vercel.app/",
     image: "/images/disney-clone.jpg",
     category: "Web Application"
@@ -48,7 +48,7 @@ const projects: Project[] = [
     title: "Food Ordering System",
     description: "A full-stack food ordering system with payment integration and real-time order tracking.",
     technologies: ["Next.js", "React", "Tailwind CSS", "Framer Motion", "TSParticles", "Lucide React", "PostgreSQL", "Prisma", "Stripe Payments", "Node.js", "Express"],
-    githubUrl: "https://github.com/yourusername/food-ordering",
+    githubUrl: "https://github.com/rialparmar1777/Food-Order",
     liveUrl: "https://food-ordering-system.vercel.app/",
     image: "/images/food-ordering.jpg",
     category: "Web Application"
@@ -57,7 +57,7 @@ const projects: Project[] = [
     title: "Church Organization Website",
     description: "A church website with event management, donation system, and community features.",
     technologies: ["Next.js", "React", "Tailwind CSS", "Framer Motion", "React Icons", "React Query", "Node.js", "Express", "MongoDB", "Stripe Payments"],
-    githubUrl: "https://github.com/yourusername/church-website",
+    githubUrl: "https://github.com/rialparmar1777/churchwebsite",
     liveUrl: "https://church-website.vercel.app/",
     image: "/images/church-website.jpg",
     category: "Website"
@@ -66,8 +66,8 @@ const projects: Project[] = [
     title: "Real-time Chat Application",
     description: "A real-time messaging system built with Java and Firebase, featuring secure authentication and push notifications.",
     technologies: ["Java", "Android Studio", "XML Layouts", "Material Design", "Push Notifications", "Real-time Updates", "Firebase Realtime Database", "Firebase Authentication", "Firebase Cloud Messaging", "Firebase Analytics", "Cloud Functions"],
-    githubUrl: "https://github.com/yourusername/chat-app",
-    liveUrl: "https://github.com/yourusername/chat-app",
+    githubUrl: "https://github.com/rialparmar1777/Real-time-Chat-Application/tree/master",
+    liveUrl: "https://github.com/rialparmar1777/Real-time-Chat-Application/tree/master",
     image: "/images/chat-app.png",
     category: "Mobile App"
   },
@@ -75,8 +75,8 @@ const projects: Project[] = [
     title: "Q-Game Mind Puzzle",
     description: "An engaging mind games puzzle built with C#, challenging players with strategic thinking and problem-solving scenarios.",
     technologies: ["C#", "Windows Forms", ".NET Framework", "Custom Controls", "Game Logic"],
-    githubUrl: "https://github.com/yourusername/q-game",
-    liveUrl: "https://github.com/yourusername/q-game",
+    githubUrl: "https://github.com/rialparmar1777/QGame",
+    liveUrl: "https://github.com/rialparmar1777/QGame",
     image: "/images/q-game.png",
     category: "Game"
   },
@@ -84,8 +84,8 @@ const projects: Project[] = [
     title: "Block Puzzle Game",
     description: "A challenging and addictive Block 3 Puzzle game that tests your strategic skills.",
     technologies: ["C#", "Windows Forms", ".NET Framework", "Custom Graphics", "Animation System", "Game State Management"],
-    githubUrl: "https://github.com/yourusername/block-puzzle",
-    liveUrl: "https://github.com/yourusername/block-puzzle",
+    githubUrl: "https://github.com/rialparmar1777/Block-Puzzle-Game",
+    liveUrl: "https://github.com/rialparmar1777/Block-Puzzle-Game",
     image: "/images/block-puzzle.webp",
     category: "Game"
   }
