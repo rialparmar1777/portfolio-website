@@ -120,11 +120,15 @@ const MobileHero = () => {
         <div className="relative w-full h-full rounded-full overflow-hidden border-4 transform-style-3d"
           style={{ borderColor: getTextColor('primary') }}>
           <Image
-            src="/images/ProfilePicture.jpeg"
+            src="/images/ProfilePicutre.jpeg"
             alt="Rial Parmar"
             fill
             className="object-cover"
             priority
+            style={{
+              objectPosition: "center 10%",
+              transform: "scale(1.15)"
+            }}
           />
         </div>
         {/* Enhanced Glow effect */}

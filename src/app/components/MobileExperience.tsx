@@ -177,7 +177,7 @@ const MobileExperience = () => {
         >
           Experience
         </motion.h2>
-        <motion.div 
+    <motion.div
           className="h-1 rounded-full overflow-hidden"
           style={{ background: getBackgroundColor('default') }}
         >
@@ -188,7 +188,7 @@ const MobileExperience = () => {
               width: `${scrollProgress}%`
             }}
             transition={{ duration: 0.3 }}
-          />
+        />
         </motion.div>
       </motion.div>
 
@@ -208,10 +208,10 @@ const MobileExperience = () => {
           {/* Animated timeline line */}
           <motion.div 
             className="absolute left-4 top-0 bottom-0 w-0.5"
-            style={{ 
-              background: `linear-gradient(to bottom, ${getBorderColor('light')}, rgba(59, 130, 246, 0.5), ${getBorderColor('light')})`,
-              boxShadow: '0 0 8px rgba(59, 130, 246, 0.3)'
-            }}
+          style={{ 
+            background: `linear-gradient(to bottom, ${getBorderColor('light')}, rgba(59, 130, 246, 0.5), ${getBorderColor('light')})`,
+            boxShadow: '0 0 8px rgba(59, 130, 246, 0.3)'
+          }}
             animate={{
               background: [
                 `linear-gradient(to bottom, ${getBorderColor('light')}, rgba(59, 130, 246, 0.5), ${getBorderColor('light')})`,
@@ -224,16 +224,16 @@ const MobileExperience = () => {
               repeat: Infinity,
               ease: "linear",
             }}
-          />
+        />
 
           {/* Experience items with enhanced 3D effects */}
           <div className="space-y-8 pl-12">
-            {experiences.map((experience, index) => (
-              <motion.div
-                key={index}
+          {experiences.map((experience, index) => (
+            <motion.div
+              key={index}
                 className="relative"
                 initial={{ opacity: 0, y: 50 }}
-                animate={{ 
+              animate={{ 
                   opacity: 1, 
                   y: 0,
                   transition: { 
@@ -241,21 +241,21 @@ const MobileExperience = () => {
                     duration: 0.5,
                     ease: "easeOut"
                   }
-                }}
+              }}
                 whileHover={{ 
                   scale: 1.02,
                   transition: { type: "spring", stiffness: 300 }
                 }}
-              >
+            >
                 {/* Timeline dot with enhanced glow effect */}
                 <motion.div 
                   className="absolute -left-8 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full"
-                  style={{ 
-                    background: activeIndex === index ? 'rgb(59, 130, 246)' : getBorderColor('light'),
-                    border: `2px solid ${getBackgroundColor('default')}`,
+                style={{ 
+                  background: activeIndex === index ? 'rgb(59, 130, 246)' : getBorderColor('light'),
+                  border: `2px solid ${getBackgroundColor('default')}`,
                   }}
                   animate={{
-                    boxShadow: activeIndex === index 
+                  boxShadow: activeIndex === index 
                       ? ['0 0 0 4px rgba(59, 130, 246, 0.2)', '0 0 0 8px rgba(59, 130, 246, 0.1)', '0 0 0 4px rgba(59, 130, 246, 0.2)']
                       : ['0 0 0 4px rgba(59, 130, 246, 0.1)', '0 0 0 4px rgba(59, 130, 246, 0.1)'],
                   }}
@@ -263,27 +263,27 @@ const MobileExperience = () => {
                     duration: 2,
                     repeat: Infinity,
                     ease: "easeInOut",
-                  }}
-                />
+                }}
+              />
 
                 {/* Experience card with enhanced 3D effect */}
-                <motion.div
+              <motion.div
                   className="overflow-hidden rounded-2xl perspective-1000"
-                  style={{ 
-                    background: getBackgroundColor('paper'),
-                    border: `1px solid ${getBorderColor('light')}`,
+                style={{ 
+                  background: getBackgroundColor('paper'),
+                  border: `1px solid ${getBorderColor('light')}`,
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
                     transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
                     transition: 'transform 0.1s ease-out'
-                  }}
+                }}
                   whileHover={{ 
                     scale: 1.02,
                     boxShadow: '0 12px 28px rgba(0, 0, 0, 0.15)',
                     transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg) scale(1.02)`
                   }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => toggleExpand(index)}
-                >
+                whileTap={{ scale: 0.98 }}
+                onClick={() => toggleExpand(index)}
+              >
                   {/* Card header with animated gradient */}
                   <motion.div 
                     className="p-4"
@@ -317,8 +317,8 @@ const MobileExperience = () => {
                           {experience.title}
                         </h3>
                         <p className="text-sm text-white/80">
-                          {experience.company}
-                        </p>
+                            {experience.company}
+                          </p>
                       </div>
                     </div>
                   </motion.div>
@@ -329,37 +329,63 @@ const MobileExperience = () => {
                       <div className="flex items-center gap-1">
                         <FaMapMarkerAlt size={12} style={{ color: getTextColor('secondary') }} />
                         <span style={{ color: getTextColor('secondary') }}>
-                          {experience.location}
+                        {experience.location}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
                         <FaCalendarAlt size={12} style={{ color: getTextColor('secondary') }} />
                         <span style={{ color: getTextColor('secondary') }}>
-                          {experience.duration}
+                        {experience.duration}
                         </span>
-                      </div>
-                    </div>
+                  </div>
+                </div>
 
-                    {/* Expandable content with enhanced animations */}
-                    <AnimatePresence>
-                      {expandedIndex === index && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
+                {/* Expandable content with enhanced animations */}
+                <AnimatePresence>
+                  {expandedIndex === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
                           className="space-y-4"
-                        >
-                          {/* Description with icon */}
+                    >
+                        {/* Description with icon */}
+                        <div>
+                          <div className="flex items-center gap-2 mb-3">
+                            <FaLightbulb className="text-yellow-400" size={16} />
+                            <h4 className="text-sm font-semibold" style={{ color: getTextColor('primary') }}>
+                              Key Responsibilities
+                            </h4>
+                          </div>
+                          <div className="space-y-2">
+                            {experience.description.map((item, i) => (
+                              <motion.p
+                                key={i}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.2, delay: i * 0.05 }}
+                                className="flex items-start text-sm"
+                                style={{ color: getTextColor('secondary') }}
+                              >
+                                <span className="mr-2 text-blue-400">•</span>
+                                {item}
+                              </motion.p>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Achievements with icon */}
+                        {experience.achievements && (
                           <div>
                             <div className="flex items-center gap-2 mb-3">
-                              <FaLightbulb className="text-yellow-400" size={16} />
+                              <FaAward className="text-amber-400" size={16} />
                               <h4 className="text-sm font-semibold" style={{ color: getTextColor('primary') }}>
-                                Key Responsibilities
+                                Key Achievements
                               </h4>
                             </div>
                             <div className="space-y-2">
-                              {experience.description.map((item, i) => (
+                              {experience.achievements.map((item, i) => (
                                 <motion.p
                                   key={i}
                                   initial={{ opacity: 0, x: -10 }}
@@ -368,88 +394,62 @@ const MobileExperience = () => {
                                   className="flex items-start text-sm"
                                   style={{ color: getTextColor('secondary') }}
                                 >
-                                  <span className="mr-2 text-blue-400">•</span>
+                                  <span className="mr-2 text-green-400">✓</span>
                                   {item}
                                 </motion.p>
                               ))}
                             </div>
                           </div>
+                        )}
 
-                          {/* Achievements with icon */}
-                          {experience.achievements && (
-                            <div>
-                              <div className="flex items-center gap-2 mb-3">
-                                <FaAward className="text-amber-400" size={16} />
-                                <h4 className="text-sm font-semibold" style={{ color: getTextColor('primary') }}>
-                                  Key Achievements
-                                </h4>
-                              </div>
-                              <div className="space-y-2">
-                                {experience.achievements.map((item, i) => (
-                                  <motion.p
-                                    key={i}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.2, delay: i * 0.05 }}
-                                    className="flex items-start text-sm"
-                                    style={{ color: getTextColor('secondary') }}
-                                  >
-                                    <span className="mr-2 text-green-400">✓</span>
-                                    {item}
-                                  </motion.p>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Skills with icon */}
-                          <div>
-                            <div className="flex items-center gap-2 mb-3">
-                              <FaStar className="text-purple-400" size={16} />
-                              <h4 className="text-sm font-semibold" style={{ color: getTextColor('primary') }}>
-                                Skills & Technologies
-                              </h4>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                              {experience.skills.map((skill, i) => (
-                                <motion.span
-                                  key={i}
-                                  initial={{ opacity: 0, scale: 0.8 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  transition={{ duration: 0.2, delay: i * 0.05 }}
-                                  className="px-3 py-1 rounded-full text-xs"
-                                  style={{ 
-                                    background: getBackgroundColor('default'),
-                                    color: getTextColor('primary'),
-                                    border: `1px solid ${getBorderColor('light')}`
-                                  }}
-                                >
-                                  {skill}
-                                </motion.span>
-                              ))}
-                            </div>
+                        {/* Skills with icon */}
+                        <div>
+                          <div className="flex items-center gap-2 mb-3">
+                            <FaStar className="text-purple-400" size={16} />
+                            <h4 className="text-sm font-semibold" style={{ color: getTextColor('primary') }}>
+                              Skills & Technologies
+                            </h4>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                          <div className="flex flex-wrap gap-2">
+                            {experience.skills.map((skill, i) => (
+                              <motion.span
+                                key={i}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.2, delay: i * 0.05 }}
+                                className="px-3 py-1 rounded-full text-xs"
+                                style={{ 
+                                    background: getBackgroundColor('default'),
+                                  color: getTextColor('primary'),
+                                    border: `1px solid ${getBorderColor('light')}`
+                                }}
+                              >
+                                {skill}
+                              </motion.span>
+                            ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                    {/* Expand/collapse indicator with animation */}
+                {/* Expand/collapse indicator with animation */}
                     <div className="flex justify-center mt-4">
-                      <motion.div
-                        animate={{ rotate: expandedIndex === index ? 180 : 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <FaChevronDown 
-                          size={14} 
-                          style={{ color: expandedIndex === index ? 'rgb(59, 130, 246)' : getTextColor('secondary') }}
-                        />
-                      </motion.div>
-                    </div>
+                  <motion.div
+                    animate={{ rotate: expandedIndex === index ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <FaChevronDown 
+                      size={14} 
+                      style={{ color: expandedIndex === index ? 'rgb(59, 130, 246)' : getTextColor('secondary') }}
+                    />
+                  </motion.div>
+                </div>
                   </div>
-                </motion.div>
               </motion.div>
-            ))}
-          </div>
+            </motion.div>
+          ))}
+        </div>
         </motion.div>
       </div>
 

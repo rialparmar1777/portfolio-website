@@ -106,8 +106,12 @@ const Projects = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [cursor, setCursor] = useState({ x: 0, y: 0, visible: false });
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
   
   // Parallax scroll effect
   const { scrollYProgress } = useScroll({
@@ -249,11 +253,11 @@ const Projects = () => {
               layout
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.5 }}
               className={`group relative overflow-hidden rounded-2xl ${
                 isDark ? 'bg-gray-800/50' : 'bg-white'
-              } shadow-lg hover:shadow-xl transition-all duration-300`}
-              whileHover={{ scale: 1.02 }}
+              } shadow-lg transition-none border-2 border-transparent`}
+              whileHover={{ scale: 1.05, y: -8, boxShadow: '0 8px 32px 0 rgba(139, 92, 246, 0.22)', filter: 'drop-shadow(0 0 24px #a78bfa88)', borderColor: '#a78bfa' }}
               whileTap={{ scale: 0.98 }}
               onClick={() => {
                 setSelectedProject(project);
@@ -266,7 +270,7 @@ const Projects = () => {
                   alt={project.title}
                   width={400}
                   height={300}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-none"
                 />
                 <div className={`absolute inset-0 bg-gradient-to-t ${
                   isDark ? 'from-gray-900/80' : 'from-gray-900/60'

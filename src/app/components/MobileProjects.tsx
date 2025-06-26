@@ -348,32 +348,32 @@ const MobileProjects = () => {
           />
         </motion.div>
         
-        {isSearchExpanded && (
-          <motion.div
+          {isSearchExpanded && (
+            <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mb-3"
-          >
+              className="mb-3"
+            >
             <motion.input
-              type="text"
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+                  type="text"
+                  placeholder="Search projects..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2 rounded-lg"
-              style={{ 
-                background: getBackgroundColor('default'),
-                color: getTextColor('primary'),
-                border: `1px solid ${getBorderColor('light')}`,
-              }}
+                  style={{ 
+                    background: getBackgroundColor('default'),
+                    color: getTextColor('primary'),
+                    border: `1px solid ${getBorderColor('light')}`,
+                  }}
               whileFocus={{ 
                 scale: 1.02,
                 boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.2)'
               }}
               transition={{ type: "spring", stiffness: 300 }}
-            />
-          </motion.div>
-        )}
+                />
+            </motion.div>
+          )}
         
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
           <motion.button
@@ -395,8 +395,8 @@ const MobileProjects = () => {
                 duration: 1,
                 ease: "easeInOut",
               }}
-            >
-              <FaStar size={14} />
+          >
+            <FaStar size={14} />
             </motion.div>
             Featured
           </motion.button>
@@ -422,9 +422,9 @@ const MobileProjects = () => {
         ref={containerRef}
         className="flex-1 overflow-y-auto px-4 py-4"
       >
-        <motion.div 
+          <motion.div 
           className="grid grid-cols-1 gap-4"
-          style={{ 
+              style={{ 
             transform: `rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)`,
             transition: 'transform 0.1s ease-out'
           }}
@@ -441,24 +441,24 @@ const MobileProjects = () => {
             const itemY = useTransform(itemSpringProgress, [0, 0.2, 0.8, 1], [50, 0, 0, -50]);
 
             return (
-              <motion.div
+            <motion.div
                 key={index}
                 className="relative overflow-hidden rounded-2xl perspective-1000"
-                style={{ 
-                  background: getBackgroundColor('paper'),
-                  border: `1px solid ${getBorderColor('light')}`,
+              style={{ 
+                background: getBackgroundColor('paper'),
+                border: `1px solid ${getBorderColor('light')}`,
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
                   transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
                   transition: 'transform 0.1s ease-out',
                   opacity: itemOpacity,
                   y: itemY
-                }}
+              }}
                 whileHover={{ 
                   scale: 1.02,
                   boxShadow: '0 12px 28px rgba(0, 0, 0, 0.15)',
                   transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg) scale(1.02)`
                 }}
-                whileTap={{ scale: 0.98 }}
+              whileTap={{ scale: 0.98 }}
                 onClick={() => openProjectModal(project)}
               >
                 <div className="relative h-48">
@@ -471,9 +471,9 @@ const MobileProjects = () => {
                           <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin border-t-transparent"></div>
                         </div>
                       )}
-                      <Image
-                        src={project.image}
-                        alt={project.title}
+                  <Image
+                    src={project.image}
+                    alt={project.title}
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -502,9 +502,9 @@ const MobileProjects = () => {
               </motion.div>
             );
           })}
-        </motion.div>
-      </div>
-      
+            </motion.div>
+        </div>
+        
       {/* Project modal with scroll-based reveal */}
       <AnimatePresence>
         {isModalOpen && selectedProject && (
@@ -523,7 +523,7 @@ const MobileProjects = () => {
               className="w-full max-w-2xl rounded-2xl overflow-hidden"
               style={{ 
                 background: getBackgroundColor('paper'),
-                border: `1px solid ${getBorderColor('light')}`,
+              border: `1px solid ${getBorderColor('light')}`,
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
               }}
               onClick={e => e.stopPropagation()}
@@ -538,9 +538,9 @@ const MobileProjects = () => {
                         <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin border-t-transparent"></div>
                       </div>
                     )}
-                    <Image
-                      src={selectedProject.image}
-                      alt={selectedProject.title}
+                <Image
+                  src={selectedProject.image}
+                  alt={selectedProject.title}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

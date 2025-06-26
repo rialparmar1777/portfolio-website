@@ -267,13 +267,14 @@ const Hero = () => {
                 }}
               >
                 <Image
-                  src="/images/ProfilePicture.jpeg"
+                  src="/images/ProfilePicutre.jpeg"
                   alt="Rial Parmar"
                   fill
                   className="object-cover"
                   priority
                   style={{
-                    objectPosition: "center 20%"
+                    objectPosition: "center 10%",
+                    transform: "scale(1.15)"
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />

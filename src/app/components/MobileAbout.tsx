@@ -44,7 +44,7 @@ const MobileAbout = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -201,24 +201,24 @@ const MobileAbout = () => {
       >
         <motion.div 
           className="space-y-8"
-          style={{ 
+            style={{ 
             transform: `rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)`,
             transition: 'transform 0.1s ease-out'
-          }}
-        >
+            }}
+          >
           {/* About Me Section */}
           <AnimatePresence mode="wait">
             {activeTab === 'about' && (
-              <motion.div
+      <motion.div
                 key="about"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className="space-y-6"
-              >
+      >
                 {/* Hero Card */}
-                <motion.div
+            <motion.div 
                   className="overflow-hidden rounded-2xl perspective-1000"
                   style={{ 
                     background: getBackgroundColor('paper'),
@@ -239,8 +239,8 @@ const MobileAbout = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 }}
-                    >
-                      <motion.div
+                      >
+                        <motion.div
                         className="p-2 rounded-full"
                         style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}
                         whileHover={{ rotate: 360 }}
@@ -266,15 +266,15 @@ const MobileAbout = () => {
                     >
                       I'm a passionate full-stack developer with a strong foundation in both frontend and backend technologies. My journey in software development is driven by a constant desire to learn, innovate, and create impactful solutions. I specialize in building modern, scalable web applications with a focus on user experience and performance.
                     </motion.p>
-                  </div>
-                </motion.div>
+              </div>
+            </motion.div>
 
                 {/* Approach Card */}
-                <motion.div
+          <motion.div 
                   className="overflow-hidden rounded-2xl perspective-1000"
-                  style={{ 
-                    background: getBackgroundColor('paper'),
-                    border: `1px solid ${getBorderColor('light')}`,
+            style={{ 
+              background: getBackgroundColor('paper'),
+              border: `1px solid ${getBorderColor('light')}`,
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
                     transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
                     transition: 'transform 0.1s ease-out'
@@ -284,7 +284,7 @@ const MobileAbout = () => {
                     boxShadow: '0 12px 28px rgba(0, 0, 0, 0.15)',
                     transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg) scale(1.02)`
                   }}
-                >
+          >
                   <div className="p-6">
                     <motion.div 
                       className="flex items-center gap-3 mb-4"
@@ -297,7 +297,7 @@ const MobileAbout = () => {
                         style={{ background: 'linear-gradient(135deg, #8b5cf6, #ec4899)' }}
                         whileHover={{ rotate: 360 }}
                         transition={{ duration: 0.5 }}
-                      >
+              >
                         <FaHeart className="w-5 h-5 text-white" />
                       </motion.div>
                       <motion.h3 
@@ -340,19 +340,19 @@ const MobileAbout = () => {
                           <FaStar className="w-3 h-3 mt-1" style={{ color: getTextColor('primary') }} />
                           <span className="text-sm" style={{ color: getTextColor('secondary') }}>
                             {item}
-                          </span>
+              </span>
                         </motion.li>
                       ))}
                     </motion.ul>
-                  </div>
-                </motion.div>
-
+            </div>
+          </motion.div>
+          
                 {/* Values Card */}
-                <motion.div
+          <motion.div 
                   className="overflow-hidden rounded-2xl perspective-1000"
-                  style={{ 
-                    background: getBackgroundColor('paper'),
-                    border: `1px solid ${getBorderColor('light')}`,
+            style={{ 
+              background: getBackgroundColor('paper'),
+              border: `1px solid ${getBorderColor('light')}`,
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
                     transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
                     transition: 'transform 0.1s ease-out'
@@ -362,7 +362,7 @@ const MobileAbout = () => {
                     boxShadow: '0 12px 28px rgba(0, 0, 0, 0.15)',
                     transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg) scale(1.02)`
                   }}
-                >
+          >
                   <div className="p-6">
                     <motion.div 
                       className="flex items-center gap-3 mb-4"
@@ -375,7 +375,7 @@ const MobileAbout = () => {
                         style={{ background: 'linear-gradient(135deg, #ec4899, #f43f5e)' }}
                         whileHover={{ rotate: 360 }}
                         transition={{ duration: 0.5 }}
-                      >
+              >
                         <FaAward className="w-5 h-5 text-white" />
                       </motion.div>
                       <motion.h3 
@@ -422,8 +422,8 @@ const MobileAbout = () => {
                         </motion.li>
                       ))}
                     </motion.ul>
-                  </div>
-                </motion.div>
+            </div>
+          </motion.div>
               </motion.div>
             )}
 
@@ -438,12 +438,12 @@ const MobileAbout = () => {
                 className="space-y-6"
               >
                 {skills.map((category, index) => (
-                  <motion.div
+          <motion.div 
                     key={index}
                     className="overflow-hidden rounded-2xl perspective-1000"
-                    style={{ 
-                      background: getBackgroundColor('paper'),
-                      border: `1px solid ${getBorderColor('light')}`,
+            style={{ 
+              background: getBackgroundColor('paper'),
+              border: `1px solid ${getBorderColor('light')}`,
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
                       transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
                       transition: 'transform 0.1s ease-out'
@@ -453,7 +453,7 @@ const MobileAbout = () => {
                       boxShadow: '0 12px 28px rgba(0, 0, 0, 0.15)',
                       transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg) scale(1.02)`
                     }}
-                  >
+              >
                     <div className="p-6">
                       <div className="flex items-center gap-2 mb-4">
                         {category.icon}
@@ -465,7 +465,7 @@ const MobileAbout = () => {
                         >
                           {category.name}
                         </motion.h3>
-                      </div>
+              </div>
                       <div className="space-y-3">
                         {category.skills.map((skill, skillIndex) => (
                           <motion.div
@@ -477,7 +477,7 @@ const MobileAbout = () => {
                           >
                             <span className="text-sm" style={{ color: getTextColor('secondary') }}>
                               {skill.name}
-                            </span>
+              </span>
                             <ProgressBar 
                               proficiency={skill.proficiency} 
                               color={skill.color}
@@ -485,12 +485,12 @@ const MobileAbout = () => {
                           </motion.div>
                         ))}
                       </div>
-                    </div>
-                  </motion.div>
+            </div>
+          </motion.div>
                 ))}
               </motion.div>
             )}
-
+          
             {/* Education Section */}
             {activeTab === 'education' && (
               <motion.div
@@ -502,12 +502,12 @@ const MobileAbout = () => {
                 className="space-y-6"
               >
                 {education.map((item, index) => (
-                  <motion.div
+          <motion.div 
                     key={index}
                     className="overflow-hidden rounded-2xl perspective-1000"
-                    style={{ 
-                      background: getBackgroundColor('paper'),
-                      border: `1px solid ${getBorderColor('light')}`,
+            style={{ 
+              background: getBackgroundColor('paper'),
+              border: `1px solid ${getBorderColor('light')}`,
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
                       transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
                       transition: 'transform 0.1s ease-out'
@@ -530,22 +530,22 @@ const MobileAbout = () => {
                       <motion.p 
                         className="text-sm mb-2"
                         style={{ color: getTextColor('secondary') }}
-                      >
+              >
                         {item.institution}
                       </motion.p>
                       <motion.p 
                         className="text-sm"
                         style={{ color: getTextColor('secondary') }}
-                      >
+              >
                         {item.duration}
                       </motion.p>
-                    </div>
-                  </motion.div>
+            </div>
+          </motion.div>
                 ))}
-              </motion.div>
+      </motion.div>
             )}
           </AnimatePresence>
-        </motion.div>
+    </motion.div>
       </div>
     </div>
   );
