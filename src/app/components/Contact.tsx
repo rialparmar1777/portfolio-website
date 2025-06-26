@@ -18,7 +18,7 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { getTextColor } = useThemeStyles();
+  const { getTextColor, getBackgroundColor, getBorderColor, getShadow, isDark } = useThemeStyles();
   const containerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
@@ -145,7 +145,14 @@ const Contact = () => {
                   rel="noopener noreferrer"
                   className="block"
                 >
-                  <GlassCard className="p-6">
+                  <div 
+                    className="p-6 rounded-2xl backdrop-blur-sm border transition-all duration-300 hover:scale-105"
+                    style={{
+                      background: getBackgroundColor('glass'),
+                      borderColor: getBorderColor('light'),
+                      boxShadow: getShadow('md'),
+                    }}
+                  >
                     <div className="flex items-center gap-4">
                       <div className={`p-3 rounded-lg bg-gradient-to-br ${link.color}`}>
                         {link.icon}
@@ -159,7 +166,7 @@ const Contact = () => {
                         </p>
                       </div>
                     </div>
-                  </GlassCard>
+                  </div>
                 </Link>
               </motion.div>
             ))}
@@ -173,7 +180,14 @@ const Contact = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <GlassCard className="p-8">
+            <div 
+              className="p-8 rounded-2xl backdrop-blur-sm border"
+              style={{
+                background: getBackgroundColor('paper'),
+                borderColor: getBorderColor('light'),
+                boxShadow: getShadow('lg'),
+              }}
+            >
               <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -186,8 +200,12 @@ const Contact = () => {
                       value={formData.from_name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
-                      style={{ color: getTextColor('primary') }}
+                      className="w-full px-4 py-2 rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500/20"
+                      style={{
+                        background: getBackgroundColor('glass'),
+                        color: getTextColor('primary'),
+                        border: `1px solid ${getBorderColor('light')}`,
+                      }}
                     />
                   </div>
                   <div>
@@ -200,11 +218,16 @@ const Contact = () => {
                       value={formData.reply_to}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
-                      style={{ color: getTextColor('primary') }}
+                      className="w-full px-4 py-2 rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500/20"
+                      style={{
+                        background: getBackgroundColor('glass'),
+                        color: getTextColor('primary'),
+                        border: `1px solid ${getBorderColor('light')}`,
+                      }}
                     />
                   </div>
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: getTextColor('primary') }}>
                     Subject
@@ -215,10 +238,15 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
-                    style={{ color: getTextColor('primary') }}
+                    className="w-full px-4 py-2 rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500/20"
+                    style={{
+                      background: getBackgroundColor('glass'),
+                      color: getTextColor('primary'),
+                      border: `1px solid ${getBorderColor('light')}`,
+                    }}
                   />
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: getTextColor('primary') }}>
                     Message
@@ -229,21 +257,30 @@ const Contact = () => {
                     onChange={handleChange}
                     required
                     rows={6}
-                    className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors resize-none"
-                    style={{ color: getTextColor('primary') }}
+                    className="w-full px-4 py-2 rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500/20 resize-none"
+                    style={{
+                      background: getBackgroundColor('glass'),
+                      color: getTextColor('primary'),
+                      border: `1px solid ${getBorderColor('light')}`,
+                    }}
                   />
                 </div>
-                <div>
-                  <button
+                
+                <motion.button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 px-6 rounded-lg font-medium text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    background: 'linear-gradient(135deg, #8B5CF6, #3B82F6)',
+                    boxShadow: getShadow('md'),
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   >
                     {isSubmitting ? 'Sending...' : 'Send Message'}
-                  </button>
-                </div>
+                </motion.button>
               </form>
-            </GlassCard>
+            </div>
           </motion.div>
         </div>
       </div>

@@ -101,7 +101,7 @@ const TimelineItem = ({
   onClick: () => void;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { isDark, getTextColor, colors } = useThemeStyles();
+  const { getTextColor, getBackgroundColor, getBorderColor, getShadow, isDark } = useThemeStyles();
   
   return (
     <motion.div
@@ -111,21 +111,14 @@ const TimelineItem = ({
       className="relative"
     >
       <div
-        className={`p-6 cursor-pointer transition-all duration-300 rounded-2xl overflow-hidden backdrop-blur-sm ${
-          isActive ? 'scale-102' : ''
-        }`}
+        className="p-6 cursor-pointer transition-all duration-300 rounded-2xl overflow-hidden backdrop-blur-sm"
         style={{
           background: isActive 
-            ? isDark 
-              ? 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(79, 70, 229, 0.2))'
-              : 'linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1))'
-            : isDark
-              ? 'rgba(255, 255, 255, 0.03)'
-              : 'rgba(255, 255, 255, 0.5)',
-          border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.7)'}`,
-          boxShadow: isDark 
-            ? '0 4px 20px rgba(0, 0, 0, 0.2)' 
-            : '0 4px 20px rgba(0, 0, 0, 0.1)',
+            ? getBackgroundColor('glassActive')
+            : getBackgroundColor('glass'),
+          border: `1px solid ${isActive ? getBorderColor('medium') : getBorderColor('light')}`,
+          boxShadow: isActive ? getShadow('lg') : getShadow('md'),
+          transform: isActive ? 'scale(1.02)' : 'scale(1)',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -133,23 +126,29 @@ const TimelineItem = ({
       >
         <div className="flex items-start space-x-4">
           <div 
-            className={`p-3 rounded-xl transition-colors duration-300 ${
-            isActive 
-                ? isDark 
-                  ? 'bg-purple-500/20 text-purple-300' 
-                  : 'bg-purple-500/20 text-purple-700'
-                : isDark
-                  ? 'bg-gray-800/50 text-gray-300'
-                  : 'bg-white/50 text-gray-700'
-            }`}
+            className="p-3 rounded-xl transition-colors duration-300"
+            style={{
+              background: isActive 
+                ? isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.2)'
+                : getBackgroundColor('glass'),
+              color: isActive 
+                ? isDark ? '#C4B5FD' : '#7C3AED'
+                : getTextColor('secondary'),
+            }}
           >
             {experience.icon}
           </div>
           <div>
-            <h3 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+            <h3 
+              className="text-xl font-semibold mb-2"
+              style={{ color: getTextColor('primary') }}
+            >
               {experience.title}
             </h3>
-            <p className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p 
+              className="text-sm font-medium"
+              style={{ color: getTextColor('secondary') }}
+            >
               {experience.company}
             </p>
             <div className="flex items-center text-sm mt-3" style={{ color: getTextColor('secondary') }}>
@@ -164,7 +163,7 @@ const TimelineItem = ({
 };
 
 const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
-  const { isDark, getTextColor } = useThemeStyles();
+  const { getTextColor, getBackgroundColor, getBorderColor, getShadow, isDark } = useThemeStyles();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -182,114 +181,115 @@ const ExperienceDetails = ({ experience }: { experience: ExperienceItem }) => {
       <div 
         className="p-8 rounded-2xl overflow-hidden backdrop-blur-sm"
         style={{
-          background: isDark 
-            ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))'
-            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7))',
-          border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.7)'}`,
-          boxShadow: isDark 
-            ? '0 10px 30px -10px rgba(0, 0, 0, 0.3)' 
-            : '0 10px 30px -10px rgba(0, 0, 0, 0.2)'
+          background: getBackgroundColor('paper'),
+          border: `1px solid ${getBorderColor('light')}`,
+          boxShadow: getShadow('xl'),
         }}
       >
         <div className="flex items-center mb-8">
-          <div className={`p-4 rounded-xl ${
-            isDark 
-              ? 'bg-purple-500/20 text-purple-300' 
-              : 'bg-purple-500/20 text-purple-700'
-          }`}>
+          <div 
+            className="p-4 rounded-xl"
+            style={{
+              background: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.2)',
+              color: isDark ? '#C4B5FD' : '#7C3AED',
+            }}
+          >
             {experience.icon}
           </div>
-          <div className="ml-6">
-            <h3 className={`text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+          <div className="ml-4">
+            <h2 
+              className="text-2xl font-bold mb-2"
+              style={{ color: getTextColor('primary') }}
+            >
               {experience.title}
-            </h3>
-            <div className="flex items-center">
-              <p className={`text-lg font-medium ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            </h2>
+            <p 
+              className="text-lg font-medium mb-1"
+              style={{ color: getTextColor('secondary') }}
+            >
                 {experience.company}
               </p>
-              {experience.companyUrl && (
-                <a 
-                  href={experience.companyUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={`ml-2 ${isDark ? 'text-purple-400 hover:text-purple-300' : 'text-purple-600 hover:text-purple-500'} transition-colors`}
-                >
-                  <FaExternalLinkAlt size={14} />
-                </a>
-              )}
+            <div className="flex items-center text-sm" style={{ color: getTextColor('secondary') }}>
+              <FaMapMarkerAlt className="mr-2" />
+              {experience.location}
             </div>
           </div>
         </div>
         
-        <div className={`flex items-center mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-          <FaMapMarkerAlt className="mr-2" />
-          {experience.location}
-        </div>
-        
-        <div className="mb-8">
-          <h4 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div>
+            <h3 
+              className="text-lg font-semibold mb-4"
+              style={{ color: getTextColor('primary') }}
+            >
             Key Responsibilities
-          </h4>
-          <div className="space-y-3">
+            </h3>
+            <ul className="space-y-3">
             {experience.description.map((item, index) => (
-              <motion.p
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex items-start"
-                style={{ color: getTextColor('secondary') }}
-              >
-                <span className={`mr-3 ${isDark ? 'text-purple-400' : 'text-purple-600'}`}>•</span>
-                {item}
-              </motion.p>
-            ))}
-          </div>
-        </div>
-        
-        {experience.achievements && experience.achievements.length > 0 && (
-          <div className="mb-8">
-            <h4 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
-              Key Achievements
-            </h4>
-            <div className="space-y-3">
-              {experience.achievements.map((item, index) => (
-                <motion.p
+                <motion.li
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
                   className="flex items-start"
                   style={{ color: getTextColor('secondary') }}
                 >
-                  <span className={`mr-3 ${isDark ? 'text-green-400' : 'text-green-600'}`}>✓</span>
+                  <span className="mr-3 mt-1 w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#8B5CF6' }}></span>
                   {item}
-                </motion.p>
+                </motion.li>
               ))}
-            </div>
+            </ul>
           </div>
-        )}
         
         <div>
-          <h4 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+            <h3 
+              className="text-lg font-semibold mb-4"
+              style={{ color: getTextColor('primary') }}
+            >
+              Key Achievements
+            </h3>
+            {experience.achievements && (
+              <ul className="space-y-3 mb-6">
+                {experience.achievements.map((achievement, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="flex items-start"
+                    style={{ color: getTextColor('secondary') }}
+                  >
+                    <span className="mr-3 mt-1 w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#3B82F6' }}></span>
+                    {achievement}
+                  </motion.li>
+                ))}
+              </ul>
+            )}
+            
+            <h3 
+              className="text-lg font-semibold mb-4"
+              style={{ color: getTextColor('primary') }}
+            >
             Skills & Technologies
-          </h4>
-          <div className="flex flex-wrap gap-3">
+            </h3>
+            <div className="flex flex-wrap gap-2">
             {experience.skills.map((skill, index) => (
               <motion.span
                 key={index}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                className={`px-4 py-2 rounded-xl text-sm font-medium ${
-                  isDark 
-                    ? 'bg-purple-500/10 text-purple-300 border border-purple-500/30' 
-                    : 'bg-purple-500/10 text-purple-700 border border-purple-500/30'
-                }`}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="px-3 py-1 text-sm rounded-full"
+                  style={{
+                    background: getBackgroundColor('glass'),
+                    color: getTextColor('secondary'),
+                    border: `1px solid ${getBorderColor('light')}`,
+                  }}
               >
                 {skill}
               </motion.span>
             ))}
+            </div>
           </div>
         </div>
       </div>

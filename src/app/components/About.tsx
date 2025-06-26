@@ -794,7 +794,7 @@ const SkillsSection = () => {
 };
 
 const IntroductionSection = () => {
-  const { getTextColor, getBackgroundColor } = useThemeStyles();
+  const { getTextColor, getBackgroundColor, getBorderColor, isDark } = useThemeStyles();
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   
@@ -816,7 +816,8 @@ const IntroductionSection = () => {
       >
         {/* Gradient Orbs */}
         <motion.div 
-          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] opacity-20"
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px]"
+          style={{ opacity: isDark ? 0.25 : 0.2 }}
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360],
@@ -827,11 +828,17 @@ const IntroductionSection = () => {
             ease: "linear",
           }}
         >
-          <div className="absolute inset-0 bg-[conic-gradient(from_0deg,purple,blue,purple)] rounded-full blur-[60px]" />
+          <div 
+            className="absolute inset-0 rounded-full blur-[60px]"
+            style={{
+              background: `conic-gradient(from 0deg, ${isDark ? '#A78BFA' : '#8B5CF6'}, ${isDark ? '#3B82F6' : '#3B82F6'}, ${isDark ? '#A78BFA' : '#8B5CF6'})`,
+            }}
+          />
         </motion.div>
         
         <motion.div 
-          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] opacity-20"
+          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px]"
+          style={{ opacity: isDark ? 0.25 : 0.2 }}
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [360, 180, 0],
@@ -842,7 +849,12 @@ const IntroductionSection = () => {
             ease: "linear",
           }}
         >
-          <div className="absolute inset-0 bg-[conic-gradient(from_180deg,blue,purple,blue)] rounded-full blur-[60px]" />
+          <div 
+            className="absolute inset-0 rounded-full blur-[60px]"
+            style={{
+              background: `conic-gradient(from 180deg, ${isDark ? '#3B82F6' : '#3B82F6'}, ${isDark ? '#A78BFA' : '#8B5CF6'}, ${isDark ? '#3B82F6' : '#3B82F6'})`,
+            }}
+          />
         </motion.div>
       </motion.div>
       
@@ -876,9 +888,19 @@ const IntroductionSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              className="flex flex-col items-center p-6 rounded-xl bg-gradient-to-b from-blue-500/10 to-purple-500/10 backdrop-blur-sm"
+              className="flex flex-col items-center p-6 rounded-xl backdrop-blur-sm border"
+              style={{
+                background: getBackgroundColor('glass'),
+                borderColor: getBorderColor('light'),
+              }}
             >
-              <div className="p-4 rounded-full bg-blue-500/20 text-blue-500 mb-4">
+              <div 
+                className="p-4 rounded-full mb-4"
+                style={{
+                  background: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)',
+                  color: '#3B82F6',
+                }}
+              >
                 <FaCode className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
@@ -893,9 +915,19 @@ const IntroductionSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.7 }}
-              className="flex flex-col items-center p-6 rounded-xl bg-gradient-to-b from-purple-500/10 to-blue-500/10 backdrop-blur-sm"
+              className="flex flex-col items-center p-6 rounded-xl backdrop-blur-sm border"
+              style={{
+                background: getBackgroundColor('glass'),
+                borderColor: getBorderColor('light'),
+              }}
             >
-              <div className="p-4 rounded-full bg-purple-500/20 text-purple-500 mb-4">
+              <div 
+                className="p-4 rounded-full mb-4"
+                style={{
+                  background: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.1)',
+                  color: '#8B5CF6',
+                }}
+              >
                 <FaRocket className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
@@ -910,9 +942,19 @@ const IntroductionSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.8 }}
-              className="flex flex-col items-center p-6 rounded-xl bg-gradient-to-b from-indigo-500/10 to-purple-500/10 backdrop-blur-sm"
+              className="flex flex-col items-center p-6 rounded-xl backdrop-blur-sm border"
+              style={{
+                background: getBackgroundColor('glass'),
+                borderColor: getBorderColor('light'),
+              }}
             >
-              <div className="p-4 rounded-full bg-indigo-500/20 text-indigo-500 mb-4">
+              <div 
+                className="p-4 rounded-full mb-4"
+                style={{
+                  background: isDark ? 'rgba(99, 102, 241, 0.2)' : 'rgba(99, 102, 241, 0.1)',
+                  color: '#6366F1',
+                }}
+              >
                 <FaMusic className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>

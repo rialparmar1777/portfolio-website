@@ -187,8 +187,8 @@ const MobileHero = () => {
                 duration: 2,
                 repeat: Infinity,
                 delay: i * 0.2,
-              }}
-            />
+          }}
+        />
           ))}
         </motion.div>
       </motion.div>
@@ -298,24 +298,24 @@ const MobileHero = () => {
           
           <AnimatePresence>
             {showMore && (
-              <motion.div
+          <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="mt-4 text-sm text-left"
-                style={{ color: getTextColor('secondary') }}
-              >
-                <p className="mb-3">
+            transition={{ duration: 0.3 }}
+            className="mt-4 text-sm text-left"
+            style={{ color: getTextColor('secondary') }}
+          >
+            <p className="mb-3">
                   With over 2+ years of experience in web development, I specialize in building scalable applications that solve real-world problems.
-                </p>
-                <p className="mb-3">
-                  My approach combines technical excellence with user-centered design, ensuring that every project delivers both functionality and delight.
-                </p>
-                <p>
-                  When I'm not coding, I'm exploring new technologies, contributing to open-source projects, and sharing my knowledge with the developer community.
-                </p>
-              </motion.div>
+            </p>
+            <p className="mb-3">
+              My approach combines technical excellence with user-centered design, ensuring that every project delivers both functionality and delight.
+            </p>
+            <p>
+              When I'm not coding, I'm exploring new technologies, contributing to open-source projects, and sharing my knowledge with the developer community.
+            </p>
+          </motion.div>
             )}
           </AnimatePresence>
         </motion.div>
@@ -361,7 +361,7 @@ const MobileHero = () => {
           </motion.a>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="flex justify-center items-center gap-4 mb-6"
           variants={itemVariants}
         >

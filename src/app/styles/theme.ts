@@ -160,29 +160,29 @@ export const theme: ThemeConfig = {
         contrast: '#FFFFFF',
       },
       background: {
-        default: 'rgba(17, 24, 39, 0.9)',
-        paper: 'rgba(17, 24, 39, 0.95)',
-        elevated: 'rgba(17, 24, 39, 0.98)',
-        glass: 'rgba(17, 24, 39, 0.7)',
-        glassHover: 'rgba(17, 24, 39, 0.8)',
-        glassActive: 'rgba(17, 24, 39, 0.9)',
+        default: 'rgba(15, 23, 42, 0.95)', // Slate-900 with better opacity
+        paper: 'rgba(30, 41, 59, 0.98)', // Slate-800 with high opacity
+        elevated: 'rgba(51, 65, 85, 0.99)', // Slate-700 with very high opacity
+        glass: 'rgba(15, 23, 42, 0.8)', // Slate-900 with glass effect
+        glassHover: 'rgba(30, 41, 59, 0.85)', // Slate-800 with hover effect
+        glassActive: 'rgba(51, 65, 85, 0.9)', // Slate-700 with active effect
       },
       text: {
-        primary: 'rgba(255, 255, 255, 0.87)',
-        secondary: 'rgba(255, 255, 255, 0.6)',
-        disabled: 'rgba(255, 255, 255, 0.38)',
+        primary: 'rgba(248, 250, 252, 0.95)', // Slate-50 with high opacity
+        secondary: 'rgba(203, 213, 225, 0.8)', // Slate-300 with good opacity
+        disabled: 'rgba(148, 163, 184, 0.5)', // Slate-400 with medium opacity
       },
       border: {
-        light: 'rgba(255, 255, 255, 0.12)',
-        medium: 'rgba(255, 255, 255, 0.24)',
-        strong: 'rgba(255, 255, 255, 0.36)',
+        light: 'rgba(148, 163, 184, 0.2)', // Slate-400 with subtle opacity
+        medium: 'rgba(203, 213, 225, 0.3)', // Slate-300 with medium opacity
+        strong: 'rgba(248, 250, 252, 0.4)', // Slate-50 with stronger opacity
       },
       gradient: {
-        primary: 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(59, 130, 246, 0.2))',
-        secondary: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2))',
-        glass: 'linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0))',
-        glassHover: 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
-        glassActive: 'linear-gradient(45deg, rgba(255,255,255,0.15), rgba(255,255,255,0.1))',
+        primary: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.25))',
+        secondary: 'linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.25))',
+        glass: 'linear-gradient(45deg, rgba(248, 250, 252, 0.08), rgba(203, 213, 225, 0.02))',
+        glassHover: 'linear-gradient(45deg, rgba(248, 250, 252, 0.12), rgba(203, 213, 225, 0.06))',
+        glassActive: 'linear-gradient(45deg, rgba(248, 250, 252, 0.16), rgba(203, 213, 225, 0.1))',
       },
     },
     light: {
@@ -199,50 +199,50 @@ export const theme: ThemeConfig = {
         contrast: '#FFFFFF',
       },
       background: {
-        default: 'rgba(255, 255, 255, 0.9)',
-        paper: 'rgba(255, 255, 255, 0.95)',
-        elevated: 'rgba(255, 255, 255, 0.98)',
-        glass: 'rgba(255, 255, 255, 0.7)',
-        glassHover: 'rgba(255, 255, 255, 0.8)',
-        glassActive: 'rgba(255, 255, 255, 0.9)',
+        default: 'rgba(255, 255, 255, 0.95)',
+        paper: 'rgba(248, 250, 252, 0.98)', // Slate-50 with high opacity
+        elevated: 'rgba(241, 245, 249, 0.99)', // Slate-100 with very high opacity
+        glass: 'rgba(255, 255, 255, 0.8)',
+        glassHover: 'rgba(248, 250, 252, 0.85)', // Slate-50 with hover effect
+        glassActive: 'rgba(241, 245, 249, 0.9)', // Slate-100 with active effect
       },
       text: {
-        primary: 'rgba(0, 0, 0, 0.87)',
-        secondary: 'rgba(0, 0, 0, 0.6)',
-        disabled: 'rgba(0, 0, 0, 0.38)',
+        primary: 'rgba(15, 23, 42, 0.95)', // Slate-900 with high opacity
+        secondary: 'rgba(51, 65, 85, 0.8)', // Slate-700 with good opacity
+        disabled: 'rgba(100, 116, 139, 0.5)', // Slate-500 with medium opacity
       },
       border: {
-        light: 'rgba(0, 0, 0, 0.12)',
-        medium: 'rgba(0, 0, 0, 0.24)',
-        strong: 'rgba(0, 0, 0, 0.36)',
+        light: 'rgba(148, 163, 184, 0.2)', // Slate-400 with subtle opacity
+        medium: 'rgba(100, 116, 139, 0.3)', // Slate-500 with medium opacity
+        strong: 'rgba(51, 65, 85, 0.4)', // Slate-700 with stronger opacity
       },
       gradient: {
-        primary: 'linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(59, 130, 246, 0.1))',
-        secondary: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1))',
-        glass: 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0))',
-        glassHover: 'linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
-        glassActive: 'linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2))',
+        primary: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.15))',
+        secondary: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15))',
+        glass: 'linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(248, 250, 252, 0.05))',
+        glassHover: 'linear-gradient(45deg, rgba(255, 255, 255, 0.25), rgba(248, 250, 252, 0.1))',
+        glassActive: 'linear-gradient(45deg, rgba(255, 255, 255, 0.35), rgba(248, 250, 252, 0.15))',
       },
     },
   },
   shadows: {
     dark: {
-      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.1)',
-      md: '0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
-      lg: '0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1)',
-      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1)',
-      glass: '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)',
-      glassHover: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25)',
-      glassActive: '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
+      sm: '0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2)',
+      md: '0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3)',
+      lg: '0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
+      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3)',
+      glass: '0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+      glassHover: '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+      glassActive: '0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
     },
     light: {
       sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
       md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
       lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-      glass: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-      glassHover: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-      glassActive: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+      glass: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+      glassHover: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
+      glassActive: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1)',
     },
   },
   transitions: {

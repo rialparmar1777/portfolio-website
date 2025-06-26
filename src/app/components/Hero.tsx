@@ -10,7 +10,7 @@ import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 
 const Hero = () => {
-  const { getTextColor, getBackgroundColor, getBorderColor } = useThemeStyles();
+  const { getTextColor, getBackgroundColor, getBorderColor, isDark } = useThemeStyles();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const controls = useAnimation();
@@ -121,13 +121,31 @@ const Hero = () => {
     >
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(147,51,234,0.15),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.15),transparent_50%)]" />
+        <div 
+          className="absolute inset-0 bg-gradient-to-b from-transparent"
+          style={{
+            background: `linear-gradient(to bottom, transparent, ${isDark ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.3)'})`,
+          }}
+        />
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(circle at center, ${isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.15)'}, transparent 50%)`,
+          }}
+        />
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(circle at center, ${isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'}, transparent 50%)`,
+          }}
+        />
         
         {/* Animated circles */}
         <motion.div
-          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-purple-500/10 blur-3xl"
+          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full blur-3xl"
+          style={{
+            background: isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.1)',
+          }}
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -139,7 +157,10 @@ const Hero = () => {
           }}
         />
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full blur-3xl"
+          style={{
+            background: isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)',
+          }}
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -206,7 +227,10 @@ const Hero = () => {
             >
               <motion.a
                 href="#contact"
-                className="px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="px-6 py-3 rounded-lg font-medium text-white transition-all duration-300 shadow-lg hover:shadow-xl"
+                style={{
+                  background: 'linear-gradient(135deg, #8B5CF6, #3B82F6)',
+                }}
                 whileHover={!isTouchDevice ? { scale: 1.05 } : {}}
                 whileTap={{ scale: 0.95 }}
               >
@@ -214,8 +238,12 @@ const Hero = () => {
               </motion.a>
               <motion.a
                 href="#projects"
-                className="px-6 py-3 rounded-lg font-medium border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300"
-                style={{ color: getTextColor('primary') }}
+                className="px-6 py-3 rounded-lg font-medium border transition-all duration-300"
+                style={{ 
+                  color: getTextColor('primary'),
+                  borderColor: getBorderColor('medium'),
+                  background: getBackgroundColor('glass'),
+                }}
                 whileHover={!isTouchDevice ? { scale: 1.05 } : {}}
                 whileTap={{ scale: 0.95 }}
               >
@@ -319,7 +347,10 @@ const Hero = () => {
       
       {/* Scroll indicator */}
       <motion.div
-        className="fixed bottom-0 left-0 right-0 hidden md:flex flex-col items-center justify-center py-4 bg-gradient-to-t from-black/20 to-transparent"
+        className="fixed bottom-0 left-0 right-0 hidden md:flex flex-col items-center justify-center py-4"
+        style={{
+          background: `linear-gradient(to top, ${isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.2)'}, transparent)`,
+        }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.5 }}
@@ -329,7 +360,7 @@ const Hero = () => {
         </span>
         <motion.div
           className="w-6 h-10 border-2 rounded-full flex items-center justify-center p-1"
-          style={{ borderColor: getBorderColor('light') }}
+          style={{ borderColor: getBorderColor('medium') }}
           animate={{
             y: [0, 10, 0],
           }}

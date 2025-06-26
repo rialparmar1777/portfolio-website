@@ -28,7 +28,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
-  const { isDark } = useThemeStyles();
+  const { isDark, getBackgroundColor, getBorderColor, getShadow } = useThemeStyles();
   const menuRef = useRef<HTMLDivElement>(null);
   const navbarRef = useRef<HTMLElement>(null);
   
@@ -93,18 +93,18 @@ const Navbar: React.FC<NavbarProps> = ({
         style={{
           background: isScrolled
             ? isDark
-              ? 'linear-gradient(to right, rgba(13, 40, 44, 0.95), rgba(22, 78, 99, 0.95))'
+              ? 'linear-gradient(120deg, #101828 80%, #0f172a 100%)'
               : 'rgba(255, 255, 255, 0.7)'
             : 'transparent',
           borderBottom: isScrolled
-            ? `1px solid ${isDark ? 'rgba(45, 212, 191, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`
+            ? `1px solid ${getBorderColor('light')}`
             : 'none',
           boxShadow: isScrolled
             ? isDark
-              ? '0 4px 30px rgba(13, 40, 44, 0.3)'
-              : '0 4px 30px rgba(0, 0, 0, 0.1)'
+              ? getShadow('glass')
+              : getShadow('md')
             : 'none',
-          backdropFilter: isScrolled ? 'blur(10px)' : 'none',
+          backdropFilter: isScrolled ? 'blur(12px)' : 'none',
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,22 +127,22 @@ const Navbar: React.FC<NavbarProps> = ({
                 }}
               >
                 <motion.div
-                  className="mr-3 p-2.5 rounded-xl"
+                  className="mr-3 p-2.5 rounded-xl shadow-lg"
                   style={{
                     background: isDark
-                      ? 'linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(56, 189, 248, 0.15))'
-                      : 'linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1))',
-                    border: `1px solid ${isDark ? 'rgba(45, 212, 191, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
-                    boxShadow: isDark ? '0 0 20px rgba(13, 40, 44, 0.2)' : 'none',
+                      ? getBackgroundColor('glass')
+                      : getBackgroundColor('paper'),
+                    border: `1px solid ${getBorderColor('light')}`,
+                    boxShadow: isDark ? '0 0 24px 0 #38bdf833' : getShadow('md'),
                   }}
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
                 >
                   <span className={`text-2xl font-extrabold ${
                     isDark
-                      ? 'bg-gradient-to-r from-teal-300 via-cyan-300 to-teal-300'
+                      ? 'text-white drop-shadow-[0_2px_12px_rgba(255,255,255,0.95)]'
                       : 'bg-gradient-to-r from-purple-600 to-blue-600'
-                  } text-transparent bg-clip-text`}>
+                  } ${isDark ? '' : 'text-transparent bg-clip-text'}`}>
                     R
                   </span>
                 </motion.div>
@@ -167,7 +167,10 @@ const Navbar: React.FC<NavbarProps> = ({
               />
               <div className="flex items-center space-x-4 ml-6 pl-6 border-l border-opacity-20" 
                 style={{ 
-                  borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'
+                  borderColor: getBorderColor('light'),
+                  boxShadow: isDark ? '0 2px 16px 0 #38bdf822' : getShadow('sm'),
+                  background: isDark ? getBackgroundColor('glass') : 'transparent',
+                  backdropFilter: 'blur(8px)',
                 }}
               >
                 <ThemeToggle />
