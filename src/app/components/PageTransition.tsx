@@ -13,7 +13,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [curtainOpen, setCurtainOpen] = useState(false);
   const [showLogo, setShowLogo] = useState(true);
-  const { isDark } = useThemeStyles();
+  const { isDark, getGradient, colors } = useThemeStyles();
 
   useEffect(() => {
     setCurtainOpen(false);
@@ -71,6 +71,36 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
     </>
   );
 
+  // Sparkle effect for rocket
+  const Sparkles = () => (
+    <>
+      {Array.from({ length: 7 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full bg-white pointer-events-none"
+          style={{
+            width: 2 + Math.random() * 2,
+            height: 2 + Math.random() * 2,
+            left: `${30 + Math.random() * 40}%`,
+            top: `${30 + Math.random() * 40}%`,
+            opacity: 0.18 + Math.random() * 0.18,
+            filter: 'blur(0.5px)',
+            zIndex: 1,
+          }}
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{
+            duration: 1.2 + Math.random() * 0.8,
+            repeat: Infinity,
+            delay: i * 0.2,
+          }}
+        />
+      ))}
+    </>
+  );
+
   return (
     <>
       <AnimatePresence mode="wait">
@@ -79,51 +109,79 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
             key="curtain"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            animate={{ opacity: curtainOpen ? 1 : 1 }}
             transition={{ duration: 0.5 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-900 via-purple-900 to-gray-900"
           >
             {/* Starfield */}
-            <LayeredStars />
+            <motion.div
+              initial={{ opacity: 1 }}
+              animate={{ opacity: curtainOpen ? 0 : 1 }}
+              transition={{ duration: 0.7, delay: 0.7 }}
+              className="absolute inset-0 z-10 pointer-events-none"
+            >
+              <LayeredStars />
+            </motion.div>
 
             {/* Left Curtain */}
             <motion.div
               className="absolute top-0 left-0 h-full w-1/2 z-40 overflow-hidden"
               style={{
-                background: 'linear-gradient(to right, #1f1f3b 70%, #5b21b6 100%)',
-                boxShadow: '16px 0 48px 0 rgba(0,0,0,0.3)',
-                borderTopRightRadius: '32px',
-                borderBottomRightRadius: '32px',
-                borderRight: '2px solid rgba(255,255,255,0.1)',
+                background: getGradient('glass'),
+                boxShadow: '16px 0 64px 0 rgba(0,0,0,0.32)',
+                borderTopRightRadius: '36px',
+                borderBottomRightRadius: '36px',
+                borderRight: `2.5px solid ${colors.primary}`,
+                position: 'absolute',
               }}
               initial={{ x: 0 }}
               animate={curtainOpen ? { x: '-100%' } : { x: 0 }}
               transition={{ duration: 1.4, ease: [0.7, 0, 0.84, 0] }}
             >
+              {/* Glass highlight edge */}
               <motion.div
-                className="absolute top-0 left-0 w-1/4 h-full bg-white opacity-5 rotate-12"
-                animate={{ x: ['-100%', '150%'] }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute top-0 left-0 w-1/6 h-full bg-white opacity-10 pointer-events-none"
+                style={{ filter: 'blur(8px)' }}
+                animate={{ x: ['-100%', '200%'] }}
+                transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              {/* Light sweep */}
+              <motion.div
+                className="absolute top-0 left-0 w-1/4 h-full bg-gradient-to-r from-white/30 to-transparent opacity-30 pointer-events-none"
+                style={{ filter: 'blur(12px)' }}
+                animate={{ x: ['-120%', '180%'] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
               />
             </motion.div>
 
-            {/* Right Curtain */}
+            {/* Right Curtain (staggered open) */}
             <motion.div
               className="absolute top-0 right-0 h-full w-1/2 z-40 overflow-hidden"
               style={{
-                background: 'linear-gradient(to left, #1f1f3b 70%, #5b21b6 100%)',
-                boxShadow: '-16px 0 48px 0 rgba(0,0,0,0.3)',
-                borderTopLeftRadius: '32px',
-                borderBottomLeftRadius: '32px',
-                borderLeft: '2px solid rgba(255,255,255,0.1)',
+                background: getGradient('glass'),
+                boxShadow: '-16px 0 64px 0 rgba(0,0,0,0.32)',
+                borderTopLeftRadius: '36px',
+                borderBottomLeftRadius: '36px',
+                borderLeft: `2.5px solid ${colors.primary}`,
+                position: 'absolute',
               }}
               initial={{ x: 0 }}
               animate={curtainOpen ? { x: '100%' } : { x: 0 }}
-              transition={{ duration: 1.4, ease: [0.7, 0, 0.84, 0] }}
+              transition={{ duration: 1.4, delay: 0.12, ease: [0.7, 0, 0.84, 0] }}
             >
+              {/* Glass highlight edge */}
               <motion.div
-                className="absolute top-0 right-0 w-1/4 h-full bg-white opacity-5 rotate-12"
-                animate={{ x: ['150%', '-100%'] }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute top-0 right-0 w-1/6 h-full bg-white opacity-10 pointer-events-none"
+                style={{ filter: 'blur(8px)' }}
+                animate={{ x: ['120%', '-180%'] }}
+                transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              {/* Light sweep */}
+              <motion.div
+                className="absolute top-0 right-0 w-1/4 h-full bg-gradient-to-l from-white/30 to-transparent opacity-30 pointer-events-none"
+                style={{ filter: 'blur(12px)' }}
+                animate={{ x: ['120%', '-180%'] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
               />
             </motion.div>
 
@@ -136,14 +194,21 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 1.6, ease: 'easeInOut' }}
               >
-                <div className="relative w-20 h-20 flex items-center justify-center">
-                  {/* Aura */}
+                <div className="relative w-24 h-24 flex items-center justify-center">
+                  {/* Glowing animated ring */}
                   <motion.div
-                    className="absolute inset-0 rounded-full bg-purple-400 blur-3xl opacity-20 animate-pulse"
+                    className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{
+                      background: getGradient('primary'),
+                      filter: 'blur(18px)',
+                      opacity: 0.32,
+                    }}
                     initial={{ scale: 1 }}
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
-                    transition={{ duration: 1.2, repeat: Infinity }}
+                    animate={{ scale: [1, 1.13, 1], opacity: [0.32, 0.5, 0.32] }}
+                    transition={{ duration: 1.4, repeat: Infinity }}
                   />
+                  {/* Sparkles */}
+                  <Sparkles />
                   {/* Rocket */}
                   <motion.div
                     className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg flex items-center justify-center"
@@ -167,7 +232,6 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                     transition={{ duration: 0.3, repeat: Infinity }}
                   />
                 </div>
-
                 {/* Launching Text */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
