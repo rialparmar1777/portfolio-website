@@ -19,6 +19,33 @@ interface ExperienceItem {
 
 const experiences: ExperienceItem[] = [
   {
+    title: 'Operations Customer Expert I / Technical Support',
+    company: 'Teleperformance',
+    duration: 'June 2025 - Present',
+    location: 'Waterloo, Ontario, Canada',
+    description: [
+      'Triaged and resolved complex technical incidents involving streaming, connectivity, and device integration across Windows, macOS, Android, and iOS platforms',
+      'Performed advanced diagnostics on home and enterprise network environments, identifying issues related to router setup, DNS, IP conflicts, latency, and packet loss',
+      'Guided users through OS-level settings, software configuration, and security permissions to resolve compatibility and performance issues in real-time',
+      'Maintained accurate and structured case notes in Salesforce and internal ticketing tools, ensuring traceability and seamless escalations',
+      'De-escalated high-pressure situations by communicating solutions clearly to non-technical users, maintaining empathy and professionalism',
+      'Collaborated with backend engineering teams to flag recurring system anomalies, contributing to root cause analysis and long-term fixes'
+    ],
+    achievements: [
+      'Achieved a 98% CSAT score and exceeded FCR benchmarks for 4 consecutive months',
+      'Resolved 600+ technical cases with a 92% first-contact resolution rate',
+      'Developed internal troubleshooting flowcharts adopted by peers for faster diagnostics',
+      'Recognized in internal commendation program for "Excellence in Tech Support"'
+    ],
+    skills: [
+      'Technical Support', 'Network Troubleshooting', 'Salesforce', 'Windows/macOS Support',
+      'Customer Experience', 'DNS & Connectivity', 'Remote Desktop', 'Incident Documentation',
+      'Ticketing Systems', 'Communication', 'Problem Solving'
+    ],
+    icon: <FaHeadset className="w-5 h-5" />,
+    companyUrl: 'https://teleperformance.com'
+  },
+  {
     title: 'Customer Service Representative',
     company: 'Redberry Restaurants',
     duration: 'Mar 2023 - Present',
