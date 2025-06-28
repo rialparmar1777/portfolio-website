@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
-import { FaGithub, FaExternalLinkAlt, FaTimes, FaSearch, FaFilter, FaArrowLeft, FaArrowRight, FaChevronRight, FaCode, FaLaptop, FaMobile, FaGamepad, FaGlobe, FaStar, FaHeart, FaAward, FaArrowUp } from 'react-icons/fa';
+import { FaGithub, FaExternalLinkAlt, FaTimes, FaSearch, FaFilter, FaArrowLeft, FaArrowRight, FaChevronRight, FaCode, FaLaptop, FaMobile, FaGamepad, FaGlobe, FaStar, FaHeart, FaAward, FaArrowUp, FaRocket, FaEye, FaBrain } from 'react-icons/fa';
 import Image from 'next/image';
 import { useThemeStyles } from '../hooks/useThemeStyles';
 
@@ -130,7 +130,7 @@ const FallbackImage = ({ category }: { category: string }) => {
 };
 
 const MobileProjects = () => {
-  const { getTextColor, getBackgroundColor, getBorderColor } = useThemeStyles();
+  const { getTextColor, getBackgroundColor, getBorderColor, isDark } = useThemeStyles();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -144,6 +144,7 @@ const MobileProjects = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
+  const [floatingElements, setFloatingElements] = useState<Array<{id: number, x: number, y: number, delay: number, icon: React.ReactNode}>>([]);
   const projectsRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -158,6 +159,20 @@ const MobileProjects = () => {
   // Transform scroll progress to opacity and y position
   const opacity = useTransform(springProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   const y = useTransform(springProgress, [0, 0.2, 0.8, 1], [50, 0, 0, -50]);
+  const scale = useTransform(springProgress, [0, 0.5, 1], [0.9, 1, 0.95]);
+
+  // Enhanced floating elements
+  useEffect(() => {
+    const icons = [<FaCode />, <FaRocket />, <FaStar />, <FaHeart />, <FaBrain />, <FaEye />];
+    const elements = Array.from({ length: 10 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 2,
+      icon: icons[i % icons.length]
+    }));
+    setFloatingElements(elements);
+  }, []);
 
   // Enhanced image error handling
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
@@ -202,95 +217,98 @@ const MobileProjects = () => {
     };
   }, [scrollProgress]);
 
-  // Enhanced project filtering
+  // Auto-advance featured projects
   useEffect(() => {
-    let filtered = [...projects];
+    const timer = setInterval(() => {
+      setActiveFeaturedIndex((prev) => (prev + 1) % Math.min(4, filteredProjects.length));
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [filteredProjects.length]);
+
+  // Filter projects based on category and search
+  useEffect(() => {
+    let filtered = projects;
     
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(project => project.category === selectedCategory);
     }
     
     if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(project => 
-        project.title.toLowerCase().includes(query) || 
-        project.description.toLowerCase().includes(query) ||
-        project.technologies.some(tech => tech.toLowerCase().includes(query))
+      filtered = filtered.filter(project =>
+        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.technologies.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
     
-    // Sort projects by category for better organization
-    filtered.sort((a, b) => {
-      if (a.category === b.category) return 0;
-      return a.category! > b.category! ? 1 : -1;
-    });
-    
     setFilteredProjects(filtered);
   }, [selectedCategory, searchQuery]);
-  
-  // Auto-rotate featured projects
-  useEffect(() => {
-    if (activeTab === 'featured') {
-      const interval = setInterval(() => {
-        setActiveFeaturedIndex((prev) => (prev + 1) % Math.min(3, filteredProjects.length));
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [activeTab, filteredProjects.length]);
-  
-  // Enhanced scroll handling
-  useEffect(() => {
-    const handleScroll = () => {
-      if (projectsRef.current) {
-        const position = projectsRef.current.scrollTop;
-        setScrollPosition(position);
-        setShowScrollTop(position > 300);
-        
-        // Update scroll progress
-        const { scrollHeight, clientHeight } = projectsRef.current;
-        const progress = (position / (scrollHeight - clientHeight)) * 100;
-        setScrollProgress(progress);
-        setScrollDirection(progress > scrollProgress ? 'down' : 'up');
-      }
-    };
-    
-    if (projectsRef.current) {
-      projectsRef.current.addEventListener('scroll', handleScroll);
-      return () => {
-        if (projectsRef.current) {
-          projectsRef.current.removeEventListener('scroll', handleScroll);
-        }
-      };
-    }
-  }, []);
-  
+
   const scrollToTop = () => {
-    if (projectsRef.current) {
-      projectsRef.current.scrollTo({
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
     }
   };
 
-  // Enhanced modal handling
   const openProjectModal = (project: Project) => {
     setSelectedProject(project);
     setIsModalOpen(true);
-    // Prevent background scrolling when modal is open
-    document.body.style.overflow = 'hidden';
   };
 
   const closeProjectModal = () => {
     setIsModalOpen(false);
-    setSelectedProject(null);
-    // Restore background scrolling
-    document.body.style.overflow = 'auto';
+    setTimeout(() => setSelectedProject(null), 300);
   };
+
+  const floatingVariants = {
+    animate: {
+      y: [0, -25, 0],
+      x: [0, 12, 0],
+      rotate: [0, 180, 360],
+      scale: [1, 1.15, 1],
+      transition: {
+        duration: 7,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0, scale: 0.9 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        damping: 15,
+        stiffness: 100,
+        duration: 0.6
+      }
+    }
+  };
+
+  const featuredProjects = filteredProjects.slice(0, 4);
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header with scroll-based reveal */}
+      {/* Enhanced Header */}
       <motion.div 
         className="sticky top-0 z-10 px-4 py-3 perspective-1000"
         style={{ 
@@ -300,40 +318,20 @@ const MobileProjects = () => {
           transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
           transition: 'transform 0.1s ease-out',
           opacity,
-          y
+          y,
+          scale
         }}
       >
-        <div className="flex items-center justify-between mb-3">
-          <motion.h2 
-            className="text-xl font-bold"
-            style={{ color: getTextColor('primary') }}
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            Projects
-          </motion.h2>
-          <motion.button
-            onClick={() => setIsSearchExpanded(!isSearchExpanded)}
-            className="p-2 rounded-full"
-            style={{ 
-              background: getBackgroundColor('default'),
-              color: getTextColor('primary'),
-              border: `1px solid ${getBorderColor('light')}`,
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)'
-            }}
-            whileHover={{ 
-              scale: 1.1,
-              backgroundColor: getTextColor('primary'),
-              color: getBackgroundColor('default')
-            }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <FaSearch size={16} />
-          </motion.button>
-        </div>
+        <motion.h2 
+          className="text-xl font-bold mb-2"
+          style={{ color: getTextColor('primary') }}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          Projects
+        </motion.h2>
 
-        {/* Scroll progress indicator */}
+        {/* Enhanced Scroll progress indicator */}
         <motion.div 
           className="h-1 rounded-full overflow-hidden mb-3"
           style={{ background: getBackgroundColor('default') }}
@@ -347,296 +345,428 @@ const MobileProjects = () => {
             transition={{ duration: 0.3 }}
           />
         </motion.div>
-        
-          {isSearchExpanded && (
-            <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-              className="mb-3"
+
+        {/* Enhanced Search and Filter */}
+        <div className="flex items-center gap-2 mb-3">
+          <motion.div
+            className={`flex-1 transition-all duration-300 ${
+              isSearchExpanded ? 'w-full' : 'w-12'
+            }`}
+            whileHover={{ scale: 1.02 }}
+          >
+            <motion.button
+              onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+              className="w-full p-2 rounded-lg flex items-center gap-2"
+              style={{
+                background: getBackgroundColor('glass'),
+                border: `1px solid ${getBorderColor('light')}`,
+                color: getTextColor('secondary')
+              }}
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
+              whileTap={{ scale: 0.95 }}
             >
-            <motion.input
+              <FaSearch className="w-4 h-4" />
+              {isSearchExpanded && (
+                <motion.input
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: '100%', opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
                   type="text"
                   placeholder="Search projects..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg"
-                  style={{ 
-                    background: getBackgroundColor('default'),
-                    color: getTextColor('primary'),
-                    border: `1px solid ${getBorderColor('light')}`,
-                  }}
-              whileFocus={{ 
-                scale: 1.02,
-                boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.2)'
-              }}
-              transition={{ type: "spring", stiffness: 300 }}
+                  className="flex-1 bg-transparent outline-none text-sm"
+                  style={{ color: getTextColor('primary') }}
                 />
-            </motion.div>
-          )}
-        
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+              )}
+            </motion.button>
+          </motion.div>
+
           <motion.button
-            onClick={() => setActiveTab('featured')}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap flex items-center gap-1 ${
-              activeTab === 'featured'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
-            }`}
-            whileHover={{ scale: 1.05 }}
+            onClick={() => setSelectedCategory(selectedCategory === 'all' ? 'Web Application' : 'all')}
+            className="p-2 rounded-lg flex items-center gap-1"
+            style={{
+              background: selectedCategory !== 'all' 
+                ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' 
+                : getBackgroundColor('glass'),
+              border: `1px solid ${getBorderColor('light')}`,
+              color: selectedCategory !== 'all' ? 'white' : getTextColor('secondary')
+            }}
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}
             whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300 }}
           >
-            <motion.div
-              animate={{
-                rotate: activeTab === 'featured' ? [0, 360] : 0,
-              }}
-              transition={{
-                duration: 1,
-                ease: "easeInOut",
-              }}
-          >
-            <FaStar size={14} />
-            </motion.div>
-            Featured
-          </motion.button>
-          <motion.button
-            onClick={() => setActiveTab('all')}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap flex items-center gap-1 ${
-              activeTab === 'all'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <FaCode size={14} />
-            All Projects
+            <FaFilter className="w-4 h-4" />
           </motion.button>
         </div>
+
+        {/* Enhanced Category Filter */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {['all', ...categories].map((category) => (
+            <motion.button
+              key={category}
+              onClick={() => setSelectedCategory(category || 'all')}
+              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex items-center gap-1 ${
+                selectedCategory === category
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+              }`}
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              {category !== 'all' && categoryIcons[category as keyof typeof categoryIcons]}
+              {category === 'all' ? 'All' : category}
+            </motion.button>
+          ))}
+        </div>
       </motion.div>
-      
-      {/* Projects grid with scroll-based reveal */}
+
+      {/* Enhanced Content */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto px-4 py-4"
+        className="flex-1 overflow-y-auto px-4 py-4 relative"
       >
-          <motion.div 
-          className="grid grid-cols-1 gap-4"
-              style={{ 
-            transform: `rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg)`,
-            transition: 'transform 0.1s ease-out'
-          }}
+        {/* Floating Elements */}
+        {floatingElements.map((element) => (
+          <motion.div
+            key={element.id}
+            className="absolute pointer-events-none"
+            style={{
+              left: `${element.x}%`,
+              top: `${element.y}%`,
+              color: isDark ? 'rgba(147, 51, 234, 0.2)' : 'rgba(147, 51, 234, 0.1)',
+            }}
+            variants={floatingVariants}
+            animate="animate"
+            initial={{ opacity: 0, scale: 0 }}
+            transition={{ delay: element.delay }}
+          >
+            {element.icon}
+          </motion.div>
+        ))}
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="relative z-10"
         >
-          {filteredProjects.map((project, index) => {
-            // Calculate individual item's scroll progress
-            const itemScrollProgress = useScroll({
-              target: containerRef,
-              offset: ["start end", "end start"]
-            });
-
-            const itemSpringProgress = useSpring(itemScrollProgress.scrollYProgress, springConfig);
-            const itemOpacity = useTransform(itemSpringProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-            const itemY = useTransform(itemSpringProgress, [0, 0.2, 0.8, 1], [50, 0, 0, -50]);
-
-            return (
+          {/* Featured Projects Carousel */}
+          {activeTab === 'featured' && featuredProjects.length > 0 && (
             <motion.div
-                key={index}
-                className="relative overflow-hidden rounded-2xl perspective-1000"
-              style={{ 
-                background: getBackgroundColor('paper'),
-                border: `1px solid ${getBorderColor('light')}`,
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-                  transform: `rotateX(${mousePosition.y * 3}deg) rotateY(${mousePosition.x * 3}deg)`,
-                  transition: 'transform 0.1s ease-out',
-                  opacity: itemOpacity,
-                  y: itemY
-              }}
-                whileHover={{ 
-                  scale: 1.02,
-                  boxShadow: '0 12px 28px rgba(0, 0, 0, 0.15)',
-                  transform: `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg) scale(1.02)`
+              variants={itemVariants}
+              className="mb-8"
+            >
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: getTextColor('primary') }}>
+                <FaStar className="text-yellow-500" />
+                Featured Projects
+              </h3>
+              
+              <motion.div
+                className="relative h-48 rounded-2xl overflow-hidden"
+                style={{
+                  background: getBackgroundColor('glass'),
+                  border: `1px solid ${getBorderColor('light')}`,
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
                 }}
-              whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.02, y: -5 }}
+              >
+                {featuredProjects.map((project, index) => (
+                  <motion.div
+                    key={project.title}
+                    className="absolute inset-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ 
+                      opacity: index === activeFeaturedIndex ? 1 : 0,
+                      scale: index === activeFeaturedIndex ? 1 : 0.9
+                    }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <div className="relative w-full h-full">
+                      {!imageErrors[project.title] ? (
+                        <Image
+                          src={project.image}
+                          alt={project.title}
+                          fill
+                          className="object-cover"
+                          onError={() => handleImageError(project.title)}
+                          onLoad={() => handleImageLoad(project.title)}
+                          onLoadStart={() => handleImageLoadStart(project.title)}
+                        />
+                      ) : (
+                        <FallbackImage category={project.category || 'Web Application'} />
+                      )}
+                      
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <h4 className="text-white font-semibold mb-1">{project.title}</h4>
+                        <p className="text-white/80 text-xs mb-2 line-clamp-2">{project.description}</p>
+                        <div className="flex items-center gap-2">
+                          <motion.button
+                            onClick={() => openProjectModal(project)}
+                            className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            View Details
+                          </motion.button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+                
+                {/* Navigation Dots */}
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+                  {featuredProjects.map((_, index) => (
+                    <motion.button
+                      key={index}
+                      onClick={() => setActiveFeaturedIndex(index)}
+                      className={`w-2 h-2 rounded-full ${
+                        index === activeFeaturedIndex ? 'bg-white' : 'bg-white/50'
+                      }`}
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.8 }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* All Projects Grid */}
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-1 gap-4"
+          >
+            {filteredProjects.map((project, index) => (
+              <motion.div
+                key={project.title}
+                className="group cursor-pointer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -5 }}
                 onClick={() => openProjectModal(project)}
               >
-                <div className="relative h-48">
-                  {imageErrors[project.title] ? (
-                    <FallbackImage category={project.category || "Web Application"} />
+                <div 
+                  className="relative h-48 rounded-2xl overflow-hidden"
+                  style={{
+                    background: getBackgroundColor('glass'),
+                    border: `1px solid ${getBorderColor('light')}`,
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+                  }}
+                >
+                  {!imageErrors[project.title] ? (
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-110"
+                      onError={() => handleImageError(project.title)}
+                      onLoad={() => handleImageLoad(project.title)}
+                      onLoadStart={() => handleImageLoadStart(project.title)}
+                    />
                   ) : (
-                    <>
-                      {imageLoading[project.title] && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                          <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin border-t-transparent"></div>
-                        </div>
-                      )}
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        priority={index < 3}
-                        onError={() => handleImageError(project.title)}
-                        onLoad={() => handleImageLoad(project.title)}
-                        onLoadStart={() => handleImageLoadStart(project.title)}
-                      />
-                    </>
+                    <FallbackImage category={project.category || 'Web Application'} />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <motion.h3 
-                      className="text-lg font-semibold text-white"
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      {project.title}
-                    </motion.h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      {categoryIcons[project.category!]}
-                      <span className="text-sm text-white/80">{project.category}</span>
+                  
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  <div className="absolute top-3 right-3">
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm">
+                      {categoryIcons[project.category || 'Web Application']}
+                      <span className="text-white text-xs">{project.category}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <h4 className="text-white font-semibold mb-2">{project.title}</h4>
+                    <p className="text-white/80 text-sm mb-3 line-clamp-2">{project.description}</p>
+                    <div className="flex items-center gap-2">
+                      <motion.a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FaGithub className="w-4 h-4 text-white" />
+                      </motion.a>
+                      {project.liveUrl && (
+                        <motion.a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 bg-white/20 backdrop-blur-sm rounded-full"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <FaExternalLinkAlt className="w-4 h-4 text-white" />
+                        </motion.a>
+                      )}
                     </div>
                   </div>
                 </div>
               </motion.div>
-            );
-          })}
-            </motion.div>
-        </div>
-        
-      {/* Project modal with scroll-based reveal */}
+            ))}
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Enhanced Scroll to Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 p-3 rounded-full shadow-lg z-50"
+            style={{
+              background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+              color: 'white'
+            }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FaArrowUp className="w-5 h-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Enhanced Project Modal */}
       <AnimatePresence>
         {isModalOpen && selectedProject && (
           <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: 'rgba(0, 0, 0, 0.5)' }}
-            onClick={closeProjectModal}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-2xl rounded-2xl overflow-hidden"
-              style={{ 
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={closeProjectModal}
+            />
+            
+            <motion.div
+              className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl"
+              style={{
                 background: getBackgroundColor('paper'),
-              border: `1px solid ${getBorderColor('light')}`,
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
+                border: `1px solid ${getBorderColor('light')}`,
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
               }}
-              onClick={e => e.stopPropagation()}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
             >
-              <div className="relative h-64">
-                {imageErrors[selectedProject.title] ? (
-                  <FallbackImage category={selectedProject.category || "Web Application"} />
+              <div className="relative h-48">
+                {!imageErrors[selectedProject.title] ? (
+                  <Image
+                    src={selectedProject.image}
+                    alt={selectedProject.title}
+                    fill
+                    className="object-cover rounded-t-2xl"
+                  />
                 ) : (
-                  <>
-                    {imageLoading[selectedProject.title] && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                        <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin border-t-transparent"></div>
-                      </div>
-                    )}
-                <Image
-                  src={selectedProject.image}
-                  alt={selectedProject.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      priority
-                      onError={() => handleImageError(selectedProject.title)}
-                      onLoad={() => handleImageLoad(selectedProject.title)}
-                      onLoadStart={() => handleImageLoadStart(selectedProject.title)}
-                    />
-                  </>
+                  <FallbackImage category={selectedProject.category || 'Web Application'} />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <button
+                
+                <motion.button
                   onClick={closeProjectModal}
-                  className="absolute top-4 right-4 p-2 rounded-full"
-                  style={{ 
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    color: 'white'
-                  }}
+                  className="absolute top-4 right-4 p-2 rounded-full bg-black/50 backdrop-blur-sm text-white"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <FaTimes className="w-4 h-4" />
-                </button>
+                </motion.button>
               </div>
+              
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2" style={{ color: getTextColor('primary') }}>
+                <h3 className="text-xl font-bold mb-2" style={{ color: getTextColor('primary') }}>
                   {selectedProject.title}
                 </h3>
                 <p className="text-sm mb-4" style={{ color: getTextColor('secondary') }}>
                   {selectedProject.description}
                 </p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {selectedProject.technologies.map((tech, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 text-sm rounded-full"
-                      style={{ 
-                        background: 'rgba(0, 0, 0, 0.1)',
-                        color: getTextColor('secondary')
-                      }}
-                    >
-                      {tech}
-                    </span>
-                  ))}
+                
+                <div className="mb-4">
+                  <h4 className="font-semibold mb-2" style={{ color: getTextColor('primary') }}>
+                    Technologies
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProject.technologies.map((tech, index) => (
+                      <motion.span
+                        key={tech}
+                        className="px-2 py-1 text-xs rounded-full"
+                        style={{
+                          background: getBackgroundColor('glass'),
+                          color: getTextColor('secondary'),
+                          border: `1px solid ${getBorderColor('light')}`
+                        }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        {tech}
+                      </motion.span>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex gap-4">
-                  <a
+                
+                <div className="flex gap-3">
+                  <motion.a
                     href={selectedProject.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 rounded-full"
-                    style={{ 
-                      background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-                      color: 'white'
+                    className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-medium"
+                    style={{
+                      background: getBackgroundColor('glass'),
+                      color: getTextColor('primary'),
+                      border: `1px solid ${getBorderColor('light')}`
                     }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     <FaGithub className="w-4 h-4" />
-                    <span>GitHub</span>
-                  </a>
+                    GitHub
+                  </motion.a>
+                  
                   {selectedProject.liveUrl && (
-                    <a
+                    <motion.a
                       href={selectedProject.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 rounded-full"
-                      style={{ 
-                        background: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+                      className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-medium"
+                      style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
                         color: 'white'
                       }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       <FaExternalLinkAlt className="w-4 h-4" />
-                      <span>Live Demo</span>
-                    </a>
+                      Live Demo
+                    </motion.a>
                   )}
                 </div>
               </div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Scroll to Top Button */}
-      <AnimatePresence>
-        {showScrollTop && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            onClick={scrollToTop}
-            className="fixed bottom-4 right-4 p-3 rounded-full"
-            style={{ 
-              background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-              color: 'white',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-            }}
-          >
-            <FaArrowUp className="w-5 h-5" />
-          </motion.button>
         )}
       </AnimatePresence>
     </div>

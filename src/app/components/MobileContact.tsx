@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring, useScroll, useTransform as useTransformScroll } from 'framer-motion';
 import Link from 'next/link';
-import { FaGithub, FaLinkedin, FaInstagram, FaPaperPlane, FaEnvelope, FaUser, FaAt, FaHeading, FaComment, FaArrowUp, FaCheck, FaSpinner, FaHeart, FaStar, FaRocket } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaInstagram, FaPaperPlane, FaEnvelope, FaUser, FaAt, FaHeading, FaComment, FaArrowUp, FaCheck, FaSpinner, FaHeart, FaStar, FaRocket, FaCode, FaBrain, FaEye } from 'react-icons/fa';
 import emailjs from '@emailjs/browser';
 import { toast } from 'react-hot-toast';
 import { useThemeStyles } from '../hooks/useThemeStyles';
@@ -20,6 +20,7 @@ const MobileContact = () => {
   const [activeField, setActiveField] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [floatingElements, setFloatingElements] = useState<Array<{id: number, x: number, y: number, delay: number, icon: React.ReactNode}>>([]);
   const { getTextColor, getBackgroundColor, getBorderColor, isDark } = useThemeStyles();
   const formRef = useRef<HTMLFormElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,6 +30,19 @@ const MobileContact = () => {
     if (process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY) {
       emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY);
     }
+  }, []);
+
+  // Enhanced floating elements
+  useEffect(() => {
+    const icons = [<FaCode />, <FaRocket />, <FaStar />, <FaHeart />, <FaBrain />, <FaEye />];
+    const elements = Array.from({ length: 8 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 2,
+      icon: icons[i % icons.length]
+    }));
+    setFloatingElements(elements);
   }, []);
 
   // Handle scroll position for scroll-to-top button
@@ -49,6 +63,19 @@ const MobileContact = () => {
       };
     }
   }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const springConfig = { stiffness: 100, damping: 30, mass: 0.8 };
+  const springProgress = useSpring(scrollYProgress, springConfig);
+
+  // Transform scroll progress to opacity and y position
+  const opacity = useTransform(springProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const y = useTransform(springProgress, [0, 0.2, 0.8, 1], [50, 0, 0, -50]);
+  const scale = useTransform(springProgress, [0, 0.5, 1], [0.9, 1, 0.95]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,248 +195,136 @@ const MobileContact = () => {
     }
   ];
 
-  // Decorative elements for the background
-  const decorativeElements = [
-    { icon: <FaHeart className="w-4 h-4" />, color: isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)', top: '10%', left: '5%' },
-    { icon: <FaStar className="w-4 h-4" />, color: isDark ? 'rgba(234, 179, 8, 0.1)' : 'rgba(234, 179, 8, 0.05)', top: '15%', right: '10%' },
-    { icon: <FaRocket className="w-4 h-4" />, color: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)', bottom: '20%', left: '15%' },
-    { icon: <FaPaperPlane className="w-4 h-4" />, color: isDark ? 'rgba(147, 51, 234, 0.1)' : 'rgba(147, 51, 234, 0.05)', bottom: '10%', right: '5%' }
-  ];
+  const floatingVariants = {
+    animate: {
+      y: [0, -30, 0],
+      x: [0, 15, 0],
+      rotate: [0, 180, 360],
+      scale: [1, 1.2, 1],
+      transition: {
+        duration: 8,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0, scale: 0.9 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        damping: 15,
+        stiffness: 100,
+        duration: 0.6
+      }
+    }
+  };
 
   return (
     <div 
       ref={containerRef}
       className="h-full flex flex-col overflow-y-auto relative"
     >
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {decorativeElements.map((element, index) => (
+      {/* Enhanced Header */}
+      <motion.div 
+        className="sticky top-0 z-10 px-4 py-3 perspective-1000"
+        style={{ 
+          background: getBackgroundColor('paper'),
+          borderBottom: `1px solid ${getBorderColor('light')}`,
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+          opacity,
+          y,
+          scale
+        }}
+      >
+        <motion.h2 
+          className="text-xl font-bold mb-2"
+          style={{ color: getTextColor('primary') }}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          Get In Touch
+        </motion.h2>
+        <p className="text-sm" style={{ color: getTextColor('secondary') }}>
+          Let's work together on your next project
+        </p>
+      </motion.div>
+
+      {/* Enhanced Content */}
+      <div className="flex-1 px-4 py-4 relative">
+        {/* Floating Elements */}
+        {floatingElements.map((element) => (
           <motion.div
-            key={index}
-            className="absolute"
-            style={{ 
-              top: element.top, 
-              left: element.left, 
-              right: element.right,
-              bottom: element.bottom,
-              color: element.color
+            key={element.id}
+            className="absolute pointer-events-none"
+            style={{
+              left: `${element.x}%`,
+              top: `${element.y}%`,
+              color: isDark ? 'rgba(147, 51, 234, 0.2)' : 'rgba(147, 51, 234, 0.1)',
             }}
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ 
-              opacity: 1, 
-              scale: 1,
-              rotate: [0, 10, -10, 0]
-            }}
-            transition={{ 
-              duration: 2 + index * 0.5, 
-              repeat: Infinity, 
-              repeatType: "reverse",
-              delay: index * 0.2
-            }}
+            variants={floatingVariants}
+            animate="animate"
+            initial={{ opacity: 0, scale: 0 }}
+            transition={{ delay: element.delay }}
           >
             {element.icon}
           </motion.div>
         ))}
-      </div>
 
-      {/* Header */}
-      <motion.div 
-        className="sticky top-0 z-10 px-4 py-5"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        style={{ 
-          background: getBackgroundColor('paper'),
-          borderBottom: `1px solid ${getBorderColor('light')}`,
-          boxShadow: isDark 
-            ? '0 4px 20px rgba(0, 0, 0, 0.3)' 
-            : '0 4px 20px rgba(0, 0, 0, 0.05)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)'
-        }}
-      >
-        <div className="relative">
-          <motion.div
-            className="absolute -top-2 -left-2 w-16 h-16 rounded-full opacity-20"
-            style={{ 
-              background: 'radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
-              filter: 'blur(10px)'
-            }}
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.2, 0.3, 0.2]
-            }}
-            transition={{ 
-              duration: 4, 
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text relative z-10">
-            Let's Connect
-          </h2>
-          <p className="text-sm text-center mt-2" style={{ color: getTextColor('secondary') }}>
-            Have an exciting project in mind? I'd love to hear about it!
-          </p>
-        </div>
-      </motion.div>
-      
-      {/* Content */}
-      <div className="flex-1 px-4 py-4 space-y-6 relative z-10">
-        {/* Social Links */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="grid grid-cols-2 gap-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="relative z-10 space-y-6"
         >
-          {socialLinks.map((link, index) => (
-            <motion.div
-              key={link.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: isDark 
-                  ? `0 10px 25px -5px ${link.accentColor}` 
-                  : `0 10px 25px -5px ${link.accentColor}`
-              }}
-              whileTap={{ scale: 0.98 }}
-              onHoverStart={() => setHoveredLink(link.name)}
-              onHoverEnd={() => setHoveredLink(null)}
-              className="relative"
-            >
-              <Link
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block"
-              >
-                <div 
-                  className="p-4 rounded-xl flex items-center gap-3 h-full relative overflow-hidden"
-                  style={{ 
-                    background: getBackgroundColor('paper'),
-                    border: `1px solid ${getBorderColor('light')}`,
-                    boxShadow: isDark 
-                      ? '0 4px 12px rgba(0, 0, 0, 0.2)' 
-                      : '0 4px 12px rgba(0, 0, 0, 0.05)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  {/* Glow effect on hover */}
-                  <motion.div
-                    className="absolute inset-0 opacity-0"
-                    style={{ 
-                      background: `radial-gradient(circle at center, ${link.accentColor} 0%, transparent 70%)`,
-                      zIndex: 0
-                    }}
-                    animate={{ 
-                      opacity: hoveredLink === link.name ? 0.5 : 0
-                    }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  
-                  <div 
-                    className={`p-3 rounded-lg bg-gradient-to-br ${link.color} text-white relative z-10`}
-                    style={{
-                      boxShadow: hoveredLink === link.name 
-                        ? `0 0 15px ${link.accentColor}` 
-                        : 'none',
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
-                    {link.icon}
-                  </div>
-                  <div className="relative z-10">
-                    <h3 className="text-sm font-semibold" style={{ color: getTextColor('primary') }}>
-                      {link.name}
-                    </h3>
-                    <p className="text-xs" style={{ color: getTextColor('secondary') }}>
-                      {link.description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Contact Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="relative"
-        >
-          {/* Decorative background for form */}
+          {/* Enhanced Contact Form */}
           <motion.div
-            className="absolute -inset-1 rounded-xl opacity-30"
-            style={{ 
-              background: 'linear-gradient(45deg, rgba(59, 130, 246, 0.5), rgba(147, 51, 234, 0.5))',
-              filter: 'blur(10px)',
-              zIndex: -1
-            }}
-            animate={{ 
-              opacity: [0.2, 0.3, 0.2],
-              scale: [1, 1.02, 1]
-            }}
-            transition={{ 
-              duration: 5, 
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          
-          <div 
-            className="p-5 rounded-xl relative"
-            style={{ 
-              background: getBackgroundColor('paper'),
+            variants={itemVariants}
+            className="p-6 rounded-2xl backdrop-blur-sm"
+            style={{
+              background: getBackgroundColor('glass'),
               border: `1px solid ${getBorderColor('light')}`,
-              boxShadow: isDark 
-                ? '0 8px 32px rgba(0, 0, 0, 0.2)' 
-                : '0 8px 32px rgba(0, 0, 0, 0.05)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)'
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
             }}
+            whileHover={{ scale: 1.02, y: -5 }}
           >
-            <div className="flex items-center gap-2 mb-4">
-              <div className="p-2 rounded-lg" style={{ background: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)' }}>
-                <FaPaperPlane className="w-4 h-4" style={{ color: isDark ? '#60A5FA' : '#3B82F6' }} />
-              </div>
-              <h3 className="text-lg font-semibold" style={{ color: getTextColor('primary') }}>
-                Send me a message
-              </h3>
-            </div>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: getTextColor('primary') }}>
+              <FaPaperPlane className="text-blue-500" />
+              Send Message
+            </h3>
             
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
               {formFields.map((field) => (
-                <div key={field.name}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="p-1.5 rounded-md" style={{ background: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)' }}>
-                      {field.icon}
+                <motion.div
+                  key={field.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  <label className="block text-sm font-medium mb-2" style={{ color: getTextColor('primary') }}>
+                    {field.label}
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <div style={{ color: getTextColor('secondary') }}>
+                        {field.icon}
+                      </div>
                     </div>
-                    <label className="text-sm font-medium" style={{ color: getTextColor('primary') }}>
-                      {field.label}
-                    </label>
-                  </div>
-                  <div 
-                    className="relative"
-                    style={{
-                      border: `1px solid ${activeField === field.name 
-                        ? isDark ? 'rgba(59, 130, 246, 0.5)' : 'rgba(59, 130, 246, 0.3)' 
-                        : getBorderColor('light')}`,
-                      borderRadius: '0.75rem',
-                      boxShadow: activeField === field.name
-                        ? isDark 
-                          ? '0 0 0 2px rgba(59, 130, 246, 0.2), 0 4px 12px rgba(0, 0, 0, 0.2)' 
-                          : '0 0 0 2px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05)'
-                        : isDark 
-                          ? '0 4px 12px rgba(0, 0, 0, 0.2)' 
-                          : '0 4px 12px rgba(0, 0, 0, 0.05)',
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
                     <input
                       type={field.type}
                       name={field.name}
@@ -417,176 +332,187 @@ const MobileContact = () => {
                       onChange={handleChange}
                       onFocus={() => handleFocus(field.name)}
                       onBlur={handleBlur}
-                      required
                       placeholder={field.placeholder}
-                      className="w-full px-4 py-3 rounded-lg outline-none"
-                      style={{ 
+                      className="w-full pl-10 pr-4 py-3 rounded-lg text-sm transition-all duration-300"
+                      style={{
                         background: getBackgroundColor('default'),
                         color: getTextColor('primary'),
+                        border: `2px solid ${activeField === field.name ? '#3b82f6' : getBorderColor('light')}`,
+                        boxShadow: activeField === field.name ? '0 0 0 3px rgba(59, 130, 246, 0.1)' : 'none'
                       }}
+                      required
                     />
-                    {activeField === field.name && (
-                      <motion.div
-                        className="absolute inset-0 rounded-lg pointer-events-none"
-                        style={{ 
-                          border: `1px solid ${isDark ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.2)'}`,
-                          boxShadow: `0 0 10px ${isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)'}`
-                        }}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                      />
-                    )}
                   </div>
-                </div>
+                </motion.div>
               ))}
               
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="p-1.5 rounded-md" style={{ background: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)' }}>
-                    <FaComment className="w-4 h-4" />
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <label className="block text-sm font-medium mb-2" style={{ color: getTextColor('primary') }}>
+                  Message
+                </label>
+                <div className="relative">
+                  <div className="absolute top-3 left-3 flex items-start pointer-events-none">
+                    <div style={{ color: getTextColor('secondary') }}>
+                      <FaComment className="w-4 h-4" />
+                    </div>
                   </div>
-                  <label className="text-sm font-medium" style={{ color: getTextColor('primary') }}>
-                    Message
-                  </label>
-                </div>
-                <div 
-                  className="relative"
-                  style={{
-                    border: `1px solid ${activeField === 'message' 
-                      ? isDark ? 'rgba(59, 130, 246, 0.5)' : 'rgba(59, 130, 246, 0.3)' 
-                      : getBorderColor('light')}`,
-                    borderRadius: '0.75rem',
-                    boxShadow: activeField === 'message'
-                      ? isDark 
-                        ? '0 0 0 2px rgba(59, 130, 246, 0.2), 0 4px 12px rgba(0, 0, 0, 0.2)' 
-                        : '0 0 0 2px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05)'
-                      : isDark 
-                        ? '0 4px 12px rgba(0, 0, 0, 0.2)' 
-                        : '0 4px 12px rgba(0, 0, 0, 0.05)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
                   <textarea
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
                     onFocus={() => handleFocus('message')}
                     onBlur={handleBlur}
-                    required
-                    placeholder="Your message here..."
-                    rows={5}
-                    className="w-full px-4 py-3 rounded-lg resize-none outline-none"
-                    style={{ 
+                    placeholder="Tell me about your project..."
+                    rows={4}
+                    className="w-full pl-10 pr-4 py-3 rounded-lg text-sm resize-none transition-all duration-300"
+                    style={{
                       background: getBackgroundColor('default'),
                       color: getTextColor('primary'),
+                      border: `2px solid ${activeField === 'message' ? '#3b82f6' : getBorderColor('light')}`,
+                      boxShadow: activeField === 'message' ? '0 0 0 3px rgba(59, 130, 246, 0.1)' : 'none'
                     }}
+                    required
                   />
-                  {activeField === 'message' && (
-                    <motion.div
-                      className="absolute inset-0 rounded-lg pointer-events-none"
-                      style={{ 
-                        border: `1px solid ${isDark ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.2)'}`,
-                        boxShadow: `0 0 10px ${isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)'}`
-                      }}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.2 }}
-                    />
-                  )}
                 </div>
-              </div>
+              </motion.div>
               
-              <div className="pt-2">
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full px-6 py-3 rounded-lg text-white font-medium flex items-center justify-center gap-2 relative overflow-hidden"
-                  style={{ 
-                    background: isSuccess 
-                      ? 'linear-gradient(to right, #10B981, #059669)' 
-                      : 'linear-gradient(to right, #3B82F6, #8B5CF6)',
-                    boxShadow: isDark 
-                      ? '0 4px 12px rgba(0, 0, 0, 0.3)' 
-                      : '0 4px 12px rgba(0, 0, 0, 0.1)'
+              <motion.button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3 px-6 rounded-lg font-medium text-white flex items-center justify-center gap-2 transition-all duration-300"
+                style={{
+                  background: isSubmitting 
+                    ? 'linear-gradient(135deg, #6b7280, #9ca3af)' 
+                    : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                }}
+                whileHover={!isSubmitting ? { scale: 1.02, y: -2 } : {}}
+                whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <FaSpinner className="w-4 h-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <FaPaperPlane className="w-4 h-4" />
+                    Send Message
+                  </>
+                )}
+              </motion.button>
+            </form>
+          </motion.div>
+
+          {/* Enhanced Social Links */}
+          <motion.div
+            variants={itemVariants}
+            className="p-6 rounded-2xl backdrop-blur-sm"
+            style={{
+              background: getBackgroundColor('glass'),
+              border: `1px solid ${getBorderColor('light')}`,
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+            }}
+            whileHover={{ scale: 1.02, y: -5 }}
+          >
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: getTextColor('primary') }}>
+              <FaRocket className="text-purple-500" />
+              Connect With Me
+            </h3>
+            
+            <div className="grid grid-cols-2 gap-3">
+              {socialLinks.map((link, index) => (
+                <motion.a
+                  key={link.name}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-4 rounded-xl flex flex-col items-center gap-2 transition-all duration-300"
+                  style={{
+                    background: getBackgroundColor('default'),
+                    border: `1px solid ${getBorderColor('light')}`,
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)'
                   }}
                   whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: isDark 
-                      ? '0 6px 16px rgba(0, 0, 0, 0.4)' 
-                      : '0 6px 16px rgba(0, 0, 0, 0.15)'
+                    scale: 1.05, 
+                    y: -5,
+                    boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)'
                   }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.95 }}
+                  onHoverStart={() => setHoveredLink(link.name)}
+                  onHoverEnd={() => setHoveredLink(null)}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
                 >
-                  {/* Button glow effect */}
                   <motion.div
-                    className="absolute inset-0 opacity-0"
-                    style={{ 
-                      background: 'radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%)',
-                      zIndex: 1
-                    }}
-                    animate={{ 
-                      opacity: isSubmitting || isSuccess ? 0 : [0, 0.5, 0],
-                      scale: [1, 1.5, 1]
-                    }}
-                    transition={{ 
-                      duration: 2, 
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                  
-                  <span className="relative z-10">
-                    {isSubmitting ? (
-                      <>
-                        <FaSpinner className="w-4 h-4 animate-spin inline mr-2" />
-                        <span>Sending...</span>
-                      </>
-                    ) : isSuccess ? (
-                      <>
-                        <FaCheck className="w-4 h-4 inline mr-2" />
-                        <span>Message Sent!</span>
-                      </>
-                    ) : (
-                      <>
-                        <FaPaperPlane className="w-4 h-4 inline mr-2" />
-                        <span>Send Message</span>
-                      </>
-                    )}
-                  </span>
-                </motion.button>
-              </div>
-            </form>
-          </div>
+                    className={`p-3 rounded-full bg-gradient-to-r ${link.color}`}
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {link.icon}
+                  </motion.div>
+                  <div className="text-center">
+                    <h4 className="font-medium text-sm" style={{ color: getTextColor('primary') }}>
+                      {link.name}
+                    </h4>
+                    <p className="text-xs" style={{ color: getTextColor('secondary') }}>
+                      {link.description}
+                    </p>
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Enhanced Success Message */}
+          <AnimatePresence>
+            {isSuccess && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="p-4 rounded-xl flex items-center gap-3"
+                style={{
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white'
+                }}
+              >
+                <FaCheck className="w-5 h-5" />
+                <div>
+                  <h4 className="font-semibold">Message Sent!</h4>
+                  <p className="text-sm opacity-90">I'll get back to you soon.</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
-      
-      {/* Scroll to top button */}
+
+      {/* Enhanced Scroll to Top Button */}
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
             onClick={scrollToTop}
-            className="fixed bottom-20 right-4 p-3 rounded-full z-50"
-            style={{ 
-              background: isDark 
-                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8))' 
-                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.9))',
-              boxShadow: isDark 
-                ? '0 4px 12px rgba(0, 0, 0, 0.3)' 
-                : '0 4px 12px rgba(0, 0, 0, 0.15)'
+            className="fixed bottom-6 right-6 p-3 rounded-full shadow-lg z-50"
+            style={{
+              background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+              color: 'white'
             }}
-            whileHover={{ 
-              scale: 1.1,
-              boxShadow: isDark 
-                ? '0 6px 16px rgba(0, 0, 0, 0.4)' 
-                : '0 6px 16px rgba(0, 0, 0, 0.25)'
-            }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
-            <FaArrowUp size={16} className="text-white" />
+            <FaArrowUp className="w-5 h-5" />
           </motion.button>
         )}
       </AnimatePresence>
